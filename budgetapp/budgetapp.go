@@ -21,8 +21,57 @@ func serveError(c appengine.Context, w http.ResponseWriter, err error) {
 }
 
 var rootTemplate = template.Must(template.New("root").Parse(rootTemplateHTML))
+var inputTemplate = template.Must(template.New("root").Parse(inputTemplateHTML))
 
 const rootTemplateHTML = `
+<html>
+<body>
+<h1>Dani and Nick's Budget</h1>
+<table>
+<thead>
+<th>Account Number</th>
+<th>Date</th>
+<th>Transaction Type</th>
+<th>Description</th>
+<th>Amount</th>
+<th>Balance</th>
+</thead>
+<tbody>
+{{range .}}
+<tr>
+<td>{{.Account_number}}</td>
+<td>{{.Date}}</td>
+<td>{{.Transaction_type}}</td>
+<td>{{.Description}}</td>
+<td>{{.Amount}}</td>
+<td>{{.Balance}}</td>
+</tr>
+{{end}}
+</tbody>
+</table>
+</body>
+</html>
+`
+
+func handleRoot(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	w.Header().Set("Content-Type", "text/html")
+
+	q := datastore.NewQuery("Record").
+		Filter("Date =", "04/09/2014")
+	records := make([]record.Record, 0, 10)
+	_, err := q.GetAll(c, &records)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	err = rootTemplate.Execute(w, records)
+	if err != nil {
+		c.Errorf("%v", err)
+	}
+}
+
+const inputTemplateHTML = `
 <html><body>
 <form action="{{.}}" method="POST" enctype="multipart/form-data">
 Upload File: <input type="file" name="file"><br>
@@ -30,7 +79,7 @@ Upload File: <input type="file" name="file"><br>
 </form></body></html>
 `
 
-func handleRoot(w http.ResponseWriter, r *http.Request) {
+func handleInput(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	uploadURL, err := blobstore.UploadURL(c, "/upload", nil)
 	if err != nil {
@@ -38,7 +87,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html")
-	err = rootTemplate.Execute(w, uploadURL)
+	err = inputTemplate.Execute(w, uploadURL)
 	if err != nil {
 		c.Errorf("%v", err)
 	}
@@ -107,5 +156,6 @@ func recordKey(c appengine.Context) *datastore.Key {
 
 func init() {
 	http.HandleFunc("/", handleRoot)
+	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
 }
