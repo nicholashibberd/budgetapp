@@ -10,7 +10,7 @@ import (
 	"appengine/blobstore"
 	"appengine/datastore"
 
-	"myapp/record"
+	"budgetapp/record"
 )
 
 func serveError(c appengine.Context, w http.ResponseWriter, err error) {
@@ -46,6 +46,7 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+
 	blobs, _, err := blobstore.ParseUpload(r)
 	if err != nil {
 		serveError(c, w, err)
@@ -57,8 +58,11 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-	reader := blobstore.NewReader(c, file[0].BlobKey)
-	records, err := record.Parse_file(reader)
+	blobkey := file[0].BlobKey
+	reader := blobstore.NewReader(c, blobkey)
+	stat, _ := blobstore.Stat(c, blobkey)
+	filename := stat.Filename
+	records, err := record.Parse_file(reader, filename)
 
 	for i := 0; i < len(records); i++ {
 		r := records[i]
