@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"speter.net/go/exp/math/dec/inf"
 	"strings"
 	"time"
 )
@@ -132,4 +133,15 @@ func parse_date(str string) time.Time {
 		log.Print(err.Error())
 	}
 	return time
+}
+
+func (r Record) DecimalAmount() *inf.Dec {
+	d := &inf.Dec{}
+
+	var ok bool
+	if d, ok = d.SetString(r.Amount); !ok {
+		return &inf.Dec{}
+	}
+
+	return d
 }

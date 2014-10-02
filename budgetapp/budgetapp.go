@@ -11,6 +11,7 @@ import (
 	"appengine/datastore"
 
 	"budgetapp/record"
+	"budgetapp/record_collection"
 	"errors"
 	"time"
 )
@@ -39,7 +40,7 @@ const rootTemplateHTML = `
 <th>Balance</th>
 </thead>
 <tbody>
-{{range .}}
+{{range .Records}}
 <tr>
 <td>{{.Account_number}}</td>
 <td>{{.Date}}</td>
@@ -52,11 +53,19 @@ const rootTemplateHTML = `
 </tbody>
 </table>
 <div>
+<h2>Total: {{.Total}}</h2>
+</div>
+<div>
 <a href="/input">New Input</a>
 </div>
 </body>
 </html>
 `
+
+type Page struct {
+	Records []record.Record
+	Total   string
+}
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
@@ -81,7 +90,16 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 		log.Printf(err.Error())
 	}
 
-	err = rootTemplate.Execute(w, records)
+	record_collection := record_collection.RecordCollection{
+		Records: records,
+	}
+
+	page := &Page{
+		Records: record_collection.Records,
+		Total:   record_collection.Total(),
+	}
+
+	err = rootTemplate.Execute(w, page)
 	if err != nil {
 		c.Errorf("%v", err)
 	}
