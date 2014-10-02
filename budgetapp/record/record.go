@@ -6,10 +6,11 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 )
 
 type Record struct {
-	Date             string
+	Date             time.Time
 	Description      string
 	Amount           string
 	Balance          string
@@ -43,7 +44,6 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 	a := make([]Record, 20)
 	line_count := 0
 	for {
-		log.Printf("Line count: %d", line_count)
 		record, err := reader.Read()
 		if err != nil {
 			if err == io.EOF {
@@ -53,7 +53,6 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 			}
 		}
 		a[line_count] = parser.parse_record(record)
-		log.Print("testing log")
 		line_count += 1
 	}
 
@@ -61,13 +60,11 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 }
 
 func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
-	log.Print("NatwestParser invoked")
 	reader := csv.NewReader(file)
 	reader.FieldsPerRecord = 8
 	a := make([]Record, 20)
 	line_count := 0
 	for {
-		log.Printf("Line count: %d", line_count)
 		record, err := reader.Read()
 		if err != nil {
 			if strings.Contains(err.Error(), "wrong number of fields in line") {
@@ -81,7 +78,6 @@ func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
 			}
 		}
 		a[line_count] = parser.parse_record(record)
-		log.Print("testing log")
 		line_count += 1
 	}
 
@@ -91,10 +87,10 @@ func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
 func (parser ANZParser) parse_record(str []string) Record {
 	description := str[3]
 	account_number := str[0]
-	date := str[1]
 	amount := str[4]
 	balance := str[5]
 	transaction_type := parse_transaction_type(str[3])
+	date := parse_date(str[1])
 	return Record{
 		Description:      description,
 		Account_number:   account_number,
@@ -108,10 +104,10 @@ func (parser ANZParser) parse_record(str []string) Record {
 func (parser NatwestParser) parse_record(str []string) Record {
 	description := str[2]
 	account_number := str[6]
-	date := str[0]
 	amount := str[3]
 	balance := str[4]
 	transaction_type := str[1]
+	date := parse_date(str[0])
 	return Record{
 		Description:      description,
 		Account_number:   account_number,
@@ -128,4 +124,12 @@ func parse_transaction_type(str string) string {
 	} else {
 		return "UNDEFINED"
 	}
+}
+
+func parse_date(str string) time.Time {
+	time, err := time.Parse("02/01/2006", str)
+	if err != nil {
+		log.Print(err.Error())
+	}
+	return time
 }

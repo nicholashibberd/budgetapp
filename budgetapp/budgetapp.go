@@ -11,6 +11,8 @@ import (
 	"appengine/datastore"
 
 	"budgetapp/record"
+	"errors"
+	"time"
 )
 
 func serveError(c appengine.Context, w http.ResponseWriter, err error) {
@@ -49,6 +51,9 @@ const rootTemplateHTML = `
 {{end}}
 </tbody>
 </table>
+<div>
+<a href="/input">New Input</a>
+</div>
 </body>
 </html>
 `
@@ -57,10 +62,21 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html")
 
-	q := datastore.NewQuery("Record").
-		Filter("Date =", "04/09/2014")
+	q := datastore.NewQuery("Record")
+
+	start_date, err := parseDateParam(r.URL.Query()["start_date"])
+	var end_date time.Time
+	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	if err == nil {
+		q = q.
+			Filter("Date >=", start_date).
+			Filter("Date <=", end_date)
+	} else {
+		log.Print(err.Error())
+	}
+
 	records := make([]record.Record, 0, 10)
-	_, err := q.GetAll(c, &records)
+	_, err = q.GetAll(c, &records)
 	if err != nil {
 		log.Printf(err.Error())
 	}
@@ -69,6 +85,17 @@ func handleRoot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c.Errorf("%v", err)
 	}
+}
+
+func parseDateParam(params []string) (time.Time, error) {
+	if len(params) == 0 {
+		return time.Time{}, errors.New("No date parameter provided")
+	}
+	time, err := time.Parse("02/01/2006", params[0])
+	if err != nil {
+		log.Print(err.Error())
+	}
+	return time, nil
 }
 
 const inputTemplateHTML = `
@@ -143,9 +170,7 @@ func recordDoesNotExist(r record.Record, c appengine.Context) bool {
 }
 
 func storeRecord(r record.Record, c appengine.Context) error {
-	log.Printf(r.Description)
 	key := datastore.NewIncompleteKey(c, "Record", recordKey(c))
-	log.Printf(key.String())
 	_, err := datastore.Put(c, key, &r)
 	return err
 }
@@ -154,8 +179,15 @@ func recordKey(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "Record", "default_record", 0, nil)
 }
 
+func serveSingle(pattern string, filename string) {
+	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filename)
+	})
+}
+
 func init() {
 	http.HandleFunc("/", handleRoot)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
+	serveSingle("/favicon.ico", "./favicon.ico")
 }
