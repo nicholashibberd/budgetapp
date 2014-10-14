@@ -82,14 +82,7 @@ func (parser ANZParser) parse_record(str []string) Record {
 	balance := str[5]
 	transaction_type := parse_transaction_type(str[3])
 	date := parse_date(str[1])
-	return Record{
-		Description:      description,
-		Account_number:   account_number,
-		Amount:           amount,
-		Date:             date,
-		Balance:          balance,
-		Transaction_type: transaction_type,
-	}
+	return NewRecord(description, account_number, amount, date, balance, transaction_type)
 }
 
 func (parser NatwestParser) parse_record(str []string) Record {
@@ -99,14 +92,7 @@ func (parser NatwestParser) parse_record(str []string) Record {
 	balance := str[4]
 	transaction_type := str[1]
 	date := parse_date(str[0])
-	return Record{
-		Description:      description,
-		Account_number:   account_number,
-		Amount:           amount,
-		Date:             date,
-		Balance:          balance,
-		Transaction_type: transaction_type,
-	}
+	return NewRecord(description, account_number, amount, date, balance, transaction_type)
 }
 
 func parse_transaction_type(str string) string {
