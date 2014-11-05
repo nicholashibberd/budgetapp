@@ -1,6 +1,8 @@
 package budgetapp
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -11,7 +13,6 @@ import (
 	"appengine/datastore"
 
 	"budgetapp/record"
-	"budgetapp/record_collection"
 	"errors"
 	"time"
 )
@@ -21,88 +22,6 @@ func serveError(c appengine.Context, w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "text/plain")
 	io.WriteString(w, "Internal Server Error")
 	c.Errorf("%v", err)
-}
-
-var rootTemplate = template.Must(template.New("root").Parse(rootTemplateHTML))
-var inputTemplate = template.Must(template.New("root").Parse(inputTemplateHTML))
-
-const rootTemplateHTML = `
-<html>
-<body>
-<h1>Dani and Nick's Budget</h1>
-<table>
-<thead>
-<th>Account Number</th>
-<th>Date</th>
-<th>Transaction Type</th>
-<th>Description</th>
-<th>Amount</th>
-<th>Balance</th>
-</thead>
-<tbody>
-{{range .Records}}
-<tr>
-<td>{{.Account_number}}</td>
-<td>{{.Date}}</td>
-<td>{{.Transaction_type}}</td>
-<td>{{.Description}}</td>
-<td>{{.Amount}}</td>
-<td>{{.Balance}}</td>
-</tr>
-{{end}}
-</tbody>
-</table>
-<div>
-<h2>Total: {{.Total}}</h2>
-</div>
-<div>
-<a href="/input">New Input</a>
-</div>
-</body>
-</html>
-`
-
-type Page struct {
-	Records []record.Record
-	Total   string
-}
-
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	w.Header().Set("Content-Type", "text/html")
-
-	q := datastore.NewQuery("Record")
-
-	start_date, err := parseDateParam(r.URL.Query()["start_date"])
-	var end_date time.Time
-	end_date, err = parseDateParam(r.URL.Query()["end_date"])
-	if err == nil {
-		q = q.
-			Filter("Date >=", start_date).
-			Filter("Date <=", end_date)
-	} else {
-		log.Print(err.Error())
-	}
-
-	records := make([]record.Record, 0, 10)
-	_, err = q.GetAll(c, &records)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-
-	record_collection := record_collection.RecordCollection{
-		Records: records,
-	}
-
-	page := &Page{
-		Records: record_collection.Records,
-		Total:   record_collection.Total(),
-	}
-
-	err = rootTemplate.Execute(w, page)
-	if err != nil {
-		c.Errorf("%v", err)
-	}
 }
 
 func parseDateParam(params []string) (time.Time, error) {
@@ -115,6 +34,8 @@ func parseDateParam(params []string) (time.Time, error) {
 	}
 	return time, nil
 }
+
+var inputTemplate = template.Must(template.New("root").Parse(inputTemplateHTML))
 
 const inputTemplateHTML = `
 <html><body>
@@ -136,6 +57,38 @@ func handleInput(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		c.Errorf("%v", err)
 	}
+}
+
+func handleJson(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	q := datastore.NewQuery("Record")
+
+	start_date, err := parseDateParam(r.URL.Query()["start_date"])
+	var end_date time.Time
+	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	if err == nil {
+		q = q.
+			Filter("Date >=", start_date).
+			Filter("Date <=", end_date)
+	} else {
+		log.Print(err.Error())
+	}
+
+	records := make([]record.DatastoreRecord, 0, 10)
+	_, err = q.GetAll(c, &records)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	res1B, _ := json.Marshal(records)
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(res1B))
+	return
+	// err = inputTemplate.Execute(w, uploadURL)
+	// if err != nil {
+	// 	c.Errorf("%v", err)
+	// }
 }
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
@@ -171,7 +124,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func recordDoesNotExist(r record.Record, c appengine.Context) bool {
+func recordDoesNotExist(r record.DatastoreRecord, c appengine.Context) bool {
 	q := datastore.NewQuery("Record").
 		Filter("Date =", r.Date).
 		Filter("Description =", r.Description).
@@ -179,7 +132,7 @@ func recordDoesNotExist(r record.Record, c appengine.Context) bool {
 		Filter("Balance =", r.Balance).
 		Filter("Account_number =", r.Account_number).
 		Filter("Transaction_type =", r.Transaction_type)
-	records := make([]record.Record, 0, 10)
+	records := make([]record.DatastoreRecord, 0, 10)
 	_, err := q.GetAll(c, &records)
 	if err != nil {
 		log.Printf(err.Error())
@@ -187,7 +140,7 @@ func recordDoesNotExist(r record.Record, c appengine.Context) bool {
 	return len(records) == 0
 }
 
-func storeRecord(r record.Record, c appengine.Context) error {
+func storeRecord(r record.DatastoreRecord, c appengine.Context) error {
 	key := datastore.NewIncompleteKey(c, "Record", recordKey(c))
 	_, err := datastore.Put(c, key, &r)
 	return err
@@ -203,8 +156,45 @@ func serveSingle(pattern string, filename string) {
 	})
 }
 
+type EditPage struct {
+	RecordsJSON string
+}
+
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	q := datastore.NewQuery("Record")
+
+	start_date, err := parseDateParam(r.URL.Query()["start_date"])
+	var end_date time.Time
+	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	if err == nil {
+		q = q.
+			Filter("Date >=", start_date).
+			Filter("Date <=", end_date)
+	} else {
+		log.Print(err.Error())
+	}
+
+	records := make([]record.DatastoreRecord, 0, 10)
+	_, err = q.GetAll(c, &records)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	res1B, _ := json.Marshal(records)
+
+	recordsJSON := string(res1B)
+	p := &EditPage{RecordsJSON: recordsJSON}
+	t, _ := template.ParseFiles("edit.html")
+	t.Execute(w, p)
+}
+
 func init() {
-	http.HandleFunc("/", handleRoot)
+	http.Handle("/javascripts/", http.FileServer(http.Dir("public/")))
+	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
+	// serveSingle("/", "index.html")
+	http.HandleFunc("/json/records.json", handleJson)
+	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
 	serveSingle("/favicon.ico", "./favicon.ico")

@@ -10,8 +10,8 @@ import (
 )
 
 type Parser interface {
-	parse_record([]string) Record
-	read_file(io.Reader) ([]Record, error)
+	parse_record([]string) DatastoreRecord
+	read_file(io.Reader) ([]DatastoreRecord, error)
 }
 
 type NatwestParser struct {
@@ -20,7 +20,7 @@ type NatwestParser struct {
 type ANZParser struct {
 }
 
-func Parse_file(file io.Reader, filename string) ([]Record, error) {
+func Parse_file(file io.Reader, filename string) ([]DatastoreRecord, error) {
 	var parser Parser
 	if filename == "natwest.csv" {
 		parser = NatwestParser{}
@@ -30,9 +30,9 @@ func Parse_file(file io.Reader, filename string) ([]Record, error) {
 	return parser.read_file(file)
 }
 
-func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
+func (parser ANZParser) read_file(file io.Reader) ([]DatastoreRecord, error) {
 	reader := csv.NewReader(file)
-	a := make([]Record, 20)
+	a := make([]DatastoreRecord, 20)
 	line_count := 0
 	for {
 		record, err := reader.Read()
@@ -50,10 +50,10 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 	return a[0:line_count], nil
 }
 
-func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
+func (parser NatwestParser) read_file(file io.Reader) ([]DatastoreRecord, error) {
 	reader := csv.NewReader(file)
 	reader.FieldsPerRecord = 8
-	a := make([]Record, 20)
+	a := make([]DatastoreRecord, 20)
 	line_count := 0
 	for {
 		record, err := reader.Read()
@@ -75,24 +75,24 @@ func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
 	return a[0:line_count], nil
 }
 
-func (parser ANZParser) parse_record(str []string) Record {
+func (parser ANZParser) parse_record(str []string) DatastoreRecord {
 	description := str[3]
 	account_number := str[0]
 	amount := str[4]
 	balance := str[5]
 	transaction_type := parse_transaction_type(str[3])
 	date := parse_date(str[1])
-	return NewRecord(description, account_number, amount, date, balance, transaction_type)
+	return NewDatastoreRecord(description, account_number, amount, date, balance, transaction_type)
 }
 
-func (parser NatwestParser) parse_record(str []string) Record {
+func (parser NatwestParser) parse_record(str []string) DatastoreRecord {
 	description := str[2]
 	account_number := str[6]
 	amount := str[3]
 	balance := str[4]
 	transaction_type := str[1]
 	date := parse_date(str[0])
-	return NewRecord(description, account_number, amount, date, balance, transaction_type)
+	return NewDatastoreRecord(description, account_number, amount, date, balance, transaction_type)
 }
 
 func parse_transaction_type(str string) string {

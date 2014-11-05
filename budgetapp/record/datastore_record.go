@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Record struct {
+type DatastoreRecord struct {
 	Date             time.Time
 	Description      string
 	Amount           string
@@ -15,13 +15,27 @@ type Record struct {
 	Tags             []Tag
 }
 
-func NewRecord(de string, ac string, am string, da time.Time, b string, t string) Record {
-	return Record{
+func NewDatastoreRecord(de string, ac string, am string, da time.Time, b string, t string) DatastoreRecord {
+	tag1 := NewTag("Cash")
+	tag2 := NewTag("Presents")
+	tags := []Tag{tag1, tag2}
+	return DatastoreRecord{
 		Description:      de,
 		Account_number:   ac,
 		Amount:           am,
 		Date:             da,
 		Balance:          b,
 		Transaction_type: t,
+		Tags:             tags,
+	}
+}
+
+type Tag struct {
+	Name string
+}
+
+func NewTag(name string) Tag {
+	return Tag{
+		Name: name,
 	}
 }
