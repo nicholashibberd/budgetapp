@@ -175,10 +175,22 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		log.Print(err.Error())
 	}
 
-	records := make([]record.DatastoreRecord, 0, 10)
-	_, err = q.GetAll(c, &records)
+	var queryCount int
+	queryCount, err = q.Count(c)
 	if err != nil {
 		log.Printf(err.Error())
+	}
+	datastoreRecords := make([]record.DatastoreRecord, 0, queryCount)
+	var keys []*datastore.Key
+	keys, err = q.GetAll(c, &datastoreRecords)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	records := make([]record.Record, len(datastoreRecords))
+
+	for i := 0; i < queryCount; i++ {
+		records[i] = record.NewRecord(datastoreRecords[i], keys[i].IntID())
 	}
 
 	res1B, _ := json.Marshal(records)
