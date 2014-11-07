@@ -1,7 +1,7 @@
 package record
 
 type Record struct {
-	Id int64
+	Id int64 `json:"id"`
 	DatastoreRecord
 }
 

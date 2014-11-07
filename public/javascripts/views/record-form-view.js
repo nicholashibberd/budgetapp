@@ -34,6 +34,7 @@ var app = app || {};
     createOnEnter: function(e) {
       if (e.which === ENTER_KEY && this.$input().val().trim()) {
         this.model.tags.push(this.newTag());
+        this.model
         this.$input().val('');
       }
     },

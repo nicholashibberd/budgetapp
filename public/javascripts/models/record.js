@@ -6,11 +6,14 @@ var app = app || {};
 
   app.Record = Backbone.Model.extend({
     initialize: function() {
-      var tags = [];
-      _.each(this.attributes.Tags, function(tag) {
-        tags.push(new app.Tag(tag));
+      this.tags = new Backbone.Collection(this.get('tags'));
+      this.listenTo(this.tags, 'add', this.addTag)
+    },
+    addTag: function(e) {
+      var attrs = _.map(this.tags.models, function(m) {
+        return m.attributes
       });
-      this.tags = new Backbone.Collection(tags);
+      this.set('tags', attrs);
     }
   });
 })();

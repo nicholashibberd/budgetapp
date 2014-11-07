@@ -6,13 +6,13 @@ import (
 )
 
 type DatastoreRecord struct {
-	Date             time.Time
-	Description      string
-	Amount           string
-	Balance          string
-	Account_number   string
-	Transaction_type string
-	Tags             []Tag
+	Date             time.Time `json:"date"`
+	Description      string    `json:"description"`
+	Amount           string    `json:"amount"`
+	Balance          string    `json:"balance"`
+	Account_number   string    `json:"account_number"`
+	Transaction_type string    `json:"transaction_type"`
+	Tags             []Tag     `json:"tags"`
 }
 
 func NewDatastoreRecord(de string, ac string, am string, da time.Time, b string, t string) DatastoreRecord {

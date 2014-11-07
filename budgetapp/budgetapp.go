@@ -193,10 +193,10 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		records[i] = record.NewRecord(datastoreRecords[i], keys[i].IntID())
 	}
 
-	res1B, _ := json.Marshal(records)
+	recordsJSON, _ := json.Marshal(records)
 
-	recordsJSON := string(res1B)
-	p := &EditPage{RecordsJSON: recordsJSON}
+	jsonString := string(recordsJSON)
+	p := &EditPage{RecordsJSON: jsonString}
 	t, _ := template.ParseFiles("edit.html")
 	t.Execute(w, p)
 }
