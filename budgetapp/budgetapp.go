@@ -7,6 +7,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"appengine"
 	"appengine/blobstore"
@@ -85,10 +87,38 @@ func handleJson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(res1B))
 	return
-	// err = inputTemplate.Execute(w, uploadURL)
+}
+
+func handleRecordJson(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	recordId := strings.Split(r.URL.Path, "/")[2]
+	numericId, err := strconv.ParseInt(recordId, 10, 64)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	var record record.Record
+	k := datastore.NewKey(c, "Record", "", numericId, recordKey(c))
+	err = datastore.Get(c, k, &record)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	// q := datastore.NewQuery("Record").Filter("__key__ =", k)
+	// log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	// log.Print(q.Count(c))
+
+	// records := make([]record.DatastoreRecord, 0, 10)
+	// _, err := q.GetAll(c, &records)
 	// if err != nil {
-	// 	c.Errorf("%v", err)
+	// 	log.Printf(err.Error())
 	// }
+
+	resultsJson, _ := json.Marshal(record)
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resultsJson))
+	return
 }
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
@@ -205,7 +235,7 @@ func init() {
 	http.Handle("/javascripts/", http.FileServer(http.Dir("public/")))
 	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
 	// serveSingle("/", "index.html")
-	http.HandleFunc("/json/records.json", handleJson)
+	http.HandleFunc("/records/", handleRecordJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
