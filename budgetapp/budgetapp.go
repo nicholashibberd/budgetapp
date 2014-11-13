@@ -7,8 +7,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"appengine"
 	"appengine/blobstore"
@@ -62,6 +60,7 @@ func handleInput(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleJson(w http.ResponseWriter, r *http.Request) {
+	log.Printf("LOG!!!!!!!!!!!!!!!!!")
 	c := appengine.NewContext(r)
 	q := datastore.NewQuery("Record")
 
@@ -89,30 +88,28 @@ func handleJson(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func decodeRecord(r io.ReadCloser) (*record.Record, error) {
+	defer r.Close()
+	var record record.Record
+	err := json.NewDecoder(r).Decode(&record)
+	return &record, err
+}
+
 func handleRecordJson(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	recordId := strings.Split(r.URL.Path, "/")[2]
-	numericId, err := strconv.ParseInt(recordId, 10, 64)
+
+	record, err := decodeRecord(r.Body)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
-	var record record.Record
-	k := datastore.NewKey(c, "Record", "", numericId, recordKey(c))
-	err = datastore.Get(c, k, &record)
+	k := datastore.NewKey(c, "Record", "", record.Id, recordKey(c))
+	_, err = datastore.Put(c, k, record)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
-	// q := datastore.NewQuery("Record").Filter("__key__ =", k)
-	// log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-	// log.Print(q.Count(c))
-
-	// records := make([]record.DatastoreRecord, 0, 10)
-	// _, err := q.GetAll(c, &records)
-	// if err != nil {
-	// 	log.Printf(err.Error())
-	// }
+	record.Description = "Test Description"
 
 	resultsJson, _ := json.Marshal(record)
 
@@ -234,7 +231,6 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 func init() {
 	http.Handle("/javascripts/", http.FileServer(http.Dir("public/")))
 	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
-	// serveSingle("/", "index.html")
 	http.HandleFunc("/records/", handleRecordJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
