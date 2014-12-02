@@ -75,7 +75,7 @@ func handleJson(w http.ResponseWriter, r *http.Request) {
 		log.Print(err.Error())
 	}
 
-	records := make([]record.DatastoreRecord, 0, 10)
+	records := make([]record.Record, 0, 10)
 	_, err = q.GetAll(c, &records)
 	if err != nil {
 		log.Printf(err.Error())
@@ -140,8 +140,9 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 
 	for i := 0; i < len(records); i++ {
 		r := records[i]
-		if recordDoesNotExist(r, c) {
-			err := storeRecord(r, c)
+		r.AddTags()
+		if r.DoesNotExist(c) {
+			_, err := r.Save(c)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -149,28 +150,6 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Redirect(w, r, "/", http.StatusFound)
-}
-
-func recordDoesNotExist(r record.DatastoreRecord, c appengine.Context) bool {
-	q := datastore.NewQuery("Record").
-		Filter("Date =", r.Date).
-		Filter("Description =", r.Description).
-		Filter("Amount =", r.Amount).
-		Filter("Balance =", r.Balance).
-		Filter("Account_number =", r.Account_number).
-		Filter("Transaction_type =", r.Transaction_type)
-	records := make([]record.DatastoreRecord, 0, 10)
-	_, err := q.GetAll(c, &records)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	return len(records) == 0
-}
-
-func storeRecord(r record.DatastoreRecord, c appengine.Context) error {
-	key := datastore.NewIncompleteKey(c, "Record", recordKey(c))
-	_, err := datastore.Put(c, key, &r)
-	return err
 }
 
 func recordKey(c appengine.Context) *datastore.Key {
@@ -204,20 +183,18 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 
 	var queryCount int
 	queryCount, err = q.Count(c)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	datastoreRecords := make([]record.DatastoreRecord, 0, queryCount)
-	var keys []*datastore.Key
-	keys, err = q.GetAll(c, &datastoreRecords)
+	log.Printf("%d", queryCount)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
-	records := make([]record.Record, len(datastoreRecords))
-
-	for i := 0; i < queryCount; i++ {
-		records[i] = record.NewRecord(datastoreRecords[i], keys[i].IntID())
+	records := []record.Record{}
+	ks, err := q.GetAll(c, &records)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(records); i++ {
+		records[i].Id = ks[i].IntID()
 	}
 
 	recordsJSON, _ := json.Marshal(records)
