@@ -8,7 +8,7 @@ var app = app || {};
     tagName: "li",
     template: _.template($('#tag-template').html()),
     initialize: function() {
-      this.listenTo(this.model, 'destroy', this.remove)
+      this.listenTo(this.model, 'destroy', this.remove);
     },
     events: {
       "click .destroy": "clear",
@@ -25,6 +25,9 @@ var app = app || {};
     },
     clear: function(e) {
       this.model.destroy();
+    },
+    presenter: function() {
+      this.model.toJSON()
     }
   })
 })(jQuery);

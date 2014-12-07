@@ -59,6 +59,29 @@ func handleInput(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleTags(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	w.Header().Set("Content-Type", "text/html")
+
+	q := datastore.NewQuery("Tag")
+
+	tags := []record.Tag{}
+	ks, err := q.GetAll(c, &tags)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(tags); i++ {
+		tags[i].Id = ks[i].IntID()
+	}
+
+	tagsJSON, _ := json.Marshal(tags)
+
+	jsonString := string(tagsJSON)
+	p := &JSONData{Tags: jsonString}
+	t, _ := template.ParseFiles("tags.html")
+	t.Execute(w, p)
+}
+
 func handleJson(w http.ResponseWriter, r *http.Request) {
 	log.Printf("LOG!!!!!!!!!!!!!!!!!")
 	c := appengine.NewContext(r)
@@ -88,34 +111,48 @@ func handleJson(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func decodeRecord(r io.ReadCloser) (*record.Record, error) {
-	defer r.Close()
-	var record record.Record
-	err := json.NewDecoder(r).Decode(&record)
-	return &record, err
-}
-
 func handleRecordJson(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
-	record, err := decodeRecord(r.Body)
+	re, err := record.DecodeRecord(r.Body)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
-	k := datastore.NewKey(c, "Record", "", record.Id, recordKey(c))
-	_, err = datastore.Put(c, k, record)
+	k := datastore.NewKey(c, "Record", "", re.Id, record.RecordKey(c))
+	_, err = datastore.Put(c, k, re)
 	if err != nil {
 		log.Printf(err.Error())
 	}
 
-	record.Description = "Test Description"
-
-	resultsJson, _ := json.Marshal(record)
+	resultsJson, _ := json.Marshal(re)
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(resultsJson))
 	return
+}
+
+func handleTagsJson(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		c := appengine.NewContext(r)
+
+		tag, err := record.DecodeTag(r.Body)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		k := datastore.NewKey(c, "Tag", "", tag.Id, record.TagKey(c))
+		_, err = datastore.Put(c, k, tag)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		resultsJson, _ := json.Marshal(tag)
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(resultsJson))
+		return
+	}
 }
 
 func handleUpload(w http.ResponseWriter, r *http.Request) {
@@ -136,11 +173,22 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	reader := blobstore.NewReader(c, blobkey)
 	stat, _ := blobstore.Stat(c, blobkey)
 	filename := stat.Filename
-	records, err := record.Parse_file(reader, filename)
+	records, err := record.ParseFile(reader, filename)
+
+	q := datastore.NewQuery("Tag")
+
+	tags := []record.Tag{}
+	ks, err := q.GetAll(c, &tags)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(tags); i++ {
+		tags[i].Id = ks[i].IntID()
+	}
 
 	for i := 0; i < len(records); i++ {
 		r := records[i]
-		r.AddTags()
+		r.AddTags(tags)
 		if r.DoesNotExist(c) {
 			_, err := r.Save(c)
 			if err != nil {
@@ -152,18 +200,15 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func recordKey(c appengine.Context) *datastore.Key {
-	return datastore.NewKey(c, "Record", "default_record", 0, nil)
-}
-
 func serveSingle(pattern string, filename string) {
 	http.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filename)
 	})
 }
 
-type EditPage struct {
-	RecordsJSON string
+type JSONData struct {
+	Tags string
+	Records string
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -181,13 +226,6 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		log.Print(err.Error())
 	}
 
-	var queryCount int
-	queryCount, err = q.Count(c)
-	log.Printf("%d", queryCount)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-
 	records := []record.Record{}
 	ks, err := q.GetAll(c, &records)
 	if err != nil {
@@ -198,9 +236,25 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	recordsJSON, _ := json.Marshal(records)
+	recordsJSONString := string(recordsJSON)
 
-	jsonString := string(recordsJSON)
-	p := &EditPage{RecordsJSON: jsonString}
+	q = datastore.NewQuery("Tag")
+
+	tags := []record.Tag{}
+	ks, err = q.GetAll(c, &tags)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(tags); i++ {
+		tags[i].Id = ks[i].IntID()
+	}
+
+	tagsJSON, _ := json.Marshal(tags)
+	tagsJSONString := string(tagsJSON)
+	p := &JSONData{
+		Records: recordsJSONString,
+		Tags: tagsJSONString,
+	}
 	t, _ := template.ParseFiles("edit.html")
 	t.Execute(w, p)
 }
@@ -209,8 +263,10 @@ func init() {
 	http.Handle("/javascripts/", http.FileServer(http.Dir("public/")))
 	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
 	http.HandleFunc("/records/", handleRecordJson)
+	http.HandleFunc("/tags", handleTagsJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
+	http.HandleFunc("/tag", handleTags)
 	serveSingle("/favicon.ico", "./favicon.ico")
 }

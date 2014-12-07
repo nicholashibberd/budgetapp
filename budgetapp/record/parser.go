@@ -12,7 +12,7 @@ import (
 type Parser interface {
 	parse_record([]string) Record
 	read_file(io.Reader) ([]Record, error)
-	AddTags(*Record)
+	AddTags(*Record, []Tag)
 }
 
 type NatwestParser struct {
@@ -21,7 +21,7 @@ type NatwestParser struct {
 type ANZParser struct {
 }
 
-func Parse_file(file io.Reader, filename string) ([]Record, error) {
+func ParseFile(file io.Reader, filename string) ([]Record, error) {
 	var parser Parser
 	if filename == "natwest.csv" {
 		parser = NatwestParser{}
@@ -61,24 +61,44 @@ func NewRule(m string, r string) Rule {
 	}
 }
 
-func (p ANZParser) AddTags(r *Record) {
+func (p ANZParser) AddTags(r *Record, t []Tag) {
 	rules := []Rule{
 		NewRule("OPTUS PRE PAID", "Mobile Phone"),
-		NewRule("TRANSPORT FOR NSW-OPAL", "Transport"),
+		NewRule("TRANSPORT FOR NSW-OPAL", "Travel"),
 		NewRule("ANZ ATM", "Cash"),
 		NewRule("COLES", "Supermarket"),
 		NewRule("ANZ M-BANKING PAYMENT", "Bank Transfer"),
+		NewRule("ANZ M-BANKING FUNDS", "Funds Transfer"),
+		NewRule("ANZ INTERNET BANKING FUNDS", "Funds Transfer"),
 		NewRule("DEBIT INTEREST CHARGED", "Interest"),
+		NewRule("PAY/SALARY", "Salary"),
+		NewRule("PETROL", "Petrol"),
+		NewRule("DAN MURPHY'S", "Alcohol"),
+		NewRule("MENULOG", "Takeaway"),
+		NewRule("ALDI", "Supermarket"),
+		NewRule("BWS LIQUOR", "Alcohol"),
+		NewRule("CALTEX", "Petrol"),
+		NewRule("DENDY CINEMAS", "Cinema"),
+		NewRule("IGA", "Supermarket"),
+		NewRule("WOOLWORTHS", "Supermarket"),
+		NewRule("FOXTEL", "Foxtel"),
+		NewRule("MEDICAL", "Medical"),
+		NewRule("HAIRDRESSING", "Beauty"),
+		NewRule("BEAUTY", "Beauty"),
+		NewRule("CARPARK", "Car"),
+		NewRule("TRUE PROPERTY", "Rent"),
+		NewRule("TERRI SCHEER INSURANCE", "Villa"),
+		NewRule("TELSTRA", "Internet"),
 	}
 	for i := 0; i < len(rules); i++ {
 		ru := rules[i]
 		if strings.Contains(r.Description, ru.MatchText) {
-			r.AddTag(ru.RuleName)
+			r.AddTag(ru.RuleName, t)
 		}
 	}
 }
 
-func (p NatwestParser) AddTags(*Record) {
+func (p NatwestParser) AddTags(r *Record, t []Tag) {
 	log.Print("NatwestParser called")
 }
 

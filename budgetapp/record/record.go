@@ -5,6 +5,8 @@ import (
 	"appengine/datastore"
 	"time"
 	"log"
+	"io"
+	"encoding/json"
 )
 
 type Record struct {
@@ -16,6 +18,7 @@ type Record struct {
 	Account_number   string    `json:"account_number"`
 	Transaction_type string    `json:"transaction_type"`
 	Tags             []Tag     `json:"tags"`
+	TagIds             []int64     `json:"tag_ids"`
 }
 
 func defaultRecordList(c appengine.Context) *datastore.Key {
@@ -54,20 +57,39 @@ func (r *Record) DoesNotExist(c appengine.Context) bool {
 	return len(records) == 0
 }
 
-func (r *Record) AddTags() {
+func (r *Record) AddTags(t []Tag) {
 	switch r.Account_number {
 	case "012372210678637":
 		parser := ANZParser{}
-		parser.AddTags(r)
+		parser.AddTags(r, t)
+	case "12341195010216":
+		parser := ANZParser{}
+		parser.AddTags(r, t)
 	case "010492-43188249":
 		parser := NatwestParser{}
-		parser.AddTags(r)
+		parser.AddTags(r, t)
 	}
 
 }
 
-func (r *Record) AddTag(t string) {
-	r.Tags = append(r.Tags, NewTag(t))
+func DecodeRecord(r io.ReadCloser) (*Record, error) {
+	defer r.Close()
+	var record Record
+	err := json.NewDecoder(r).Decode(&record)
+	return &record, err
+}
+
+func RecordKey(c appengine.Context) *datastore.Key {
+	return datastore.NewKey(c, "Record", "default_record", 0, nil)
+}
+
+func (r *Record) AddTag(ru string, ts []Tag) {
+	for i := 0; i < len(ts); i++ {
+		t := ts[i]
+		if t.Name == ru {
+			r.TagIds = append(r.TagIds, t.Id)
+		}
+	}
 }
 
 func NewRecord(de string, ac string, am string, da time.Time, b string, t string) Record {
@@ -78,15 +100,5 @@ func NewRecord(de string, ac string, am string, da time.Time, b string, t string
 		Date:             da,
 		Balance:          b,
 		Transaction_type: t,
-	}
-}
-
-type Tag struct {
-	Name string
-}
-
-func NewTag(name string) Tag {
-	return Tag{
-		Name: name,
 	}
 }

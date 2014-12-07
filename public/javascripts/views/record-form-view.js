@@ -13,11 +13,11 @@ var app = app || {};
       this.$input = function() {
         return this.$el.find('#new-tag');
       };
-      this.listenTo(this.model.tags, 'add', this.addOne)
     },
     events: {
       'keypress #new-tag': 'createOnEnter',
       'click button.save': 'save',
+      'click a.add-tag': 'addTag',
     },
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -29,7 +29,7 @@ var app = app || {};
       this.$table().append(view.render().el);
     },
     addAll: function() {
-      this.model.tags.each(this.addOne, this);
+      app.Tags.each(this.addOne, this);
     },
     createOnEnter: function(e) {
       if (e.which === ENTER_KEY && this.$input().val().trim()) {
@@ -42,6 +42,11 @@ var app = app || {};
       return new app.Tag({
         Name: this.$input().val().trim()
       });
+    },
+    addTag: function(e) {
+      e.preventDefault()
+      var id = $(e.target).attr('id')
+      this.model.addTag(id)
     },
     save: function() {
       this.model.save({}, {
