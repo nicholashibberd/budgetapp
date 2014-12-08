@@ -7,6 +7,10 @@ var app = app || {};
   app.TagPopoverView = Backbone.View.extend({
     tagName: "div",
     template: _.template($('#tag-popover-template').html()),
+    initialize: function() {
+      this.listenTo(this.collection, 'add', this.render);
+      this.listenTo(this.collection, 'remove', this.render);
+    },
     events: {
       'click li': 'addTag',
       'click a.remove-tag': 'removeTag'

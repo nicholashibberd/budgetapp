@@ -7,10 +7,6 @@ var app = app || {};
   app.RecordView = Backbone.View.extend({
     tagName: 'tr',
     template: _.template($('#record-template').html()),
-    initialize: function() {
-      this.listenTo(this.model.tags, 'add', this.render);
-      this.listenTo(this.model.tags, 'remove', this.render);
-    },
     events: {
       'click button.add-tag': "addTag"
     },
@@ -22,7 +18,6 @@ var app = app || {};
     addTag: function() {
       var modal = new app.ModalView();
       this.$el.find('td.add-tag').append(modal.render().el);
-      // var recordFormView = new app.RecordFormView({model: this.model});
       modal.setContent(recordFormView.render().el)
     },
     buildTagView: function() {

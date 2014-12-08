@@ -1,3 +1,10 @@
+header {
+  background: #333;
+}
+
+a.navbar-brand {
+  color: #fff;
+}
 #tag-list li .edit {
   display: none;
 }
