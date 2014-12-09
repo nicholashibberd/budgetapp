@@ -10,7 +10,10 @@ var app = app || {};
       console.log('AppView initialized');
       this.$table = $('#record-table tbody');
       this.addAll();
-      new app.DateView()
+      new app.DateView();
+      new app.RecordsSummaryView({
+        collection: app.Records
+      });
       // this.listenTo(app.Records, 'reset', this.addAll);
     },
     addOne: function(record) {
