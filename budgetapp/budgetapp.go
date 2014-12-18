@@ -75,9 +75,26 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tagsJSON, _ := json.Marshal(tags)
+	tagsJSONString := string(tagsJSON)
 
-	jsonString := string(tagsJSON)
-	p := &JSONData{Tags: jsonString}
+	q = datastore.NewQuery("Rule")
+
+	rules := []record.Rule{}
+	ks, err = q.GetAll(c, &rules)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(rules); i++ {
+		rules[i].Id = ks[i].IntID()
+	}
+
+	rulesJSON, _ := json.Marshal(rules)
+
+	rulesJSONString := string(rulesJSON)
+	p := &JSONData{
+		Tags: tagsJSONString,
+		Rules: rulesJSONString,
+	}
 	t, _ := template.ParseFiles("tags.html")
 	t.Execute(w, p)
 }
@@ -155,6 +172,29 @@ func handleTagsJson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleRulesJson(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		c := appengine.NewContext(r)
+
+		rule, err := record.DecodeRule(r.Body)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		k := datastore.NewKey(c, "Rule", "", rule.Id, record.RuleKey(c))
+		_, err = datastore.Put(c, k, rule)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		resultsJson, _ := json.Marshal(rule)
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(resultsJson))
+		return
+	}
+}
+
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -209,6 +249,7 @@ func serveSingle(pattern string, filename string) {
 type JSONData struct {
 	Tags string
 	Records string
+	Rules string
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -264,6 +305,7 @@ func init() {
 	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
 	http.HandleFunc("/records/", handleRecordJson)
 	http.HandleFunc("/tags", handleTagsJson)
+	http.HandleFunc("/rules", handleRulesJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)

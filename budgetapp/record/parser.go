@@ -49,46 +49,46 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 	return a, nil
 }
 
-type Rule struct {
+type StaticRule struct {
 	MatchText string
 	RuleName string
 }
 
-func NewRule(m string, r string) Rule {
-	return Rule{
+func NewStaticRule(m string, r string) StaticRule {
+	return StaticRule{
 		MatchText: m,
 		RuleName: r,
 	}
 }
 
 func (p ANZParser) AddTags(r *Record, t []Tag) {
-	rules := []Rule{
-		NewRule("OPTUS PRE PAID", "Mobile Phone"),
-		NewRule("TRANSPORT FOR NSW-OPAL", "Travel"),
-		NewRule("ANZ ATM", "Cash"),
-		NewRule("COLES", "Supermarket"),
-		NewRule("ANZ M-BANKING PAYMENT", "Bank Transfer"),
-		NewRule("ANZ M-BANKING FUNDS", "Funds Transfer"),
-		NewRule("ANZ INTERNET BANKING FUNDS", "Funds Transfer"),
-		NewRule("DEBIT INTEREST CHARGED", "Interest"),
-		NewRule("PAY/SALARY", "Salary"),
-		NewRule("PETROL", "Petrol"),
-		NewRule("DAN MURPHY'S", "Alcohol"),
-		NewRule("MENULOG", "Takeaway"),
-		NewRule("ALDI", "Supermarket"),
-		NewRule("BWS LIQUOR", "Alcohol"),
-		NewRule("CALTEX", "Petrol"),
-		NewRule("DENDY CINEMAS", "Cinema"),
-		NewRule("IGA", "Supermarket"),
-		NewRule("WOOLWORTHS", "Supermarket"),
-		NewRule("FOXTEL", "Foxtel"),
-		NewRule("MEDICAL", "Medical"),
-		NewRule("HAIRDRESSING", "Beauty"),
-		NewRule("BEAUTY", "Beauty"),
-		NewRule("CARPARK", "Car"),
-		NewRule("TRUE PROPERTY", "Rent"),
-		NewRule("TERRI SCHEER INSURANCE", "Villa"),
-		NewRule("TELSTRA", "Internet"),
+	rules := []StaticRule{
+		NewStaticRule("OPTUS PRE PAID", "Mobile Phone"),
+		NewStaticRule("TRANSPORT FOR NSW-OPAL", "Travel"),
+		NewStaticRule("ANZ ATM", "Cash"),
+		NewStaticRule("COLES", "Supermarket"),
+		NewStaticRule("ANZ M-BANKING PAYMENT", "Bank Transfer"),
+		NewStaticRule("ANZ M-BANKING FUNDS", "Funds Transfer"),
+		NewStaticRule("ANZ INTERNET BANKING FUNDS", "Funds Transfer"),
+		NewStaticRule("DEBIT INTEREST CHARGED", "Interest"),
+		NewStaticRule("PAY/SALARY", "Salary"),
+		NewStaticRule("PETROL", "Petrol"),
+		NewStaticRule("DAN MURPHY'S", "Alcohol"),
+		NewStaticRule("MENULOG", "Takeaway"),
+		NewStaticRule("ALDI", "Supermarket"),
+		NewStaticRule("BWS LIQUOR", "Alcohol"),
+		NewStaticRule("CALTEX", "Petrol"),
+		NewStaticRule("DENDY CINEMAS", "Cinema"),
+		NewStaticRule("IGA", "Supermarket"),
+		NewStaticRule("WOOLWORTHS", "Supermarket"),
+		NewStaticRule("FOXTEL", "Foxtel"),
+		NewStaticRule("MEDICAL", "Medical"),
+		NewStaticRule("HAIRDRESSING", "Beauty"),
+		NewStaticRule("BEAUTY", "Beauty"),
+		NewStaticRule("CARPARK", "Car"),
+		NewStaticRule("TRUE PROPERTY", "Rent"),
+		NewStaticRule("TERRI SCHEER INSURANCE", "Villa"),
+		NewStaticRule("TELSTRA", "Internet"),
 	}
 	for i := 0; i < len(rules); i++ {
 		ru := rules[i]

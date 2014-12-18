@@ -8,3 +8,31 @@ a.navbar-brand {
 #tag-list li .edit {
   display: none;
 }
+
+.tag-summary-bar {
+  height: 20px;
+}
+
+.positive-summary-bar, .tag-summary-bar {
+  background: #009966;
+}
+
+.negative-summary-bar, .tag-summary-bar {
+  background: #428bca;
+}
+
+.positive-summary-bar, .negative-summary-bar {
+  background: #ccc;
+}
+
+.new-tag input {
+  width: 50%;
+}
+
+.new-rule input {
+  width: 100%;
+}
+
+table#tag-table, span.label, table#rule-table, span.label {
+  font-size:14px;
+}

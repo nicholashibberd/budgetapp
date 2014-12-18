@@ -32,8 +32,15 @@
     <div class="jumbotron">
       <div class="container">
         <h1 id="summary"></h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>
+        <div id="positive-tags">
+          <h2 id="positive-records">Money In: <span></span></h2>
+        </div>
+        <div id="negative-tags">
+          <h2 id="negative-records">Money Out: <span></span></h2>
+        </div>
+        <div id="tags-summary-table">
+
+        </div>
       </div>
     </div>
     <div class="container">
@@ -92,6 +99,12 @@
       </div>
       <input class="edit" value="<%- name %>">
     </script>
+    <script type="text/template" id="tag-summary-template">
+      <div class="<%-state %>-summary-bar" style="width: <%- stateWidth %>px">
+        <div style="width: <%- width %>px" class="tag-summary-bar">
+      </div>
+      </div><%- tagName %> | <%- amount %>
+    </script>
     <script type="text/template" id="tag-popover-template">
       <div>
         <% _.each(models, function(tag) { %>
@@ -123,6 +136,8 @@
     <script src="javascripts/views/tag-popover-view.js"></script>
     <script src="javascripts/views/record-view.js"></script>
     <script src="javascripts/views/date-view.js"></script>
+    <script src="javascripts/views/tag-summary-view.js"></script>
+    <script src="javascripts/views/tags-summary-view.js"></script>
     <script src="javascripts/views/records-summary-view.js"></script>
     <script src="javascripts/views/app-view.js"></script>
     <script src="javascripts/app.js"></script>

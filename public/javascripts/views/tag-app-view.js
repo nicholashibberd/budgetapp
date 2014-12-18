@@ -5,12 +5,11 @@ var app = app || {};
   'use strict';
 
   app.TagAppView = Backbone.View.extend({
-    el: '#budgetapp',
+    el: '#tag-app',
     initialize: function() {
       this.$table = $('#tag-table tbody');
       this.$input = this.$table.find('tr.new-tag input');
       this.addAll();
-      // this.listenTo(app.Records, 'reset', this.addAll);
     },
     events: {
       'click tr.new-tag button': "addTag"

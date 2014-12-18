@@ -7,14 +7,25 @@ var app = app || {};
   app.AppView = Backbone.View.extend({
     el: 'budgetapp',
     initialize: function() {
-      console.log('AppView initialized');
       this.$table = $('#record-table tbody');
       this.addAll();
       new app.DateView();
       new app.RecordsSummaryView({
+        el: 'h1',
         collection: app.Records
-      });
-      // this.listenTo(app.Records, 'reset', this.addAll);
+      }).render();
+      // new app.RecordsSummaryView({
+      //   el: '#positive-tags',
+      //   collection: app.Records.positiveRecords()
+      // }).render();
+      new app.TagsSummaryView({
+        el: '#negative-tags',
+        collection: app.Records.negativeRecords()
+      }).render();
+      new app.TagsSummaryView({
+        el: '#positive-tags',
+        collection: app.Records.positiveRecords()
+      }).render();
     },
     addOne: function(record) {
       var view = new app.RecordView({model: record});

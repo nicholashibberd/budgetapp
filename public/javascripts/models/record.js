@@ -28,6 +28,12 @@ var app = app || {};
     },
     amount: function() {
       return parseFloat(this.get('amount'));
+    },
+    isPositive: function() {
+      return this.amount() > 0;
+    },
+    isNegative: function() {
+      return this.amount() < 0;
     }
   });
 })();

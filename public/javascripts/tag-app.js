@@ -8,4 +8,5 @@ $(function() {
   'use strict';
 
   new app.TagAppView();
+  new app.RuleAppView();
 });

@@ -5,12 +5,14 @@ var app = app || {};
   'use strict';
 
   app.RecordsSummaryView = Backbone.View.extend({
-    el: 'h1#summary',
-    initialize: function() {
-      this.$el.text(this.formatCurrency(this.collection.total()));
+    render: function() {
+      this.$el.text(this.total());
     },
     formatCurrency: function(amount) {
       return "$" + amount.toFixed(2);
+    },
+    total: function() {
+      return this.formatCurrency(this.collection.total());
     }
   })
 })(jQuery);
