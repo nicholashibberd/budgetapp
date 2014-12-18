@@ -12,7 +12,6 @@ import (
 type Parser interface {
 	parse_record([]string) Record
 	read_file(io.Reader) ([]Record, error)
-	AddTags(*Record, []Tag)
 }
 
 type NatwestParser struct {
@@ -61,42 +60,42 @@ func NewStaticRule(m string, r string) StaticRule {
 	}
 }
 
-func (p ANZParser) AddTags(r *Record, t []Tag) {
-	rules := []StaticRule{
-		NewStaticRule("OPTUS PRE PAID", "Mobile Phone"),
-		NewStaticRule("TRANSPORT FOR NSW-OPAL", "Travel"),
-		NewStaticRule("ANZ ATM", "Cash"),
-		NewStaticRule("COLES", "Supermarket"),
-		NewStaticRule("ANZ M-BANKING PAYMENT", "Bank Transfer"),
-		NewStaticRule("ANZ M-BANKING FUNDS", "Funds Transfer"),
-		NewStaticRule("ANZ INTERNET BANKING FUNDS", "Funds Transfer"),
-		NewStaticRule("DEBIT INTEREST CHARGED", "Interest"),
-		NewStaticRule("PAY/SALARY", "Salary"),
-		NewStaticRule("PETROL", "Petrol"),
-		NewStaticRule("DAN MURPHY'S", "Alcohol"),
-		NewStaticRule("MENULOG", "Takeaway"),
-		NewStaticRule("ALDI", "Supermarket"),
-		NewStaticRule("BWS LIQUOR", "Alcohol"),
-		NewStaticRule("CALTEX", "Petrol"),
-		NewStaticRule("DENDY CINEMAS", "Cinema"),
-		NewStaticRule("IGA", "Supermarket"),
-		NewStaticRule("WOOLWORTHS", "Supermarket"),
-		NewStaticRule("FOXTEL", "Foxtel"),
-		NewStaticRule("MEDICAL", "Medical"),
-		NewStaticRule("HAIRDRESSING", "Beauty"),
-		NewStaticRule("BEAUTY", "Beauty"),
-		NewStaticRule("CARPARK", "Car"),
-		NewStaticRule("TRUE PROPERTY", "Rent"),
-		NewStaticRule("TERRI SCHEER INSURANCE", "Villa"),
-		NewStaticRule("TELSTRA", "Internet"),
-	}
-	for i := 0; i < len(rules); i++ {
-		ru := rules[i]
-		if strings.Contains(r.Description, ru.MatchText) {
-			r.AddTag(ru.RuleName, t)
-		}
-	}
-}
+// func (p ANZParser) AddTags(r *Record, t []Tag) {
+// 	rules := []StaticRule{
+// 		NewStaticRule("OPTUS PRE PAID", "Mobile Phone"),
+// 		NewStaticRule("TRANSPORT FOR NSW-OPAL", "Travel"),
+// 		NewStaticRule("ANZ ATM", "Cash"),
+// 		NewStaticRule("COLES", "Supermarket"),
+// 		NewStaticRule("ANZ M-BANKING PAYMENT", "Bank Transfer"),
+// 		NewStaticRule("ANZ M-BANKING FUNDS", "Funds Transfer"),
+// 		NewStaticRule("ANZ INTERNET BANKING FUNDS", "Funds Transfer"),
+// 		NewStaticRule("DEBIT INTEREST CHARGED", "Interest"),
+// 		NewStaticRule("PAY/SALARY", "Salary"),
+// 		NewStaticRule("PETROL", "Petrol"),
+// 		NewStaticRule("DAN MURPHY'S", "Alcohol"),
+// 		NewStaticRule("MENULOG", "Takeaway"),
+// 		NewStaticRule("ALDI", "Supermarket"),
+// 		NewStaticRule("BWS LIQUOR", "Alcohol"),
+// 		NewStaticRule("CALTEX", "Petrol"),
+// 		NewStaticRule("DENDY CINEMAS", "Cinema"),
+// 		NewStaticRule("IGA", "Supermarket"),
+// 		NewStaticRule("WOOLWORTHS", "Supermarket"),
+// 		NewStaticRule("FOXTEL", "Foxtel"),
+// 		NewStaticRule("MEDICAL", "Medical"),
+// 		NewStaticRule("HAIRDRESSING", "Beauty"),
+// 		NewStaticRule("BEAUTY", "Beauty"),
+// 		NewStaticRule("CARPARK", "Car"),
+// 		NewStaticRule("TRUE PROPERTY", "Rent"),
+// 		NewStaticRule("TERRI SCHEER INSURANCE", "Villa"),
+// 		NewStaticRule("TELSTRA", "Internet"),
+// 	}
+// 	for i := 0; i < len(rules); i++ {
+// 		ru := rules[i]
+// 		if strings.Contains(r.Description, ru.MatchText) {
+// 			r.AddTag(ru.RuleName, t)
+// 		}
+// 	}
+// }
 
 func (p NatwestParser) AddTags(r *Record, t []Tag) {
 	log.Print("NatwestParser called")

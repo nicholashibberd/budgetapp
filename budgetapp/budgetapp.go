@@ -215,20 +215,20 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	filename := stat.Filename
 	records, err := record.ParseFile(reader, filename)
 
-	q := datastore.NewQuery("Tag")
+	q := datastore.NewQuery("Rule")
 
-	tags := []record.Tag{}
-	ks, err := q.GetAll(c, &tags)
+	rules := []record.Rule{}
+	ks, err := q.GetAll(c, &rules)
 	if err != nil {
 	 	log.Printf(err.Error())
 	}
-	for i := 0; i < len(tags); i++ {
-		tags[i].Id = ks[i].IntID()
+	for i := 0; i < len(rules); i++ {
+		rules[i].Id = ks[i].IntID()
 	}
 
 	for i := 0; i < len(records); i++ {
 		r := records[i]
-		r.AddTags(tags)
+		r.AddTags(rules)
 		if r.DoesNotExist(c) {
 			_, err := r.Save(c)
 			if err != nil {

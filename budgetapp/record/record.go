@@ -7,6 +7,7 @@ import (
 	"log"
 	"io"
 	"encoding/json"
+	"strings"
 )
 
 type Record struct {
@@ -57,19 +58,13 @@ func (r *Record) DoesNotExist(c appengine.Context) bool {
 	return len(records) == 0
 }
 
-func (r *Record) AddTags(t []Tag) {
-	switch r.Account_number {
-	case "012372210678637":
-		parser := ANZParser{}
-		parser.AddTags(r, t)
-	case "12341195010216":
-		parser := ANZParser{}
-		parser.AddTags(r, t)
-	case "010492-43188249":
-		parser := NatwestParser{}
-		parser.AddTags(r, t)
+func (r *Record) AddTags(rs []Rule) {
+	for i := 0; i < len(rs); i++ {
+		ru := rs[i]
+		if strings.Contains(r.Description, ru.MatchText) {
+			r.AddTag(ru.TagId)
+		}
 	}
-
 }
 
 func DecodeRecord(r io.ReadCloser) (*Record, error) {
@@ -83,13 +78,8 @@ func RecordKey(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "Record", "default_record", 0, nil)
 }
 
-func (r *Record) AddTag(ru string, ts []Tag) {
-	for i := 0; i < len(ts); i++ {
-		t := ts[i]
-		if t.Name == ru {
-			r.TagIds = append(r.TagIds, t.Id)
-		}
-	}
+func (r *Record) AddTag(i int64) {
+	r.TagIds = append(r.TagIds, i)
 }
 
 func NewRecord(de string, ac string, am string, da time.Time, b string, t string) Record {

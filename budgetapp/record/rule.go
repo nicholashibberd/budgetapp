@@ -15,18 +15,6 @@ type Rule struct {
 	TagId int64 `json:"tagId"`
 }
 
-// func NewRule(mt string, tid string) Rule {
-// 	t, err := strconv.ParseInt(tid, 0, 64)
-// 	if err != nil {
-// 		log.Printf(err.Error())
-// 	}
-
-// 	return Rule{
-// 		MatchText: mt,
-// 		TagId: t,
-// 	}
-// }
-
 func defaultRuleList(c appengine.Context) *datastore.Key {
 	return datastore.NewKey(c, "RuleList", "default", 0, nil)
 }
