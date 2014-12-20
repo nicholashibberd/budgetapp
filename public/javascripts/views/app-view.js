@@ -14,10 +14,6 @@ var app = app || {};
         el: 'h1',
         collection: app.Records
       }).render();
-      // new app.RecordsSummaryView({
-      //   el: '#positive-tags',
-      //   collection: app.Records.positiveRecords()
-      // }).render();
       new app.TagsSummaryView({
         el: '#negative-tags',
         collection: app.Records.negativeRecords()

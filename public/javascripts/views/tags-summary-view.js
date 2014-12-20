@@ -6,13 +6,11 @@ var app = app || {};
 
   app.TagsSummaryView = Backbone.View.extend({
     initialize: function() {
-      this.fullWidth = this.$el.width();
-      this.$summary = this.$el.find('h2 span')
-      this.addAll();
-      new app.RecordsSummaryView({
-        collection: this.collection,
-        el: this.$summary
-      }).render()
+      this.fullWidth = this.$el.find('.tag-summary-column').width();
+      this.$summary = this.$el.find('h2 span');
+      this.$table = this.$el.find('.tag-summary-table')
+      this.setup();
+      this.listenTo(this.collection, 'change', this.setup)
     },
     addOne: function(tagSummary) {
       var view = new app.TagSummaryView({
@@ -20,14 +18,22 @@ var app = app || {};
         fullWidth: this.fullWidth,
         allRecords: this.collection
       });
-      this.$el.append(view.render().el);
+      this.$table.append(view.render().el);
     },
     addAll: function() {
+      this.$table.html('')
       var view = this;
       _.each(this.collection.tagsCollection(), function(records, tagName) {
         var tagSummary = {tagName: tagName, records: records}
         view.addOne(tagSummary);
       })
     },
+    setup: function() {
+      this.addAll();
+      new app.RecordsSummaryView({
+        collection: this.collection,
+        el: this.$summary
+      }).render()
+    }
   })
 })(jQuery);

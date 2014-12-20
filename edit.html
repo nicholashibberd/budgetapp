@@ -34,9 +34,21 @@
         <h1 id="summary"></h1>
         <div id="positive-tags">
           <h2 id="positive-records">Money In: <span></span></h2>
+          <div class="tag-summary-table">
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-10 tag-summary-column"></div>
+            </div>
+          </div>
         </div>
         <div id="negative-tags">
           <h2 id="negative-records">Money Out: <span></span></h2>
+          <div class="tag-summary-table">
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-10 tag-summary-column"></div>
+            </div>
+          </div>
         </div>
         <div id="tags-summary-table">
 
@@ -100,10 +112,16 @@
       <input class="edit" value="<%- name %>">
     </script>
     <script type="text/template" id="tag-summary-template">
-      <div class="<%-state %>-summary-bar" style="width: <%- stateWidth %>px">
-        <div style="width: <%- width %>px" class="tag-summary-bar">
+      <div class="row">
+        <div class="col-md-2">
+          <span class="tag-name"><%- tagName %></span> <%- amount %>
+        </div>
+        <div class="col-md-10 tag-summary-column">
+          <div class="<%-state %>-summary-bar" style="width: <%- stateWidth %>px">
+            <div style="width: <%- width %>px" class="tag-summary-bar"></div>
+          </div>
+        </div>
       </div>
-      </div><%- tagName %> | <%- amount %>
     </script>
     <script type="text/template" id="tag-popover-template">
       <div>

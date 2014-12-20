@@ -20,6 +20,7 @@ var app = app || {};
       return this;
     },
     addTag: function(e) {
+      e.preventDefault()
       var id = $(e.target).attr('id');
       this.collection.addTagById(id);
     },

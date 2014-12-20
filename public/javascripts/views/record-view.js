@@ -7,18 +7,10 @@ var app = app || {};
   app.RecordView = Backbone.View.extend({
     tagName: 'tr',
     template: _.template($('#record-template').html()),
-    events: {
-      'click button.add-tag': "addTag"
-    },
     render: function() {
       this.$el.html(this.template(this.presenter()));
       this.buildTagView();
       return this;
-    },
-    addTag: function() {
-      var modal = new app.ModalView();
-      this.$el.find('td.add-tag').append(modal.render().el);
-      modal.setContent(recordFormView.render().el)
     },
     buildTagView: function() {
       var tagPopoverView = new app.TagPopoverView({collection: this.model.tags});

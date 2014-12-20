@@ -5,19 +5,44 @@ header {
 a.navbar-brand {
   color: #fff;
 }
+
+.jumbotron {
+  position: relative;
+}
+
 #tag-list li .edit {
   display: none;
+}
+
+#positive-tags h2 {
+  position: absolute;
+  top: 65px;
+  left: 480px;
+}
+
+#negative-tags h2 {
+  position: absolute;
+  top: 65px;
+  left: 900px;
 }
 
 .tag-summary-bar {
   height: 20px;
 }
 
-.positive-summary-bar, .tag-summary-bar {
+.tag-summary-column {
+  padding-top: 12px;
+}
+
+span.tag-name {
+  font-weight: 500;
+}
+
+.positive-summary-bar .tag-summary-bar {
   background: #009966;
 }
 
-.negative-summary-bar, .tag-summary-bar {
+.negative-summary-bar .tag-summary-bar {
   background: #428bca;
 }
 
