@@ -26,12 +26,16 @@ a.navbar-brand {
   left: 900px;
 }
 
+.tag-summary-table {
+  font-size: 16px;
+}
+
 .tag-summary-bar {
   height: 20px;
 }
 
 .tag-summary-column {
-  padding-top: 12px;
+  padding-top: 6px;
 }
 
 span.tag-name {
