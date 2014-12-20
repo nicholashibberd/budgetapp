@@ -9,7 +9,9 @@ var app = app || {};
       this.$el.text(this.total());
     },
     formatCurrency: function(amount) {
-      return "$" + amount.toFixed(2);
+      return "$" + amount.toFixed(2).replace(/./g, function(c, i, a) {
+        return i && c !== "." && !((a.length - i) % 3) ? ',' + c : c;
+      });
     },
     total: function() {
       return this.formatCurrency(this.collection.total());
