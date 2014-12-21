@@ -23,7 +23,12 @@ var app = app || {};
           }
         })
       });
-      return tags;
+      var tagsToArray = _.map(tags, function(records, tagName) {
+        return [tagName, records];
+      });
+      return _.sortBy(tagsToArray, function(tagArray) {
+        return tagArray[1].total();
+      });
     },
     positiveRecords: function() {
       var records = _.filter(this.models, function(record) {

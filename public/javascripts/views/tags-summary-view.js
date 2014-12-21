@@ -23,8 +23,8 @@ var app = app || {};
     addAll: function() {
       this.$table.html('')
       var view = this;
-      _.each(this.collection.tagsCollection(), function(records, tagName) {
-        var tagSummary = {tagName: tagName, records: records}
+      _.each(this.collection.tagsCollection(), function(tagsArray) {
+        var tagSummary = {tagName: tagsArray[0], records: tagsArray[1]}
         view.addOne(tagSummary);
       })
     },
