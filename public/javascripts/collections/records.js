@@ -27,8 +27,8 @@ var app = app || {};
         return [tagName, records];
       });
       return _.sortBy(tagsToArray, function(tagArray) {
-        return tagArray[1].total();
-      });
+        return Math.abs(tagArray[1].total());
+      }).reverse();
     },
     positiveRecords: function() {
       var records = _.filter(this.models, function(record) {
