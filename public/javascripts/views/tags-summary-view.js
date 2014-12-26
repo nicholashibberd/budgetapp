@@ -12,9 +12,9 @@ var app = app || {};
       this.setup();
       this.listenTo(this.collection, 'change', this.setup)
     },
-    addOne: function(tagSummary) {
+    addOne: function(tagGroup) {
       var view = new app.TagSummaryView({
-        model: tagSummary,
+        model: tagGroup,
         fullWidth: this.fullWidth,
         allRecords: this.collection
       });
@@ -23,9 +23,9 @@ var app = app || {};
     addAll: function() {
       this.$table.html('')
       var view = this;
-      _.each(this.collection.tagsCollection(), function(tagsArray) {
-        var tagSummary = {tagName: tagsArray[0], records: tagsArray[1]}
-        view.addOne(tagSummary);
+      _.each(this.collection.tagsCollection().models, function(tagGroup) {
+        // var tagSummary = {tagName: tagsArray.get('0'), records: tagsArray.get('1')}
+        view.addOne(tagGroup);
       })
     },
     setup: function() {

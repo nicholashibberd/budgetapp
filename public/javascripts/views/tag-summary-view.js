@@ -17,18 +17,20 @@ var app = app || {};
     },
     presenter: function() {
       return {
-        tagName: this.model.tagName,
+        tagName: this.model.get('tagName'),
         amount: this.recordsView().total(),
         width: this.width(),
         stateWidth: this.fullWidth,
-        state: this.model.records.state()
+        state: this.model.get('records').state()
       }
     },
     recordsView: function() {
-      return new app.RecordsSummaryView({ collection: this.model.records })
+      return new app.RecordsSummaryView({
+        collection: this.model.get('records')
+      })
     },
     width: function() {
-      var percentage = this.model.records.total() / this.allRecords.total();
+      var percentage = this.model.get('records').total() / this.allRecords.total();
       var pixels = this.fullWidth * percentage;
       return pixels;
     }

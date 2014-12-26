@@ -28,18 +28,21 @@ var app = app || {};
           }
         })
       });
-      var tagsToArray = _.map(tags, function(records, tagName) {
-        return [tagName, records];
+      var tagGroups = _.map(tags, function(records, tagName) {
+        return new app.TagGroup({tagName: tagName, records: records});
       });
-      var sortedTags = _.sortBy(tagsToArray, function(tagArray) {
-        return Math.abs(tagArray[1].total());
+      var sortedTags = _.sortBy(tagGroups, function(tagGroup) {
+        return Math.abs(tagGroup.get('records').total());
       }).reverse();
       var untagged = this.untaggedRecords();
       if (untagged.length) {
-        return sortedTags.concat([['Untagged', untagged]]);
-      } else {
-        return sortedTags;
+        var untaggedTagGroup = new app.TagGroup({
+          tagName: 'Untagged',
+          records: untagged
+        })
+        sortedTags = sortedTags.concat([untaggedTagGroup]);
       }
+      return new app.TagsCollection(sortedTags);
     },
     positiveRecords: function() {
       var records = _.filter(this.models, function(record) {
