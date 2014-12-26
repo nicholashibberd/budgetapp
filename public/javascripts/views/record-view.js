@@ -17,7 +17,7 @@ var app = app || {};
       this.$el.find('td.add-tag').append(tagPopoverView.render().el)
     },
     presenter: function() {
-      var formattedDate = moment(this.model.get('date')).format('ddd Do MMM');
+      var formattedDate = this.model.date().format('ddd Do MMM');
       var presented = _.extend(this.model.toJSON(), {
         formattedDate: formattedDate,
         tags: this.model.tagsJSON()

@@ -6,6 +6,11 @@ var app = app || {};
 
   var Records = Backbone.Collection.extend({
     model: app.Record,
+    initialize: function() {
+      this.comparator = function(model) {
+        return model.date();
+      }
+    },
     url: '/records',
     total: function() {
       return _.reduce(this.models, function(memo, model) {

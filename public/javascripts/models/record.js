@@ -35,6 +35,9 @@ var app = app || {};
     },
     isNegative: function() {
       return this.amount() < 0;
+    },
+    date: function() {
+      return moment(this.get('date'))
     }
   });
 })();
