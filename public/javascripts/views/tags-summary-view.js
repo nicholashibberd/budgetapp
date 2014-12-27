@@ -7,7 +7,6 @@ var app = app || {};
   app.TagsSummaryView = Backbone.View.extend({
     initialize: function() {
       this.fullWidth = this.$el.find('.tag-summary-column').width();
-      this.$summary = this.$el.find('h2 span');
       this.$table = this.$el.find('.tag-summary-table')
       this.setup();
       this.listenTo(app.Records, 'change', this.setup)
@@ -37,10 +36,6 @@ var app = app || {};
       app.positiveRecords = this.collection.positiveRecords();
       app.negativeRecords = this.collection.negativeRecords();
       this.addAll();
-      new app.RecordsSummaryView({
-        collection: this.collection.records(),
-        el: this.$summary
-      }).render()
     }
   })
 })(jQuery);

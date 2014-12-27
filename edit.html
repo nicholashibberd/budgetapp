@@ -31,7 +31,23 @@
     </header>
     <div class="jumbotron">
       <div class="container">
-        <h1 id="summary"></h1>
+        <div id="summary" class="row">
+          <div class="col-md-4">
+            <h1 id="summary"></h1>
+          </div>
+          <div class="col-md-4">
+            <h2 id="positive">
+              Money In: <br />
+              <span></span>
+            </h2>
+          </div>
+          <div class="col-md-4">
+            <h2 id="negative">
+              Money Out: <br />
+              <span></span>
+            </h2>
+          </div>
+        </div>
         <div id="tag-groups">
           <div class="tag-summary-table">
             <div class="row">
@@ -40,24 +56,6 @@
             </div>
           </div>
         </div>
-        <!-- <div id="positive-tags"> -->
-        <!--   <h2 id="positive-records">Money In: <span></span></h2> -->
-        <!--   <div class="tag-summary-table"> -->
-        <!--     <div class="row"> -->
-        <!--       <div class="col-md-3"></div> -->
-        <!--       <div class="col-md-9 tag-summary-column"></div> -->
-        <!--     </div> -->
-        <!--   </div> -->
-        <!-- </div> -->
-        <!-- <div id="negative-tags"> -->
-        <!--   <h2 id="negative-records">Money Out: <span></span></h2> -->
-        <!--   <div class="tag-summary-table"> -->
-        <!--     <div class="row"> -->
-        <!--       <div class="col-md-3"></div> -->
-        <!--       <div class="col-md-9 tag-summary-column"></div> -->
-        <!--     </div> -->
-        <!--   </div> -->
-        <!-- </div> -->
         <div id="tags-summary-table">
 
         </div>
@@ -166,7 +164,7 @@
     <script src="javascripts/views/date-view.js"></script>
     <script src="javascripts/views/tag-summary-view.js"></script>
     <script src="javascripts/views/tags-summary-view.js"></script>
-    <script src="javascripts/views/records-summary-view.js"></script>
+    <script src="javascripts/views/records-view.js"></script>
     <script src="javascripts/views/app-view.js"></script>
     <script src="javascripts/app.js"></script>
     <script>

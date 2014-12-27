@@ -10,10 +10,9 @@ var app = app || {};
       this.$table = $('#record-table tbody');
       this.addAll();
       new app.DateView();
-      new app.RecordsSummaryView({
-        el: 'h1',
-        collection: app.Records
-      }).render();
+      new app.RecordsView({ el: 'h1', collection: app.Records }).render();
+      new app.RecordsView({ el: 'h2#positive span', collection: app.Records.positiveRecords() }).render();
+      new app.RecordsView({ el: 'h2#negative span', collection: app.Records.negativeRecords() }).render();
       new app.TagsSummaryView({
         el: '#tag-groups',
         collection: app.Records.tagsCollection

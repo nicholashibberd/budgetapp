@@ -4,7 +4,7 @@ var app = app || {};
 (function ($) {
   'use strict';
 
-  app.RecordsSummaryView = Backbone.View.extend({
+  app.RecordsView = Backbone.View.extend({
     render: function() {
       this.$el.text(this.total());
     },

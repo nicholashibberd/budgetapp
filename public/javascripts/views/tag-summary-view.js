@@ -25,7 +25,7 @@ var app = app || {};
       }
     },
     recordsView: function() {
-      return new app.RecordsSummaryView({
+      return new app.RecordsView({
         collection: this.model.get('records')
       })
     },
