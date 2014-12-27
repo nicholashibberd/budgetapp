@@ -67,7 +67,15 @@ var app = app || {};
       if (total > 0) return 'positive';
       if (total < 0) return 'negative';
       return 'zero'
-    }
+    },
+    percentage: function() {
+      if (this.state() == 'positive') {
+        return this.total() / app.positiveRecords.total()
+      } else {
+        return this.total() / app.negativeRecords.total()
+      }
+    },
+
   });
 
   app.RecordCollection = Records;

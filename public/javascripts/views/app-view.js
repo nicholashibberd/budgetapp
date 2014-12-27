@@ -10,18 +10,13 @@ var app = app || {};
       this.$table = $('#record-table tbody');
       this.addAll();
       new app.DateView();
-      var tagsCollection = app.Records.tagsCollection();
       new app.RecordsSummaryView({
         el: 'h1',
         collection: app.Records
       }).render();
       new app.TagsSummaryView({
-        el: '#negative-tags',
-        collection: tagsCollection.negativeRecords()
-      }).render();
-      new app.TagsSummaryView({
-        el: '#positive-tags',
-        collection: tagsCollection.positiveRecords()
+        el: '#tag-groups',
+        collection: app.Records.tagsCollection
       }).render();
       this.listenTo(app.Records, 'change', this.addAll())
     },

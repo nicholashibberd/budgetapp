@@ -30,8 +30,7 @@ var app = app || {};
       })
     },
     width: function() {
-      var percentage = this.model.get('records').total() / this.allRecords.total();
-      var pixels = this.fullWidth * percentage;
+      var pixels = this.fullWidth * this.model.get('records').percentage();
       return pixels;
     }
   })

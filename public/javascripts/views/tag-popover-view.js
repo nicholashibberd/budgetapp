@@ -25,6 +25,7 @@ var app = app || {};
       this.collection.addTagById(id);
     },
     removeTag: function(e) {
+      e.preventDefault()
       var id = $(e.target).attr('id');
       this.collection.removeTagById(id);
     },
