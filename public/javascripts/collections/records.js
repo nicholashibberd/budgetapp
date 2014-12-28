@@ -32,7 +32,10 @@ var app = app || {};
         return new app.TagGroup({tagName: tagName, records: records});
       });
       var sortedTags = _.sortBy(tagGroups, function(tagGroup) {
-        return Math.abs(tagGroup.get('records').total());
+        var total = tagGroup.get('records').total();
+        var posTotal = Math.abs(total);
+        if (total > 0) posTotal += 100000
+        return posTotal;
       }).reverse();
       var untagged = this.untaggedRecords();
       if (untagged.length) {
