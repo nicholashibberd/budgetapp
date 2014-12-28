@@ -6,6 +6,11 @@ var app = app || {};
 
   var Tags = Backbone.Collection.extend({
     model: app.Tag,
+    initialize: function() {
+      this.comparator = function(model) {
+        return model.get('Name');
+      }
+    },
     url: '/tags',
     addTag: function(tagName) {
       var tag = new this.model({Name: tagName});
