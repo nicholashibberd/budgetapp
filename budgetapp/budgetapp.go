@@ -87,13 +87,26 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(rules); i++ {
 		rules[i].Id = ks[i].IntID()
 	}
-
 	rulesJSON, _ := json.Marshal(rules)
-
 	rulesJSONString := string(rulesJSON)
+
+	q = datastore.NewQuery("Account")
+
+	accounts := []record.Account{}
+	ks, err = q.GetAll(c, &accounts)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].Id = ks[i].IntID()
+	}
+	accountsJSON, _ := json.Marshal(accounts)
+	accountsJSONString := string(accountsJSON)
+
 	p := &JSONData{
 		Tags: tagsJSONString,
 		Rules: rulesJSONString,
+		Accounts: accountsJSONString,
 	}
 	t, _ := template.ParseFiles("tags.html")
 	t.Execute(w, p)
@@ -195,6 +208,29 @@ func handleRulesJson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleAccountsJson(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		c := appengine.NewContext(r)
+
+		account, err := record.DecodeAccount(r.Body)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		k := datastore.NewKey(c, "Account", "", account.Id, record.AccountKey(c))
+		_, err = datastore.Put(c, k, account)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		resultsJson, _ := json.Marshal(account)
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(resultsJson))
+		return
+	}
+}
+
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -250,6 +286,7 @@ type JSONData struct {
 	Tags string
 	Records string
 	Rules string
+	Accounts string
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -292,9 +329,25 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 
 	tagsJSON, _ := json.Marshal(tags)
 	tagsJSONString := string(tagsJSON)
+
+	q = datastore.NewQuery("Account")
+
+	accounts := []record.Account{}
+	ks, err = q.GetAll(c, &accounts)
+	if err != nil {
+	 	log.Printf(err.Error())
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].Id = ks[i].IntID()
+	}
+
+	accountsJSON, _ := json.Marshal(accounts)
+	accountsJSONString := string(accountsJSON)
+
 	p := &JSONData{
 		Records: recordsJSONString,
 		Tags: tagsJSONString,
+		Accounts: accountsJSONString,
 	}
 	t, _ := template.ParseFiles("edit.html")
 	t.Execute(w, p)
@@ -306,6 +359,7 @@ func init() {
 	http.HandleFunc("/records/", handleRecordJson)
 	http.HandleFunc("/tags", handleTagsJson)
 	http.HandleFunc("/rules", handleRulesJson)
+	http.HandleFunc("/accounts", handleAccountsJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)

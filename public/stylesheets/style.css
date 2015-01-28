@@ -58,7 +58,7 @@ span.tag-name {
   width: 50%;
 }
 
-.new-rule input {
+.new-rule input, .new-account input {
   width: 100%;
 }
 

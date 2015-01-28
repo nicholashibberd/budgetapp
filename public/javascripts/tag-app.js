@@ -9,4 +9,5 @@ $(function() {
 
   new app.TagAppView();
   new app.RuleAppView();
+  new app.AccountAppView();
 });
