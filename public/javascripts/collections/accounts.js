@@ -16,6 +16,11 @@ var app = app || {};
       this.add(account);
       account.save();
     },
+    getByRegion: function(region) {
+      return _.filter(this.models, function(account) {
+        return account.get('region') == region;
+      });
+    },
   });
 
   app.Accounts = new Accounts();

@@ -10,6 +10,7 @@ var app = app || {};
       this.$table = $('#record-table tbody');
       this.addAll();
       new app.DateView();
+      new app.AccountsView({ collection: app.Accounts });
       new app.RecordsView({ el: 'h1', collection: app.Records }).render();
       new app.RecordsView({ el: 'h2#positive span', collection: app.Records.positiveRecords() }).render();
       new app.RecordsView({ el: 'h2#negative span', collection: app.Records.negativeRecords() }).render();

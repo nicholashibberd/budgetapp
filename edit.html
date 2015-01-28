@@ -26,6 +26,23 @@
             </div>
             <button type="submit" class="btn btn-primary">Go</button>
           </form>
+          <div id="account-controls">
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                Accounts
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                <li role="presentation" class="australian">
+                  <a role="menuitem" tabindex="-1" href="#"><strong>All Australian Accounts</strong></a>
+                </li>
+                <li role="presentation" class="divider"></li>
+                <li role="presentation" class="uk">
+                  <a role="menuitem" tabindex="-1" href="#"><strong>All UK Accounts</strong></a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div><!--/.navbar-collapse -->
       </div>
     </header>
@@ -156,12 +173,15 @@
     <script src="javascripts/models/tag.js"></script>
     <script src="javascripts/models/tag-group.js"></script>
     <script src="javascripts/models/record.js"></script>
+    <script src="javascripts/models/account.js"></script>
     <script src="javascripts/collections/records.js"></script>
     <script src="javascripts/collections/tags.js"></script>
+    <script src="javascripts/collections/accounts.js"></script>
     <script src="javascripts/collections/tags-collection.js"></script>
     <script src="javascripts/views/tag-popover-view.js"></script>
     <script src="javascripts/views/record-view.js"></script>
     <script src="javascripts/views/date-view.js"></script>
+    <script src="javascripts/views/accounts-view.js"></script>
     <script src="javascripts/views/tag-summary-view.js"></script>
     <script src="javascripts/views/tags-summary-view.js"></script>
     <script src="javascripts/views/records-view.js"></script>
@@ -170,8 +190,10 @@
     <script>
       var tagsJSON = JSON.parse({{.Tags}});
       var recordsJSON = JSON.parse({{.Records}});
+      var accountsJSON = JSON.parse({{.Accounts}});
       app.Tags.reset(tagsJSON);
       app.Records.reset(recordsJSON);
+      app.Accounts.reset(accountsJSON);
     </script>
   </body>
 </html>

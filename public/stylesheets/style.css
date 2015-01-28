@@ -6,6 +6,12 @@ a.navbar-brand {
   color: #fff;
 }
 
+#account-controls {
+  color: white;
+  margin-top: 8px;
+  float: right;
+}
+
 .jumbotron {
   position: relative;
 }
