@@ -12,22 +12,27 @@ var app = app || {};
       this.setup();
     },
     events: {
-      'submit': "submit"
+      'click a[role=menuitem]': "handleSelect"
     },
     setup: function() {
       var view = this;
-      _.each(app.Accounts.getByRegion('Australia'), function(account) {
+      _.each(this.collection.getByRegion('Australia'), function(account) {
         var link = '<li role="presentation" class="australian">' +
-        '<a role="menuitem" tabindex="-1" href="#">'+ account.get('name') +'</a>' +
+        '<a role="menuitem" id="' + account.get('accountNumber')  + '"tabindex="-1" href="#">'+ account.get('name') +'</a>' +
         '</li>';
         view.$australianLinks.after(link)
       });
-      _.each(app.Accounts.getByRegion('UK'), function(account) {
+      _.each(this.collection.getByRegion('UK'), function(account) {
         var link = '<li role="presentation" class="uk">' +
         '<a role="menuitem" tabindex="-1" href="#">'+ account.get('name') +'</a>' +
         '</li>';
         view.$ukLinks.after(link)
       });
+    },
+    handleSelect: function(e) {
+      e.preventDefault();
+      var selectedVal = $(e.target).closest('a').attr('id');
+      this.collection.selectAccounts(selectedVal);
     }
   })
 })(jQuery);

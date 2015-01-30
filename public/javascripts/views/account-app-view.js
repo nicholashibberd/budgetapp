@@ -14,7 +14,7 @@ var app = app || {};
       this.addAll();
     },
     events: {
-      'click tr.new-account button': "addAccount"
+      'click tr.new-account button': "addAccount",
     },
     addOne: function(account) {
       var view = new app.AccountRowView({model: account});
@@ -34,6 +34,6 @@ var app = app || {};
         this.$accountNoInput.val("");
         this.addAll()
       }
-    }
+    },
   })
 })(jQuery);
