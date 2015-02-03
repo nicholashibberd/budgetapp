@@ -34,17 +34,24 @@ var app = app || {};
       }
     },
     selectAccounts: function(selectedVal) {
-      var selected;
+      var selected, description;
       if (selectedVal == 'all_australian') {
         selected = this.getByRegion('Australia');
+        description = 'All Australian Accounts'
       } else if (selectedVal == 'all_uk') {
         selected = this.getByRegion('UK')
+        description = 'All UK Accounts'
       }
       else {
         var account = this.getByAccountNumber(selectedVal)
         selected = [account];
+        description = account.get('name')
       }
       this.selectedAccounts = selected;
+      this.accountsDescription = description;
+    },
+    getAccountsDescription: function() {
+      return this.accountsDescription
     }
   });
 

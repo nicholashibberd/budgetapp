@@ -10,6 +10,7 @@ var app = app || {};
       this.$australianLinks = this.$el.find('li.australian');
       this.$ukLinks = this.$el.find('li.uk');
       this.setup();
+      this.$buttonText = this.$el.find('span#accounts-button-text');
     },
     events: {
       'click a[role=menuitem]': "handleSelect"
@@ -24,7 +25,7 @@ var app = app || {};
       });
       _.each(this.collection.getByRegion('UK'), function(account) {
         var link = '<li role="presentation" class="uk">' +
-        '<a role="menuitem" tabindex="-1" href="#">'+ account.get('name') +'</a>' +
+        '<a role="menuitem" id="' + account.get('accountNumber') + '" tabindex="-1" href="#">'+ account.get('name') +'</a>' +
         '</li>';
         view.$ukLinks.after(link)
       });
@@ -33,6 +34,8 @@ var app = app || {};
       e.preventDefault();
       var selectedVal = $(e.target).closest('a').attr('id');
       this.collection.selectAccounts(selectedVal);
+      var accountsText = this.collection.getAccountsDescription();
+      this.$buttonText.text(accountsText);
     }
   })
 })(jQuery);
