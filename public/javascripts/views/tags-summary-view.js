@@ -26,11 +26,11 @@ var app = app || {};
         view.addOne(tagGroup);
       })
     },
-    rebuildCollection: function() {
-      this.collection = app.Records.tagsCollection();
-    },
+    // rebuildCollection: function() {
+    //   this.collection = app.Records.tagsCollection();
+    // },
     setup: function() {
-      this.rebuildCollection();
+      // this.rebuildCollection();
       app.positiveTags = this.collection.positiveTags();
       app.negativeTags = this.collection.negativeTags();
       app.positiveRecords = this.collection.positiveRecords();

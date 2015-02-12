@@ -8,17 +8,9 @@ var app = app || {};
     el: 'budgetapp',
     initialize: function() {
       this.$table = $('#record-table tbody');
-      this.addAll();
       new app.DateView();
       new app.AccountsView({ collection: app.Accounts });
-      new app.RecordsView({ el: 'h1', collection: app.Records }).render();
-      new app.RecordsView({ el: 'h2#positive span', collection: app.Records.positiveRecords() }).render();
-      new app.RecordsView({ el: 'h2#negative span', collection: app.Records.negativeRecords() }).render();
-      new app.TagsSummaryView({
-        el: '#tag-groups',
-        collection: app.Records.tagsCollection
-      }).render();
-      this.listenTo(app.Records, 'change', this.addAll())
+      this.setup();
     },
     addOne: function(record) {
       var view = new app.RecordView({model: record});
@@ -26,7 +18,20 @@ var app = app || {};
     },
     addAll: function() {
       this.$table.html('');
-      app.Records.each(this.addOne, this);
+      this.records.each(this.addOne, this);
     },
+    setup: function() {
+      this.records = app.Accounts.getSelectedRecords();
+      this.addAll();
+      new app.RecordsView({ el: 'h1', collection: this.records }).render();
+      new app.RecordsView({ el: 'h2#positive span', collection: this.records.positiveRecords() }).render();
+      new app.RecordsView({ el: 'h2#negative span', collection: this.records.negativeRecords() }).render();
+      new app.TagsSummaryView({
+        el: '#tag-groups',
+        collection: this.records.tagsCollection()
+      }).render();
+      this.listenTo(this.records, 'change', this.addAll)
+      this.listenTo(app.Accounts, 'selection', this.setup)
+    }
   })
 })(jQuery);

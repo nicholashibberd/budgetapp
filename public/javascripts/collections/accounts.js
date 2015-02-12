@@ -49,9 +49,19 @@ var app = app || {};
       }
       this.selectedAccounts = selected;
       this.accountsDescription = description;
+      this.trigger('selection')
     },
     getAccountsDescription: function() {
       return this.accountsDescription
+    },
+    getSelectedRecords: function() {
+      var accountNumbers = _.map(this.getSelectedAccounts(), function(account) {
+        return account.get('accountNumber');
+      });
+      var records = _.filter(app.Records.models, function(record) {
+        return accountNumbers.indexOf(record.get('account_number')) !== -1
+      });
+      return new app.RecordCollection(records);
     }
   });
 
