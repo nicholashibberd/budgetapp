@@ -10,7 +10,17 @@ var app = app || {};
       this.$table = $('#record-table tbody');
       new app.DateView();
       new app.AccountsView({ collection: app.Accounts });
-      this.setup();
+      this.records = app.Accounts.getSelectedRecords();
+      this.allRecordsView = new app.RecordsView({ el: 'h1', collection: this.records });
+      this.positiveRecordsView = new app.RecordsView({ el: 'h2#positive span', collection: this.records.positiveRecords() });
+      this.negativeRecordsView = new app.RecordsView({ el: 'h2#negative span', collection: this.records.negativeRecords() });
+      this.tagsSummaryView = new app.TagsSummaryView({
+        el: '#tag-groups',
+        collection: this.records.tagsCollection()
+      });
+      this.renderViews()
+      this.listenTo(this.records, 'change', this.addAll)
+      this.listenTo(app.Accounts, 'selection', this.reload)
     },
     addOne: function(record) {
       var view = new app.RecordView({model: record});
@@ -20,18 +30,23 @@ var app = app || {};
       this.$table.html('');
       this.records.each(this.addOne, this);
     },
-    setup: function() {
+    reload: function() {
+      this.resetCollections();
+      this.renderViews();
+    },
+    resetCollections: function() {
       this.records = app.Accounts.getSelectedRecords();
+      this.allRecordsView.collection = this.records;
+      this.positiveRecordsView.collection = this.records.positiveRecords();
+      this.negativeRecordsView.collection = this.records.negativeRecords();
+      this.tagsSummaryView.collection = this.records.tagsCollection();
+    },
+    renderViews: function() {
       this.addAll();
-      new app.RecordsView({ el: 'h1', collection: this.records }).render();
-      new app.RecordsView({ el: 'h2#positive span', collection: this.records.positiveRecords() }).render();
-      new app.RecordsView({ el: 'h2#negative span', collection: this.records.negativeRecords() }).render();
-      new app.TagsSummaryView({
-        el: '#tag-groups',
-        collection: this.records.tagsCollection()
-      }).render();
-      this.listenTo(this.records, 'change', this.addAll)
-      this.listenTo(app.Accounts, 'selection', this.setup)
+      this.allRecordsView.render()
+      this.positiveRecordsView.render();
+      this.negativeRecordsView.render();
+      this.tagsSummaryView.render();
     }
   })
 })(jQuery);
