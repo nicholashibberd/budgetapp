@@ -31,11 +31,6 @@ var app = app || {};
     unappliedTags: function() {
       var models = _.difference(app.Tags.models, this.models)
       return new Backbone.Collection(models);
-    },
-    summaryCollection: function() {
-      return _.map(this.models, function(tag) {
-        return tag.summary()
-      })
     }
   });
 

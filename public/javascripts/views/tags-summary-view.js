@@ -8,8 +8,7 @@ var app = app || {};
     initialize: function() {
       this.fullWidth = this.$el.find('.tag-summary-column').width();
       this.$table = this.$el.find('.tag-summary-table')
-      this.setup();
-      this.listenTo(app.Records, 'change', this.setup)
+      this.render();
     },
     addOne: function(tagGroup) {
       var view = new app.TagSummaryView({
@@ -26,16 +25,12 @@ var app = app || {};
         view.addOne(tagGroup);
       })
     },
-    // rebuildCollection: function() {
-    //   this.collection = app.Records.tagsCollection();
-    // },
-    setup: function() {
-      // this.rebuildCollection();
+    render: function() {
       app.positiveTags = this.collection.positiveTags();
       app.negativeTags = this.collection.negativeTags();
       app.positiveRecords = this.collection.positiveRecords();
       app.negativeRecords = this.collection.negativeRecords();
       this.addAll();
-    }
+    },
   })
 })(jQuery);
