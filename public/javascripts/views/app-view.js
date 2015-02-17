@@ -19,7 +19,7 @@ var app = app || {};
         collection: this.records.tagsCollection()
       });
       this.renderViews()
-      this.listenTo(this.records, 'change', this.reload)
+      this.listenTo(app.Records, 'change', this.reload)
       this.listenTo(app.Accounts, 'selection', this.reload)
     },
     addOne: function(record) {

@@ -25,7 +25,6 @@ var app = app || {};
       var tag_ids = _.map(this.tags.models, function(tag) { return tag.id });
       this.set({ tag_ids: tag_ids });
       this.save();
-      this.trigger("change")
     },
     amount: function() {
       return parseFloat(this.get('amount'));
