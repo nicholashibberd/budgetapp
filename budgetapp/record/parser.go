@@ -22,7 +22,7 @@ type ANZParser struct {
 
 func ParseFile(file io.Reader, filename string) ([]Record, error) {
 	var parser Parser
-	if filename == "natwest.csv" {
+	if strings.HasPrefix(filename, "HIBBERDNJ") {
 		parser = NatwestParser{}
 	} else {
 		parser = ANZParser{}
