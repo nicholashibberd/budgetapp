@@ -37,6 +37,15 @@ var app = app || {};
     },
     date: function() {
       return moment(this.get('date'))
+    },
+    accountName: function() {
+      return this.account().get('name');
+    },
+    account: function() {
+      var accountNumber = this.get('account_number');
+      return _.find(app.Accounts.models, function(account) {
+        return account.get('accountNumber') == accountNumber;
+      });
     }
   });
 })();

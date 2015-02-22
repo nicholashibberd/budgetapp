@@ -19,6 +19,7 @@ var app = app || {};
     presenter: function() {
       var formattedDate = this.model.date().format('ddd Do MMM');
       var presented = _.extend(this.model.toJSON(), {
+        accountName: this.model.accountName(),
         formattedDate: formattedDate,
         tags: this.model.tagsJSON()
       })
