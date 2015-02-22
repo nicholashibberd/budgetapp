@@ -111,11 +111,11 @@ func (parser SantanderParser) read_file(file io.Reader) ([]Record, error) {
 		} else if strings.HasPrefix(line, "Amount") {
 			index := strings.Index(line, "\xA0")
 			lastIndex := strings.LastIndex(line, "\xA0")
-			record[2] = line[index + 1:lastIndex - 1]
+			record[2] = line[index + 1:lastIndex]
 		} else if strings.HasPrefix(line, "Balance") {
 			index := strings.Index(line, "\xA0")
 			lastIndex := strings.LastIndex(line, "\xA0")
-			record[3] = line[index + 1:lastIndex - 1]
+			record[3] = line[index + 1:lastIndex]
 			a = append(a, parser.parse_record(record))
 			record[0] = ""
 			record[1] = ""
