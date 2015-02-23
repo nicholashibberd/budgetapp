@@ -9,8 +9,8 @@ var app = app || {};
       this.fullWidth = this.$el.find('.tag-summary-column').width();
       this.$table = this.$el.find('.tag-summary-table')
       this.$show_all_tags = this.$el.find('#show-all-tags');
-      this.$show_all_tags.hide();
       this.render();
+      this.$show_all_tags.hide();
       this.listenTo(app.Tags, 'selection', this.showTagsLink)
     },
     events: {
