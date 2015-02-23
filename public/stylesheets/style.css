@@ -32,7 +32,7 @@ a.navbar-brand {
   left: 900px;
 }
 
-.tag-summary-table {
+#tag-groups a, .tag-summary-table {
   font-size: 16px;
 }
 

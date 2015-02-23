@@ -28,10 +28,24 @@ var app = app || {};
     findById: function(id) {
       return this.find(function(tag) { return tag.id == id })
     },
+    getByName: function(name) {
+      return this.find(function(tag) { return tag.get('Name') == name })
+    },
     unappliedTags: function() {
       var models = _.difference(app.Tags.models, this.models)
       return new Backbone.Collection(models);
-    }
+    },
+    selectTags: function(selectedVal) {
+      this.selectedTags = selectedVal;
+      this.trigger('selection', selectedVal);
+    },
+    getSelectedTags: function() {
+      if (this.selectedTags !== undefined) {
+        return this.selectedTags
+      } else {
+        return "all"
+      }
+    },
   });
 
   app.TagCollection = Tags;

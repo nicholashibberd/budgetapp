@@ -8,7 +8,13 @@ var app = app || {};
     initialize: function() {
       this.fullWidth = this.$el.find('.tag-summary-column').width();
       this.$table = this.$el.find('.tag-summary-table')
+      this.$show_all_tags = this.$el.find('#show-all-tags');
+      this.$show_all_tags.hide();
       this.render();
+      this.listenTo(app.Tags, 'selection', this.showTagsLink)
+    },
+    events: {
+      "click a#show-all-tags": "show_all_tags"
     },
     addOne: function(tagGroup) {
       var view = new app.TagSummaryView({
@@ -32,5 +38,16 @@ var app = app || {};
       app.negativeRecords = this.collection.negativeRecords();
       this.addAll();
     },
+    show_all_tags: function(e) {
+      e.preventDefault();
+      app.Tags.selectTags("all");
+    },
+    showTagsLink: function(selectedVal) {
+      if (selectedVal == "all") {
+        this.$show_all_tags.hide();
+      } else {
+        this.$show_all_tags.show();
+      }
+    }
   })
 })(jQuery);

@@ -11,6 +11,9 @@ var app = app || {};
       this.fullWidth = options.fullWidth;
       this.allRecords = options.allRecords;
     },
+    events: {
+      "click a.tag-link": "select_tag"
+    },
     render: function() {
       this.$el.html(this.template(this.presenter()))
       return this;
@@ -32,6 +35,11 @@ var app = app || {};
     width: function() {
       var pixels = this.fullWidth * this.model.get('records').percentage();
       return pixels;
+    },
+    select_tag: function(e) {
+      e.preventDefault();
+      var tag = $(e.target).attr('id');
+      app.Tags.selectTags(tag);
     }
   })
 })(jQuery);

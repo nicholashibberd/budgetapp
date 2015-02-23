@@ -72,9 +72,7 @@
               <div class="col-md-9 tag-summary-column"></div>
             </div>
           </div>
-        </div>
-        <div id="tags-summary-table">
-
+          <a href="#" id="show-all-tags">Show all</a>
         </div>
       </div>
     </div>
@@ -137,7 +135,7 @@
     <script type="text/template" id="tag-summary-template">
       <div class="row">
         <div class="col-md-3">
-          <span class="tag-name"><%- tagName %></span> <%- amount %>
+          <span class="tag-name"><a href="#" id="<%- tagName %>" class="tag-link"><%- tagName %></a></span> <%- amount %>
         </div>
         <div class="col-md-9 tag-summary-column">
           <div class="<%-state %>-summary-bar" style="width: <%- stateWidth %>px">
@@ -174,6 +172,7 @@
     <script src="javascripts/models/tag-group.js"></script>
     <script src="javascripts/models/record.js"></script>
     <script src="javascripts/models/account.js"></script>
+    <script src="javascripts/models/filter.js"></script>
     <script src="javascripts/collections/records.js"></script>
     <script src="javascripts/collections/tags.js"></script>
     <script src="javascripts/collections/accounts.js"></script>

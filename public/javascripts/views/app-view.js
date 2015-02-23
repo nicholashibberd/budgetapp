@@ -21,6 +21,7 @@ var app = app || {};
       this.renderViews()
       this.listenTo(app.Records, 'change', this.reload)
       this.listenTo(app.Accounts, 'selection', this.reload)
+      this.listenTo(app.Tags, 'selection', this.reload)
     },
     addOne: function(record) {
       var view = new app.RecordView({model: record});
@@ -35,7 +36,7 @@ var app = app || {};
       this.renderViews();
     },
     resetCollections: function() {
-      this.records = app.Accounts.getSelectedRecords();
+      this.records = new app.Filter().getRecords();
       this.allRecordsView.collection = this.records;
       this.positiveRecordsView.collection = this.records.positiveRecords();
       this.negativeRecordsView.collection = this.records.negativeRecords();
