@@ -37,6 +37,7 @@ var app = app || {};
     },
     selectTags: function(selectedVal) {
       this.selectedTags = selectedVal;
+      debugger
       this.trigger('selection', selectedVal);
     },
     getSelectedTags: function() {

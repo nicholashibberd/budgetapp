@@ -43,6 +43,7 @@ var app = app || {};
       app.Tags.selectTags("all");
     },
     showTagsLink: function(selectedVal) {
+      debugger
       if (selectedVal == "all") {
         this.$show_all_tags.hide();
       } else {

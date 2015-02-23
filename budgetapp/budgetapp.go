@@ -68,7 +68,7 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	tags := []record.Tag{}
 	ks, err := q.GetAll(c, &tags)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(tags); i++ {
 		tags[i].Id = ks[i].IntID()
@@ -82,7 +82,7 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	rules := []record.Rule{}
 	ks, err = q.GetAll(c, &rules)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(rules); i++ {
 		rules[i].Id = ks[i].IntID()
@@ -95,7 +95,7 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	accounts := []record.Account{}
 	ks, err = q.GetAll(c, &accounts)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(accounts); i++ {
 		accounts[i].Id = ks[i].IntID()
@@ -104,8 +104,8 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	accountsJSONString := string(accountsJSON)
 
 	p := &JSONData{
-		Tags: tagsJSONString,
-		Rules: rulesJSONString,
+		Tags:     tagsJSONString,
+		Rules:    rulesJSONString,
 		Accounts: accountsJSONString,
 	}
 	t, _ := template.ParseFiles("tags.html")
@@ -256,7 +256,7 @@ func handleUpload(w http.ResponseWriter, r *http.Request) {
 	rules := []record.Rule{}
 	ks, err := q.GetAll(c, &rules)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(rules); i++ {
 		rules[i].Id = ks[i].IntID()
@@ -283,9 +283,9 @@ func serveSingle(pattern string, filename string) {
 }
 
 type JSONData struct {
-	Tags string
-	Records string
-	Rules string
+	Tags     string
+	Records  string
+	Rules    string
 	Accounts string
 }
 
@@ -307,7 +307,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	records := []record.Record{}
 	ks, err := q.GetAll(c, &records)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(records); i++ {
 		records[i].Id = ks[i].IntID()
@@ -321,7 +321,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	tags := []record.Tag{}
 	ks, err = q.GetAll(c, &tags)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(tags); i++ {
 		tags[i].Id = ks[i].IntID()
@@ -335,7 +335,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	accounts := []record.Account{}
 	ks, err = q.GetAll(c, &accounts)
 	if err != nil {
-	 	log.Printf(err.Error())
+		log.Printf(err.Error())
 	}
 	for i := 0; i < len(accounts); i++ {
 		accounts[i].Id = ks[i].IntID()
@@ -345,8 +345,8 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	accountsJSONString := string(accountsJSON)
 
 	p := &JSONData{
-		Records: recordsJSONString,
-		Tags: tagsJSONString,
+		Records:  recordsJSONString,
+		Tags:     tagsJSONString,
 		Accounts: accountsJSONString,
 	}
 	t, _ := template.ParseFiles("edit.html")
