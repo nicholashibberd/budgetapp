@@ -39,7 +39,6 @@ var app = app || {};
     select_tag: function(e) {
       e.preventDefault();
       var tag = $(e.target).attr('id');
-      debugger
       app.Tags.selectTags(tag);
     }
   })
