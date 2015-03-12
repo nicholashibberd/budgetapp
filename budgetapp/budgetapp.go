@@ -112,6 +112,59 @@ func handleTags(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, p)
 }
 
+func handleBudget(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	w.Header().Set("Content-Type", "text/html")
+
+	q := datastore.NewQuery("Tag")
+
+	tags := []record.Tag{}
+	ks, err := q.GetAll(c, &tags)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(tags); i++ {
+		tags[i].Id = ks[i].IntID()
+	}
+
+	tagsJSON, _ := json.Marshal(tags)
+	tagsJSONString := string(tagsJSON)
+
+	q = datastore.NewQuery("Rule")
+
+	rules := []record.Rule{}
+	ks, err = q.GetAll(c, &rules)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(rules); i++ {
+		rules[i].Id = ks[i].IntID()
+	}
+	rulesJSON, _ := json.Marshal(rules)
+	rulesJSONString := string(rulesJSON)
+
+	q = datastore.NewQuery("Account")
+
+	accounts := []record.Account{}
+	ks, err = q.GetAll(c, &accounts)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].Id = ks[i].IntID()
+	}
+	accountsJSON, _ := json.Marshal(accounts)
+	accountsJSONString := string(accountsJSON)
+
+	p := &JSONData{
+		Tags:     tagsJSONString,
+		Rules:    rulesJSONString,
+		Accounts: accountsJSONString,
+	}
+	t, _ := template.ParseFiles("budget.html")
+	t.Execute(w, p)
+}
+
 func handleJson(w http.ResponseWriter, r *http.Request) {
 	log.Printf("LOG!!!!!!!!!!!!!!!!!")
 	c := appengine.NewContext(r)
@@ -364,5 +417,6 @@ func init() {
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
 	http.HandleFunc("/tag", handleTags)
+	http.HandleFunc("/budget", handleBudget)
 	serveSingle("/favicon.ico", "./favicon.ico")
 }
