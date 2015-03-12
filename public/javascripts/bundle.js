@@ -44,16 +44,16 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $, BudgetLineList, React;
+	var $, Budget, React;
 
 	$ = __webpack_require__(2);
 
 	React = __webpack_require__(3);
 
-	BudgetLineList = __webpack_require__(1);
+	Budget = __webpack_require__(1);
 
 	$(function() {
-	  return React.render(BudgetLineList({
+	  return React.render(Budget({
 	    tags: window.tagsJSON
 	  }), document.getElementById('react-container'));
 	});
@@ -66,19 +66,19 @@
 	/** @jsx React.DOM */
 
 	var React = __webpack_require__(4);
-	var BudgetLineList = React.createClass({displayName: 'BudgetLineList',
+	var Budget = React.createClass({displayName: 'Budget',
 	  render: function() {
 	    var tags = this.props.tags;
 	    return (
 	      React.DOM.div({className: "budgetLineList"}, 
 	        tags.map(function(tag) {
-	          return React.DOM.div({className: "budget-list", key: tag.id}, tag.Name)
+	          return React.DOM.div({className: "budget-line", key: tag.id}, tag.Name)
 	        })
 	      )
 	    );
 	  },
 	});
-	module.exports = BudgetLineList;
+	module.exports = Budget;
 
 
 /***/ },

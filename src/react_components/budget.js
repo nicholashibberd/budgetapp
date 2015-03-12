@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
-var BudgetLineList = React.createClass({
+var Budget = React.createClass({
   render: function() {
     var tags = this.props.tags;
     return (
@@ -13,4 +13,4 @@ var BudgetLineList = React.createClass({
     );
   },
 });
-module.exports = BudgetLineList;
+module.exports = Budget;

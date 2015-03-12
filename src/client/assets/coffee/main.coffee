@@ -1,11 +1,11 @@
 $ = require('jquery')
 React = require('react')
 
-BudgetLineList = require('./../../../react_components/budget_line_list')
+Budget = require('./../../../react_components/budget')
 
 $ ->
   React.render(
-    BudgetLineList({
+    Budget({
       tags: window.tagsJSON
     }), 
     document.getElementById('react-container')
