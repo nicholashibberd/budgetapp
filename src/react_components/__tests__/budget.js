@@ -1,11 +1,14 @@
 /** @jsx React.DOM */
 
 jest.dontMock('../budget')
+jest.dontMock('../budget_line')
+
 describe("Budget", function() {
   var React = require('react/addons');
   var Budget = require('../budget');
+  var BudgetLine = require('../budget_line');
   var TestUtils = React.addons.TestUtils;
-  var tags, budget_line_list, elements;
+  var tags, budget, elements;
 
   beforeEach(function() {
     tags = [
@@ -15,8 +18,8 @@ describe("Budget", function() {
     budget = TestUtils.renderIntoDocument(
       <Budget tags={tags}/>
     );
-    elements = TestUtils.scryRenderedDOMComponentsWithClass(
-      budget, 'budget-line'
+    elements = TestUtils.scryRenderedComponentsWithType(
+      budget, BudgetLine
     );
   });
 
