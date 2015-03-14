@@ -25,12 +25,25 @@ describe("Budget", function() {
 
   it("renders a budget line for each json object", function() {
     expect(elements.length).toEqual(2);
-  })
+  });
 
   it("prints the name of each tag", function() {
     var tag1 = elements[0].getDOMNode()
     var tag2 = elements[1].getDOMNode()
-    expect(tag1.innerHTML).toEqual('Tag1')
-    expect(tag2.innerHTML).toEqual('Tag2')
+    expect(tag1.innerHTML).toContain('Tag1')
+    expect(tag2.innerHTML).toContain('Tag2')
+  });
+
+  describe("initial state", function() {
+    it("starts with the total at 0", function() {
+      expect(budget.state.total).toEqual(0)
+    });
+
+    it("renders the total", function() {
+      var totalDisplay = TestUtils.findRenderedDOMComponentWithClass(
+        budget, 'budgetTotal'
+      );
+      expect(totalDisplay.getDOMNode().textContent).toEqual('£0')
+    });
   })
 });

@@ -5,9 +5,10 @@ var BudgetLine = React.createClass({
   render: function() {
     var data = this.props.data;
     return (
-      <div className="budgetLine">
-        {data.tagName}
-      </div>
+      <tr className="budgetLine">
+        <td>{data.tagName}</td>
+        <td><input /></td>
+      </tr>
     );
   },
 });

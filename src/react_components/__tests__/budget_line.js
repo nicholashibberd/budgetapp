@@ -22,6 +22,6 @@ describe("BudgetLine", function() {
   });
 
   it("prints the tag name", function() {
-    expect(element.getDOMNode().innerHTML).toEqual('Tag1');
+    expect(element.getDOMNode().innerHTML).toContain('Tag1');
   })
 });
