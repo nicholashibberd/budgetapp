@@ -2,6 +2,7 @@
 
 jest.dontMock('../budget')
 jest.dontMock('../budget_line')
+jest.dontMock('underscore')
 
 describe("Budget", function() {
   var React = require('react/addons');
@@ -12,8 +13,8 @@ describe("Budget", function() {
 
   beforeEach(function() {
     tags = [
-      { Name: "Tag1", id: 1 },
-      { Name: "Tag2", id: 2 },
+      { Name: "Tag1", id: 1, total: 100 },
+      { Name: "Tag2", id: 2, total: 200 },
     ]
     budget = TestUtils.renderIntoDocument(
       <Budget tags={tags}/>
@@ -46,4 +47,19 @@ describe("Budget", function() {
       expect(totalDisplay.getDOMNode().textContent).toEqual('£0')
     });
   })
+
+  describe("value is entered on budget line", function() {
+    it("updates the total", function() {
+      inputs = TestUtils.scryRenderedDOMComponentsWithTag(budget, 'input');
+      TestUtils.Simulate.change(inputs[0], {target: {value: '333'}})
+      expect(budget.state.total).toEqual(533);
+    });
+
+    it("treats blank lines as zeroes", function() {
+      inputs = TestUtils.scryRenderedDOMComponentsWithTag(budget, 'input');
+      TestUtils.Simulate.change(inputs[0], {target: {value: '333'}})
+      TestUtils.Simulate.change(inputs[1], {target: {value: ''}})
+      expect(budget.state.total).toEqual(333);
+    });
+  });
 });
