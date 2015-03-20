@@ -3,6 +3,7 @@
 var React = require('react/addons');
 var BudgetLine = require('./budget_line');
 var _ = require('underscore');
+var $ = require('jquery');
 
 var Budget = React.createClass({
   getInitialState: function() {
@@ -19,6 +20,31 @@ var Budget = React.createClass({
       }
     });
     this.setState({total: this._calculateTotal()})
+  },
+
+  submit: function(event) {
+    event.preventDefault();
+    var budgetLines = {
+      budgetLines: [
+        {
+          start_date: "12/07/2015",
+          end_date: "25/12/2015",
+          tag_id: 123,
+          amount: "123",
+        },
+        {
+          start_date: "10/01/2015",
+          end_date: "24/01/2015",
+          tag_id: 456,
+          amount: "456",
+        }
+      ]
+    }
+    $.ajax('/budgets', {
+      method: 'POST',
+      // data: JSON.stringify(this.state.tags)
+      data: JSON.stringify(budgetLines)
+    })
   },
 
   _calculateTotal: function() {
@@ -49,6 +75,9 @@ var Budget = React.createClass({
             return <BudgetLine data={data} key={tag.id} updateTotal={_this.updateTotal}/>
           })}
         </table>
+        <div>
+          <input onClick={this.submit} className="btn btn-success submitButton" type="submit" value="Submit" />
+        </div>
       </div>
     );
   },

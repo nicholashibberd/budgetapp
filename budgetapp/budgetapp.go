@@ -116,10 +116,33 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html")
 
-	q := datastore.NewQuery("Tag")
+	q := datastore.NewQuery("BudgetLine")
+	start_date, err := parseDateParam(r.URL.Query()["start_date"])
+	var end_date time.Time
+	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	if err == nil {
+		q = q.
+			Filter("Start_date =", start_date).
+			Filter("End_date =", end_date)
+	} else {
+		log.Print(err.Error())
+	}
 
+	budgetLines := []record.BudgetLine{}
+	ks, err := q.GetAll(c, &budgetLines)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(budgetLines); i++ {
+		budgetLines[i].Id = ks[i].IntID()
+	}
+
+	budgetLinesJSON, _ := json.Marshal(budgetLines)
+	budgetLinesJSONString := string(budgetLinesJSON)
+
+	q = datastore.NewQuery("Tag")
 	tags := []record.Tag{}
-	ks, err := q.GetAll(c, &tags)
+	ks, err = q.GetAll(c, &tags)
 	if err != nil {
 		log.Printf(err.Error())
 	}
@@ -130,43 +153,15 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	tagsJSON, _ := json.Marshal(tags)
 	tagsJSONString := string(tagsJSON)
 
-	q = datastore.NewQuery("Rule")
-
-	rules := []record.Rule{}
-	ks, err = q.GetAll(c, &rules)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	for i := 0; i < len(rules); i++ {
-		rules[i].Id = ks[i].IntID()
-	}
-	rulesJSON, _ := json.Marshal(rules)
-	rulesJSONString := string(rulesJSON)
-
-	q = datastore.NewQuery("Account")
-
-	accounts := []record.Account{}
-	ks, err = q.GetAll(c, &accounts)
-	if err != nil {
-		log.Printf(err.Error())
-	}
-	for i := 0; i < len(accounts); i++ {
-		accounts[i].Id = ks[i].IntID()
-	}
-	accountsJSON, _ := json.Marshal(accounts)
-	accountsJSONString := string(accountsJSON)
-
 	p := &JSONData{
-		Tags:     tagsJSONString,
-		Rules:    rulesJSONString,
-		Accounts: accountsJSONString,
+		BudgetLines: budgetLinesJSONString,
+		Tags:        tagsJSONString,
 	}
 	t, _ := template.ParseFiles("budget.html")
 	t.Execute(w, p)
 }
 
 func handleJson(w http.ResponseWriter, r *http.Request) {
-	log.Printf("LOG!!!!!!!!!!!!!!!!!")
 	c := appengine.NewContext(r)
 	q := datastore.NewQuery("Record")
 
@@ -284,6 +279,33 @@ func handleAccountsJson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleBudgetsJson(w http.ResponseWriter, r *http.Request) {
+	log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+	if r.Method == "POST" {
+		c := appengine.NewContext(r)
+
+		budgetLines, err := record.DecodeBudgetLines(r.Body)
+		if err != nil {
+			log.Printf(err.Error())
+		}
+
+		log.Printf("!!:: %v", budgetLines)
+		for i := 0; i < len(budgetLines); i++ {
+			k := datastore.NewKey(c, "BudgetLine", "", budgetLines[i].Id, record.BudgetLineKey(c))
+			_, err = datastore.Put(c, k, &budgetLines[i])
+			if err != nil {
+				log.Printf(err.Error())
+			}
+		}
+
+		budgetLinesJson, _ := json.Marshal(budgetLines)
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(budgetLinesJson))
+		return
+	}
+}
+
 func handleUpload(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -336,10 +358,11 @@ func serveSingle(pattern string, filename string) {
 }
 
 type JSONData struct {
-	Tags     string
-	Records  string
-	Rules    string
-	Accounts string
+	Tags        string
+	Records     string
+	Rules       string
+	Accounts    string
+	BudgetLines string
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -413,6 +436,7 @@ func init() {
 	http.HandleFunc("/tags", handleTagsJson)
 	http.HandleFunc("/rules", handleRulesJson)
 	http.HandleFunc("/accounts", handleAccountsJson)
+	http.HandleFunc("/budgets", handleBudgetsJson)
 	http.HandleFunc("/", editHandler)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)

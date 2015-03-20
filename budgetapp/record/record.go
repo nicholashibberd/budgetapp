@@ -1,17 +1,18 @@
 package record
 
 import (
+	"encoding/json"
+	"io"
+	"log"
+	"strings"
+	"time"
+
 	"appengine"
 	"appengine/datastore"
-	"time"
-	"log"
-	"io"
-	"encoding/json"
-	"strings"
 )
 
 type Record struct {
-	Id   int64  `json:"id" datastore:"-"`
+	Id               int64     `json:"id" datastore:"-"`
 	Date             time.Time `json:"date"`
 	Description      string    `json:"description"`
 	Amount           string    `json:"amount"`
@@ -19,7 +20,7 @@ type Record struct {
 	Account_number   string    `json:"account_number"`
 	Transaction_type string    `json:"transaction_type"`
 	Tags             []Tag     `json:"tags"`
-	TagIds             []int64     `json:"tag_ids"`
+	TagIds           []int64   `json:"tag_ids"`
 }
 
 func defaultRecordList(c appengine.Context) *datastore.Key {

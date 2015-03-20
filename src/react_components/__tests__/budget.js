@@ -6,9 +6,10 @@ jest.dontMock('underscore')
 
 describe("Budget", function() {
   var React = require('react/addons');
+  var TestUtils = React.addons.TestUtils;
+  var $ = require('jquery');
   var Budget = require('../budget');
   var BudgetLine = require('../budget_line');
-  var TestUtils = React.addons.TestUtils;
   var tags, budget, elements;
 
   beforeEach(function() {
@@ -60,6 +61,18 @@ describe("Budget", function() {
       TestUtils.Simulate.change(inputs[0], {target: {value: '333'}})
       TestUtils.Simulate.change(inputs[1], {target: {value: ''}})
       expect(budget.state.total).toEqual(333);
+    });
+  });
+
+  describe("clicking the submit button", function() {
+    it("sends the current state", function() {
+      spyOn($, 'ajax')
+      submit = TestUtils.findRenderedDOMComponentWithClass(budget, 'submitButton');
+      TestUtils.Simulate.click(submit)
+      expect($.ajax).toHaveBeenCalledWith(
+        '/budgets',
+        budget.state.tags
+      );
     });
   });
 });
