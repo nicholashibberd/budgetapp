@@ -16,7 +16,7 @@ var Budget = React.createClass({
       return {
         tagId: tag.id,
         total: total,
-        tagName: tag.name,
+        tagName: tag.Name,
       }
     })
     return {
@@ -27,9 +27,10 @@ var Budget = React.createClass({
   },
 
   updateTotal: function(id, total) {
+    var _this = this;
     _.each(this.state.budgetLines, function(budgetLine) {
       if (budgetLine.tagId == id) {
-        budgetLine.total = total
+        budgetLine.total = _this._isNumber(total) ? total : 0;
       }
     });
     this.setState({total: this._calculateTotal(this.state.budgetLines)})

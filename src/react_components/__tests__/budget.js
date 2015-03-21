@@ -14,9 +14,9 @@ describe("Budget", function() {
 
   beforeEach(function() {
     tags = [
-      { name: "Tag1", id: 1 },
-      { name: "Tag2", id: 2 },
-      { name: "Tag3", id: 3 },
+      { Name: "Tag1", id: 1 },
+      { Name: "Tag2", id: 2 },
+      { Name: "Tag3", id: 3 },
     ]
     budgetLines = [
       { tagId: 1, total: 100 },
