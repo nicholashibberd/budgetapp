@@ -10,15 +10,21 @@ describe("Budget", function() {
   var $ = require('jquery');
   var Budget = require('../budget');
   var BudgetLine = require('../budget_line');
-  var tags, budget, elements;
+  var tags, start_date, end_date, budget, elements;
 
   beforeEach(function() {
     tags = [
       { Name: "Tag1", id: 1, total: 100 },
       { Name: "Tag2", id: 2, total: 200 },
     ]
+    start_date = '12/07/2015'
+    end_date = '25/12/2015'
     budget = TestUtils.renderIntoDocument(
-      <Budget tags={tags}/>
+      <Budget
+        tags={tags}
+        start_date={start_date}
+        end_date={end_date}
+      />
     );
     elements = TestUtils.scryRenderedComponentsWithType(
       budget, BudgetLine
@@ -69,9 +75,28 @@ describe("Budget", function() {
       spyOn($, 'ajax')
       submit = TestUtils.findRenderedDOMComponentWithClass(budget, 'submitButton');
       TestUtils.Simulate.click(submit)
+      var budgetLines = {
+        budgetLines: [
+          {
+            start_date: "12/07/2015",
+            end_date: "25/12/2015",
+            tag_id: 1,
+            amount: "100",
+          },
+          {
+            start_date: "12/07/2015",
+            end_date: "25/12/2015",
+            tag_id: 2,
+            amount: "200",
+          }
+        ]
+      }
       expect($.ajax).toHaveBeenCalledWith(
         '/budgets',
-        budget.state.tags
+        {
+          method: 'POST',
+          data: JSON.stringify(budgetLines)
+        }
       );
     });
   });

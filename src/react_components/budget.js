@@ -24,27 +24,24 @@ var Budget = React.createClass({
 
   submit: function(event) {
     event.preventDefault();
-    var budgetLines = {
-      budgetLines: [
-        {
-          start_date: "12/07/2015",
-          end_date: "25/12/2015",
-          tag_id: 123,
-          amount: "123",
-        },
-        {
-          start_date: "10/01/2015",
-          end_date: "24/01/2015",
-          tag_id: 456,
-          amount: "456",
-        }
-      ]
-    }
     $.ajax('/budgets', {
       method: 'POST',
-      // data: JSON.stringify(this.state.tags)
-      data: JSON.stringify(budgetLines)
+      data: this._budgetLinesJson()
     })
+  },
+
+  _budgetLinesJson: function() {
+    var _this = this;
+    var budgetLines = _.map(this.state.tags, function(tag) {
+      return {
+        start_date: _this.props.start_date,
+        end_date: _this.props.end_date,
+        tag_id: tag.id,
+        amount: tag.total.toString(),
+      }
+    });
+    var data = { budgetLines: budgetLines };
+    return JSON.stringify(data);
   },
 
   _calculateTotal: function() {
