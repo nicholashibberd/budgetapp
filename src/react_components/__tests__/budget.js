@@ -14,14 +14,20 @@ describe("Budget", function() {
 
   beforeEach(function() {
     tags = [
-      { Name: "Tag1", id: 1, total: 100 },
-      { Name: "Tag2", id: 2, total: 200 },
+      { name: "Tag1", id: 1 },
+      { name: "Tag2", id: 2 },
+      { name: "Tag3", id: 3 },
+    ]
+    budgetLines = [
+      { tagId: 1, total: 100 },
+      { tagId: 2, total: 200 },
     ]
     start_date = '12/07/2015'
     end_date = '25/12/2015'
     budget = TestUtils.renderIntoDocument(
       <Budget
         tags={tags}
+        budgetLines={budgetLines}
         start_date={start_date}
         end_date={end_date}
       />
@@ -31,27 +37,39 @@ describe("Budget", function() {
     );
   });
 
-  it("renders a budget line for each json object", function() {
-    expect(elements.length).toEqual(2);
+  it("renders a budget line for each tag", function() {
+    expect(elements.length).toEqual(3);
   });
 
   it("prints the name of each tag", function() {
     var tag1 = elements[0].getDOMNode()
     var tag2 = elements[1].getDOMNode()
+    var tag3 = elements[2].getDOMNode()
     expect(tag1.innerHTML).toContain('Tag1')
     expect(tag2.innerHTML).toContain('Tag2')
+    expect(tag3.innerHTML).toContain('Tag3')
   });
 
   describe("initial state", function() {
     it("starts with the total at 0", function() {
-      expect(budget.state.total).toEqual(0)
+      expect(budget.state.total).toEqual(300)
+    });
+
+    it("builds a new budget line for tags without one already", function() {
+      expect(budget.state.budgetLines).toEqual(
+        [
+          { tagId: 1, tagName: "Tag1", total: 100 },
+          { tagId: 2, tagName: "Tag2", total: 200 },
+          { tagId: 3, tagName: "Tag3", total: 0 }
+        ]
+      )
     });
 
     it("renders the total", function() {
       var totalDisplay = TestUtils.findRenderedDOMComponentWithClass(
         budget, 'budgetTotal'
       );
-      expect(totalDisplay.getDOMNode().textContent).toEqual('£0')
+      expect(totalDisplay.getDOMNode().textContent).toEqual('£300')
     });
   })
 
@@ -88,6 +106,12 @@ describe("Budget", function() {
             end_date: "25/12/2015",
             tag_id: 2,
             amount: "200",
+          },
+          {
+            start_date: "12/07/2015",
+            end_date: "25/12/2015",
+            tag_id: 3,
+            amount: "0",
           }
         ]
       }

@@ -4,7 +4,7 @@ var React = require('react/addons');
 var BudgetLine = React.createClass({
   handleChange: function(event) {
     var total = parseInt(event.target.value);
-    this.props.updateTotal(this.props.data.id, total)
+    this.props.updateTotal(this.props.data.tagId, total)
   },
 
   getInitialState: function() {

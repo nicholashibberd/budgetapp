@@ -10,9 +10,9 @@ describe("BudgetLine", function() {
 
   beforeEach(function() {
     data = {
-      id: 1,
-      tagName: 'Tag1',
-      total: 110
+      tagId: 1,
+      total: 110,
+      tagName: 'Tag1'
     }
     updateTotal = jasmine.createSpy('updateTotal');
     budgetLine = TestUtils.renderIntoDocument(
@@ -36,7 +36,7 @@ describe("BudgetLine", function() {
     it("calls the updateTotal callback", function() {
       input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
       TestUtils.Simulate.change(input, {target: {value: '120'}})
-      expect(budgetLine.props.updateTotal).toHaveBeenCalled();
+      expect(budgetLine.props.updateTotal).toHaveBeenCalledWith(1, 120);
     });
   })
 });

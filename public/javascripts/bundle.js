@@ -54,7 +54,9 @@
 
 	$(function() {
 	  return React.render(Budget({
-	    tags: window.tagsJSON
+	    tags: window.tagsJSON,
+	    start_date: window.start_date,
+	    end_date: window.end_date
 	  }), document.getElementById('react-container'));
 	});
 
@@ -89,27 +91,25 @@
 
 	  submit: function(event) {
 	    event.preventDefault();
-	    var budgetLines = {
-	      budgetLines: [
-	        {
-	          start_date: "12/07/2015",
-	          end_date: "25/12/2015",
-	          tag_id: 123,
-	          amount: "123",
-	        },
-	        {
-	          start_date: "10/01/2015",
-	          end_date: "24/01/2015",
-	          tag_id: 456,
-	          amount: "456",
-	        }
-	      ]
-	    }
 	    $.ajax('/budgets', {
 	      method: 'POST',
-	      // data: JSON.stringify(this.state.tags)
-	      data: JSON.stringify(budgetLines)
+	      data: this._budgetLinesJson()
 	    })
+	  },
+
+	  _budgetLinesJson: function() {
+	    var _this = this;
+	    var budgetLines = _.map(this.state.tags, function(tag) {
+	      debugger
+	      return {
+	        start_date: _this.props.start_date,
+	        end_date: _this.props.end_date,
+	        tag_id: tag.id,
+	        amount: tag.total.toString(),
+	      }
+	    });
+	    var data = { budgetLines: budgetLines };
+	    return JSON.stringify(data);
 	  },
 
 	  _calculateTotal: function() {
@@ -11792,12 +11792,12 @@
 	"use strict";
 
 	var ReactElement = __webpack_require__(16);
-	var ReactOwner = __webpack_require__(54);
+	var ReactOwner = __webpack_require__(52);
 	var ReactUpdates = __webpack_require__(38);
 
 	var assign = __webpack_require__(29);
 	var invariant = __webpack_require__(49);
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 
 	/**
 	 * Every React component is in one of these life cycles.
@@ -12242,20 +12242,20 @@
 	var ReactCurrentOwner = __webpack_require__(15);
 	var ReactElement = __webpack_require__(16);
 	var ReactElementValidator = __webpack_require__(17);
-	var ReactEmptyComponent = __webpack_require__(52);
-	var ReactErrorUtils = __webpack_require__(53);
+	var ReactEmptyComponent = __webpack_require__(54);
+	var ReactErrorUtils = __webpack_require__(55);
 	var ReactLegacyElement = __webpack_require__(22);
-	var ReactOwner = __webpack_require__(54);
+	var ReactOwner = __webpack_require__(52);
 	var ReactPerf = __webpack_require__(25);
-	var ReactPropTransferer = __webpack_require__(55);
-	var ReactPropTypeLocations = __webpack_require__(56);
-	var ReactPropTypeLocationNames = __webpack_require__(57);
+	var ReactPropTransferer = __webpack_require__(56);
+	var ReactPropTypeLocations = __webpack_require__(57);
+	var ReactPropTypeLocationNames = __webpack_require__(58);
 	var ReactUpdates = __webpack_require__(38);
 
 	var assign = __webpack_require__(29);
-	var instantiateReactComponent = __webpack_require__(58);
+	var instantiateReactComponent = __webpack_require__(59);
 	var invariant = __webpack_require__(49);
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 	var keyOf = __webpack_require__(60);
 	var monitorCodeUse = __webpack_require__(61);
 	var mapObject = __webpack_require__(62);
@@ -14041,7 +14041,7 @@
 	"use strict";
 
 	var ReactElement = __webpack_require__(16);
-	var ReactPropTypeLocations = __webpack_require__(56);
+	var ReactPropTypeLocations = __webpack_require__(57);
 	var ReactCurrentOwner = __webpack_require__(15);
 
 	var monitorCodeUse = __webpack_require__(61);
@@ -15722,10 +15722,10 @@
 	var ReactInstanceHandles = __webpack_require__(21);
 	var ReactPerf = __webpack_require__(25);
 
-	var containsNode = __webpack_require__(93);
+	var containsNode = __webpack_require__(95);
 	var deprecated = __webpack_require__(30);
-	var getReactRootElementInContainer = __webpack_require__(94);
-	var instantiateReactComponent = __webpack_require__(58);
+	var getReactRootElementInContainer = __webpack_require__(96);
+	var instantiateReactComponent = __webpack_require__(59);
 	var invariant = __webpack_require__(49);
 	var shouldUpdateReactComponent = __webpack_require__(63);
 	var warning = __webpack_require__(47);
@@ -16417,10 +16417,10 @@
 	"use strict";
 
 	var ReactComponent = __webpack_require__(12);
-	var ReactMultiChildUpdateTypes = __webpack_require__(95);
+	var ReactMultiChildUpdateTypes = __webpack_require__(93);
 
-	var flattenChildren = __webpack_require__(96);
-	var instantiateReactComponent = __webpack_require__(58);
+	var flattenChildren = __webpack_require__(94);
+	var instantiateReactComponent = __webpack_require__(59);
 	var shouldUpdateReactComponent = __webpack_require__(63);
 
 	/**
@@ -16935,7 +16935,7 @@
 	"use strict";
 
 	var ReactElement = __webpack_require__(16);
-	var ReactPropTypeLocationNames = __webpack_require__(57);
+	var ReactPropTypeLocationNames = __webpack_require__(58);
 
 	var deprecated = __webpack_require__(30);
 	var emptyFunction = __webpack_require__(97);
@@ -17298,7 +17298,7 @@
 	var ReactServerRenderingTransaction =
 	  __webpack_require__(99);
 
-	var instantiateReactComponent = __webpack_require__(58);
+	var instantiateReactComponent = __webpack_require__(59);
 	var invariant = __webpack_require__(49);
 
 	/**
@@ -17747,8 +17747,8 @@
 
 	"use strict";
 
-	var ReactLink = __webpack_require__(101);
-	var ReactStateSetters = __webpack_require__(102);
+	var ReactLink = __webpack_require__(100);
+	var ReactStateSetters = __webpack_require__(101);
 
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -17791,7 +17791,7 @@
 
 	"use strict";
 
-	var shallowEqual = __webpack_require__(100);
+	var shallowEqual = __webpack_require__(106);
 
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -17853,7 +17853,7 @@
 	  __webpack_require__(37)
 	);
 	var ReactCSSTransitionGroupChild = React.createFactory(
-	  __webpack_require__(103)
+	  __webpack_require__(102)
 	);
 
 	var ReactCSSTransitionGroup = React.createClass({
@@ -17916,7 +17916,7 @@
 	"use strict";
 
 	var React = __webpack_require__(6);
-	var ReactTransitionChildMapping = __webpack_require__(104);
+	var ReactTransitionChildMapping = __webpack_require__(105);
 
 	var assign = __webpack_require__(29);
 	var cloneWithProps = __webpack_require__(40);
@@ -18108,11 +18108,11 @@
 
 	"use strict";
 
-	var CallbackQueue = __webpack_require__(105);
+	var CallbackQueue = __webpack_require__(103);
 	var PooledClass = __webpack_require__(50);
 	var ReactCurrentOwner = __webpack_require__(15);
 	var ReactPerf = __webpack_require__(25);
-	var Transaction = __webpack_require__(106);
+	var Transaction = __webpack_require__(104);
 
 	var assign = __webpack_require__(29);
 	var invariant = __webpack_require__(49);
@@ -18446,7 +18446,7 @@
 	"use strict";
 
 	var ReactElement = __webpack_require__(16);
-	var ReactPropTransferer = __webpack_require__(55);
+	var ReactPropTransferer = __webpack_require__(56);
 
 	var keyOf = __webpack_require__(60);
 	var warning = __webpack_require__(47);
@@ -19790,7 +19790,7 @@
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 
 	var PropagationPhases = keyMirror({bubbled: null, captured: null});
 
@@ -20219,122 +20219,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactEmptyComponent
-	 */
-
-	"use strict";
-
-	var ReactElement = __webpack_require__(16);
-
-	var invariant = __webpack_require__(49);
-
-	var component;
-	// This registry keeps track of the React IDs of the components that rendered to
-	// `null` (in reality a placeholder such as `noscript`)
-	var nullComponentIdsRegistry = {};
-
-	var ReactEmptyComponentInjection = {
-	  injectEmptyComponent: function(emptyComponent) {
-	    component = ReactElement.createFactory(emptyComponent);
-	  }
-	};
-
-	/**
-	 * @return {ReactComponent} component The injected empty component.
-	 */
-	function getEmptyComponent() {
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    component,
-	    'Trying to return null from a render, but no null placeholder component ' +
-	    'was injected.'
-	  ) : invariant(component));
-	  return component();
-	}
-
-	/**
-	 * Mark the component as having rendered to null.
-	 * @param {string} id Component's `_rootNodeID`.
-	 */
-	function registerNullComponentID(id) {
-	  nullComponentIdsRegistry[id] = true;
-	}
-
-	/**
-	 * Unmark the component as having rendered to null: it renders to something now.
-	 * @param {string} id Component's `_rootNodeID`.
-	 */
-	function deregisterNullComponentID(id) {
-	  delete nullComponentIdsRegistry[id];
-	}
-
-	/**
-	 * @param {string} id Component's `_rootNodeID`.
-	 * @return {boolean} True if the component is rendered to null.
-	 */
-	function isNullComponentID(id) {
-	  return nullComponentIdsRegistry[id];
-	}
-
-	var ReactEmptyComponent = {
-	  deregisterNullComponentID: deregisterNullComponentID,
-	  getEmptyComponent: getEmptyComponent,
-	  injection: ReactEmptyComponentInjection,
-	  isNullComponentID: isNullComponentID,
-	  registerNullComponentID: registerNullComponentID
-	};
-
-	module.exports = ReactEmptyComponent;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
-
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactErrorUtils
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ReactErrorUtils = {
-	  /**
-	   * Creates a guarded version of a function. This is supposed to make debugging
-	   * of event handlers easier. To aid debugging with the browser's debugger,
-	   * this currently simply returns the original function.
-	   *
-	   * @param {function} func Function to be executed
-	   * @param {string} name The name of the guard
-	   * @return {function}
-	   */
-	  guard: function(func, name) {
-	    return func;
-	  }
-	};
-
-	module.exports = ReactErrorUtils;
-
-
-/***/ },
-/* 54 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2013-2014, Facebook, Inc.
 	 * All rights reserved.
 	 *
@@ -20490,7 +20374,181 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule keyMirror
+	 * @typechecks static-only
+	 */
+
+	"use strict";
+
+	var invariant = __webpack_require__(49);
+
+	/**
+	 * Constructs an enumeration with keys equal to their value.
+	 *
+	 * For example:
+	 *
+	 *   var COLORS = keyMirror({blue: null, red: null});
+	 *   var myColor = COLORS.blue;
+	 *   var isColorValid = !!COLORS[myColor];
+	 *
+	 * The last line could not be performed if the values of the generated enum were
+	 * not equal to their keys.
+	 *
+	 *   Input:  {key1: val1, key2: val2}
+	 *   Output: {key1: key1, key2: key2}
+	 *
+	 * @param {object} obj
+	 * @return {object}
+	 */
+	var keyMirror = function(obj) {
+	  var ret = {};
+	  var key;
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    obj instanceof Object && !Array.isArray(obj),
+	    'keyMirror(...): Argument must be an object.'
+	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
+	  for (key in obj) {
+	    if (!obj.hasOwnProperty(key)) {
+	      continue;
+	    }
+	    ret[key] = key;
+	  }
+	  return ret;
+	};
+
+	module.exports = keyMirror;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactEmptyComponent
+	 */
+
+	"use strict";
+
+	var ReactElement = __webpack_require__(16);
+
+	var invariant = __webpack_require__(49);
+
+	var component;
+	// This registry keeps track of the React IDs of the components that rendered to
+	// `null` (in reality a placeholder such as `noscript`)
+	var nullComponentIdsRegistry = {};
+
+	var ReactEmptyComponentInjection = {
+	  injectEmptyComponent: function(emptyComponent) {
+	    component = ReactElement.createFactory(emptyComponent);
+	  }
+	};
+
+	/**
+	 * @return {ReactComponent} component The injected empty component.
+	 */
+	function getEmptyComponent() {
+	  ("production" !== process.env.NODE_ENV ? invariant(
+	    component,
+	    'Trying to return null from a render, but no null placeholder component ' +
+	    'was injected.'
+	  ) : invariant(component));
+	  return component();
+	}
+
+	/**
+	 * Mark the component as having rendered to null.
+	 * @param {string} id Component's `_rootNodeID`.
+	 */
+	function registerNullComponentID(id) {
+	  nullComponentIdsRegistry[id] = true;
+	}
+
+	/**
+	 * Unmark the component as having rendered to null: it renders to something now.
+	 * @param {string} id Component's `_rootNodeID`.
+	 */
+	function deregisterNullComponentID(id) {
+	  delete nullComponentIdsRegistry[id];
+	}
+
+	/**
+	 * @param {string} id Component's `_rootNodeID`.
+	 * @return {boolean} True if the component is rendered to null.
+	 */
+	function isNullComponentID(id) {
+	  return nullComponentIdsRegistry[id];
+	}
+
+	var ReactEmptyComponent = {
+	  deregisterNullComponentID: deregisterNullComponentID,
+	  getEmptyComponent: getEmptyComponent,
+	  injection: ReactEmptyComponentInjection,
+	  isNullComponentID: isNullComponentID,
+	  registerNullComponentID: registerNullComponentID
+	};
+
+	module.exports = ReactEmptyComponent;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+
+/***/ },
 /* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactErrorUtils
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ReactErrorUtils = {
+	  /**
+	   * Creates a guarded version of a function. This is supposed to make debugging
+	   * of event handlers easier. To aid debugging with the browser's debugger,
+	   * this currently simply returns the original function.
+	   *
+	   * @param {function} func Function to be executed
+	   * @param {string} name The name of the guard
+	   * @return {function}
+	   */
+	  guard: function(func, name) {
+	    return func;
+	  }
+	};
+
+	module.exports = ReactErrorUtils;
+
+
+/***/ },
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20660,7 +20718,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20676,7 +20734,7 @@
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 
 	var ReactPropTypeLocations = keyMirror({
 	  prop: null,
@@ -20688,7 +20746,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20719,7 +20777,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20741,7 +20799,7 @@
 	var ReactElement = __webpack_require__(16);
 	var ReactLegacyElement = __webpack_require__(22);
 	var ReactNativeComponent = __webpack_require__(114);
-	var ReactEmptyComponent = __webpack_require__(52);
+	var ReactEmptyComponent = __webpack_require__(54);
 
 	/**
 	 * Given an `element` create an instance that will actually be mounted.
@@ -20832,64 +20890,6 @@
 	}
 
 	module.exports = instantiateReactComponent;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
-
-/***/ },
-/* 59 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule keyMirror
-	 * @typechecks static-only
-	 */
-
-	"use strict";
-
-	var invariant = __webpack_require__(49);
-
-	/**
-	 * Constructs an enumeration with keys equal to their value.
-	 *
-	 * For example:
-	 *
-	 *   var COLORS = keyMirror({blue: null, red: null});
-	 *   var myColor = COLORS.blue;
-	 *   var isColorValid = !!COLORS[myColor];
-	 *
-	 * The last line could not be performed if the values of the generated enum were
-	 * not equal to their keys.
-	 *
-	 *   Input:  {key1: val1, key2: val2}
-	 *   Output: {key1: key1, key2: key2}
-	 *
-	 * @param {object} obj
-	 * @return {object}
-	 */
-	var keyMirror = function(obj) {
-	  var ret = {};
-	  var key;
-	  ("production" !== process.env.NODE_ENV ? invariant(
-	    obj instanceof Object && !Array.isArray(obj),
-	    'keyMirror(...): Argument must be an object.'
-	  ) : invariant(obj instanceof Object && !Array.isArray(obj)));
-	  for (key in obj) {
-	    if (!obj.hasOwnProperty(key)) {
-	      continue;
-	    }
-	    ret[key] = key;
-	  }
-	  return ret;
-	};
-
-	module.exports = keyMirror;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
@@ -21224,7 +21224,7 @@
 
 	"use strict";
 
-	var ReactEmptyComponent = __webpack_require__(52);
+	var ReactEmptyComponent = __webpack_require__(54);
 	var ReactMount = __webpack_require__(23);
 
 	var invariant = __webpack_require__(49);
@@ -23056,7 +23056,7 @@
 	var ReactPerf = __webpack_require__(25);
 	var ReactReconcileTransaction = __webpack_require__(129);
 
-	var getReactRootElementInContainer = __webpack_require__(94);
+	var getReactRootElementInContainer = __webpack_require__(96);
 	var invariant = __webpack_require__(49);
 	var setInnerHTML = __webpack_require__(130);
 
@@ -23174,7 +23174,7 @@
 	"use strict";
 
 	var ReactUpdates = __webpack_require__(38);
-	var Transaction = __webpack_require__(106);
+	var Transaction = __webpack_require__(104);
 
 	var assign = __webpack_require__(29);
 	var emptyFunction = __webpack_require__(97);
@@ -23256,7 +23256,7 @@
 	var ReactElement = __webpack_require__(16);
 	var ReactDOM = __webpack_require__(18);
 
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 
 	// Store a reference to the <button> `ReactDOMComponent`. TODO: use string
 	var button = ReactElement.createFactory(ReactDOM.button.type);
@@ -24186,7 +24186,7 @@
 	var EventPluginHub = __webpack_require__(109);
 	var ReactComponent = __webpack_require__(12);
 	var ReactCompositeComponent = __webpack_require__(13);
-	var ReactEmptyComponent = __webpack_require__(52);
+	var ReactEmptyComponent = __webpack_require__(54);
 	var ReactBrowserEventEmitter = __webpack_require__(66);
 	var ReactNativeComponent = __webpack_require__(114);
 	var ReactPerf = __webpack_require__(25);
@@ -24234,7 +24234,7 @@
 	var getActiveElement = __webpack_require__(137);
 	var isTextInputElement = __webpack_require__(123);
 	var keyOf = __webpack_require__(60);
-	var shallowEqual = __webpack_require__(100);
+	var shallowEqual = __webpack_require__(106);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -25081,99 +25081,12 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule containsNode
-	 * @typechecks
-	 */
-
-	var isTextNode = __webpack_require__(146);
-
-	/*jslint bitwise:true */
-
-	/**
-	 * Checks if a given DOM node contains or is another DOM node.
-	 *
-	 * @param {?DOMNode} outerNode Outer DOM node.
-	 * @param {?DOMNode} innerNode Inner DOM node.
-	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
-	 */
-	function containsNode(outerNode, innerNode) {
-	  if (!outerNode || !innerNode) {
-	    return false;
-	  } else if (outerNode === innerNode) {
-	    return true;
-	  } else if (isTextNode(outerNode)) {
-	    return false;
-	  } else if (isTextNode(innerNode)) {
-	    return containsNode(outerNode, innerNode.parentNode);
-	  } else if (outerNode.contains) {
-	    return outerNode.contains(innerNode);
-	  } else if (outerNode.compareDocumentPosition) {
-	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
-	  } else {
-	    return false;
-	  }
-	}
-
-	module.exports = containsNode;
-
-
-/***/ },
-/* 94 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getReactRootElementInContainer
-	 */
-
-	"use strict";
-
-	var DOC_NODE_TYPE = 9;
-
-	/**
-	 * @param {DOMElement|DOMDocument} container DOM element that may contain
-	 *                                           a React component
-	 * @return {?*} DOM element that may have the reactRoot ID, or null.
-	 */
-	function getReactRootElementInContainer(container) {
-	  if (!container) {
-	    return null;
-	  }
-
-	  if (container.nodeType === DOC_NODE_TYPE) {
-	    return container.documentElement;
-	  } else {
-	    return container.firstChild;
-	  }
-	}
-
-	module.exports = getReactRootElementInContainer;
-
-
-/***/ },
-/* 95 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
 	"use strict";
 
-	var keyMirror = __webpack_require__(59);
+	var keyMirror = __webpack_require__(53);
 
 	/**
 	 * When a component's children are updated, a series of update configuration
@@ -25194,7 +25107,7 @@
 
 
 /***/ },
-/* 96 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25266,6 +25179,93 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
+/* 95 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule containsNode
+	 * @typechecks
+	 */
+
+	var isTextNode = __webpack_require__(146);
+
+	/*jslint bitwise:true */
+
+	/**
+	 * Checks if a given DOM node contains or is another DOM node.
+	 *
+	 * @param {?DOMNode} outerNode Outer DOM node.
+	 * @param {?DOMNode} innerNode Inner DOM node.
+	 * @return {boolean} True if `outerNode` contains or is `innerNode`.
+	 */
+	function containsNode(outerNode, innerNode) {
+	  if (!outerNode || !innerNode) {
+	    return false;
+	  } else if (outerNode === innerNode) {
+	    return true;
+	  } else if (isTextNode(outerNode)) {
+	    return false;
+	  } else if (isTextNode(innerNode)) {
+	    return containsNode(outerNode, innerNode.parentNode);
+	  } else if (outerNode.contains) {
+	    return outerNode.contains(innerNode);
+	  } else if (outerNode.compareDocumentPosition) {
+	    return !!(outerNode.compareDocumentPosition(innerNode) & 16);
+	  } else {
+	    return false;
+	  }
+	}
+
+	module.exports = containsNode;
+
+
+/***/ },
+/* 96 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getReactRootElementInContainer
+	 */
+
+	"use strict";
+
+	var DOC_NODE_TYPE = 9;
+
+	/**
+	 * @param {DOMElement|DOMDocument} container DOM element that may contain
+	 *                                           a React component
+	 * @return {?*} DOM element that may have the reactRoot ID, or null.
+	 */
+	function getReactRootElementInContainer(container) {
+	  if (!container) {
+	    return null;
+	  }
+
+	  if (container.nodeType === DOC_NODE_TYPE) {
+	    return container.documentElement;
+	  } else {
+	    return container.firstChild;
+	  }
+	}
+
+	module.exports = getReactRootElementInContainer;
+
+
+/***/ },
 /* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25320,7 +25320,7 @@
 
 	"use strict";
 
-	var adler32 = __webpack_require__(148);
+	var adler32 = __webpack_require__(147);
 
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -25374,9 +25374,9 @@
 	"use strict";
 
 	var PooledClass = __webpack_require__(50);
-	var CallbackQueue = __webpack_require__(105);
-	var ReactPutListenerQueue = __webpack_require__(147);
-	var Transaction = __webpack_require__(106);
+	var CallbackQueue = __webpack_require__(103);
+	var ReactPutListenerQueue = __webpack_require__(148);
+	var Transaction = __webpack_require__(104);
 
 	var assign = __webpack_require__(29);
 	var emptyFunction = __webpack_require__(97);
@@ -25484,54 +25484,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule shallowEqual
-	 */
-
-	"use strict";
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning
-	 * false when any key has values which are not strictly equal between
-	 * objA and objB. Returns true when the values of all keys are strictly equal.
-	 *
-	 * @return {boolean}
-	 */
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-	  var key;
-	  // Test for A's keys different from B.
-	  for (key in objA) {
-	    if (objA.hasOwnProperty(key) &&
-	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-	      return false;
-	    }
-	  }
-	  // Test for B's keys missing from A.
-	  for (key in objB) {
-	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = shallowEqual;
-
-
-/***/ },
-/* 101 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactLink
 	 * @typechecks static-only
 	 */
@@ -25598,7 +25550,7 @@
 
 
 /***/ },
-/* 102 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25708,7 +25660,7 @@
 
 
 /***/ },
-/* 103 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25846,112 +25798,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
-/* 104 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks static-only
-	 * @providesModule ReactTransitionChildMapping
-	 */
-
-	"use strict";
-
-	var ReactChildren = __webpack_require__(11);
-
-	var ReactTransitionChildMapping = {
-	  /**
-	   * Given `this.props.children`, return an object mapping key to child. Just
-	   * simple syntactic sugar around ReactChildren.map().
-	   *
-	   * @param {*} children `this.props.children`
-	   * @return {object} Mapping of key to child
-	   */
-	  getChildMapping: function(children) {
-	    return ReactChildren.map(children, function(child) {
-	      return child;
-	    });
-	  },
-
-	  /**
-	   * When you're adding or removing children some may be added or removed in the
-	   * same render pass. We want to show *both* since we want to simultaneously
-	   * animate elements in and out. This function takes a previous set of keys
-	   * and a new set of keys and merges them with its best guess of the correct
-	   * ordering. In the future we may expose some of the utilities in
-	   * ReactMultiChild to make this easy, but for now React itself does not
-	   * directly have this concept of the union of prevChildren and nextChildren
-	   * so we implement it here.
-	   *
-	   * @param {object} prev prev children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @param {object} next next children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @return {object} a key set that contains all keys in `prev` and all keys
-	   * in `next` in a reasonable order.
-	   */
-	  mergeChildMappings: function(prev, next) {
-	    prev = prev || {};
-	    next = next || {};
-
-	    function getValueForKey(key) {
-	      if (next.hasOwnProperty(key)) {
-	        return next[key];
-	      } else {
-	        return prev[key];
-	      }
-	    }
-
-	    // For each key of `next`, the list of keys to insert before that key in
-	    // the combined list
-	    var nextKeysPending = {};
-
-	    var pendingKeys = [];
-	    for (var prevKey in prev) {
-	      if (next.hasOwnProperty(prevKey)) {
-	        if (pendingKeys.length) {
-	          nextKeysPending[prevKey] = pendingKeys;
-	          pendingKeys = [];
-	        }
-	      } else {
-	        pendingKeys.push(prevKey);
-	      }
-	    }
-
-	    var i;
-	    var childMapping = {};
-	    for (var nextKey in next) {
-	      if (nextKeysPending.hasOwnProperty(nextKey)) {
-	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
-	          var pendingNextKey = nextKeysPending[nextKey][i];
-	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(
-	            pendingNextKey
-	          );
-	        }
-	      }
-	      childMapping[nextKey] = getValueForKey(nextKey);
-	    }
-
-	    // Finally, add the keys which didn't appear before any key in `next`
-	    for (i = 0; i < pendingKeys.length; i++) {
-	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
-	    }
-
-	    return childMapping;
-	  }
-	};
-
-	module.exports = ReactTransitionChildMapping;
-
-
-/***/ },
-/* 105 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26054,7 +25901,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
 
 /***/ },
-/* 106 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26296,6 +26143,159 @@
 	module.exports = Transaction;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(33)))
+
+/***/ },
+/* 105 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks static-only
+	 * @providesModule ReactTransitionChildMapping
+	 */
+
+	"use strict";
+
+	var ReactChildren = __webpack_require__(11);
+
+	var ReactTransitionChildMapping = {
+	  /**
+	   * Given `this.props.children`, return an object mapping key to child. Just
+	   * simple syntactic sugar around ReactChildren.map().
+	   *
+	   * @param {*} children `this.props.children`
+	   * @return {object} Mapping of key to child
+	   */
+	  getChildMapping: function(children) {
+	    return ReactChildren.map(children, function(child) {
+	      return child;
+	    });
+	  },
+
+	  /**
+	   * When you're adding or removing children some may be added or removed in the
+	   * same render pass. We want to show *both* since we want to simultaneously
+	   * animate elements in and out. This function takes a previous set of keys
+	   * and a new set of keys and merges them with its best guess of the correct
+	   * ordering. In the future we may expose some of the utilities in
+	   * ReactMultiChild to make this easy, but for now React itself does not
+	   * directly have this concept of the union of prevChildren and nextChildren
+	   * so we implement it here.
+	   *
+	   * @param {object} prev prev children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @param {object} next next children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @return {object} a key set that contains all keys in `prev` and all keys
+	   * in `next` in a reasonable order.
+	   */
+	  mergeChildMappings: function(prev, next) {
+	    prev = prev || {};
+	    next = next || {};
+
+	    function getValueForKey(key) {
+	      if (next.hasOwnProperty(key)) {
+	        return next[key];
+	      } else {
+	        return prev[key];
+	      }
+	    }
+
+	    // For each key of `next`, the list of keys to insert before that key in
+	    // the combined list
+	    var nextKeysPending = {};
+
+	    var pendingKeys = [];
+	    for (var prevKey in prev) {
+	      if (next.hasOwnProperty(prevKey)) {
+	        if (pendingKeys.length) {
+	          nextKeysPending[prevKey] = pendingKeys;
+	          pendingKeys = [];
+	        }
+	      } else {
+	        pendingKeys.push(prevKey);
+	      }
+	    }
+
+	    var i;
+	    var childMapping = {};
+	    for (var nextKey in next) {
+	      if (nextKeysPending.hasOwnProperty(nextKey)) {
+	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
+	          var pendingNextKey = nextKeysPending[nextKey][i];
+	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(
+	            pendingNextKey
+	          );
+	        }
+	      }
+	      childMapping[nextKey] = getValueForKey(nextKey);
+	    }
+
+	    // Finally, add the keys which didn't appear before any key in `next`
+	    for (i = 0; i < pendingKeys.length; i++) {
+	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
+	    }
+
+	    return childMapping;
+	  }
+	};
+
+	module.exports = ReactTransitionChildMapping;
+
+
+/***/ },
+/* 106 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule shallowEqual
+	 */
+
+	"use strict";
+
+	/**
+	 * Performs equality by iterating through keys on an object and returning
+	 * false when any key has values which are not strictly equal between
+	 * objA and objB. Returns true when the values of all keys are strictly equal.
+	 *
+	 * @return {boolean}
+	 */
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+	  var key;
+	  // Test for A's keys different from B.
+	  for (key in objA) {
+	    if (objA.hasOwnProperty(key) &&
+	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+	      return false;
+	    }
+	  }
+	  // Test for B's keys missing from A.
+	  for (key in objB) {
+	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = shallowEqual;
+
 
 /***/ },
 /* 107 */
@@ -28040,7 +28040,7 @@
 
 	var ReactDOMSelection = __webpack_require__(156);
 
-	var containsNode = __webpack_require__(93);
+	var containsNode = __webpack_require__(95);
 	var focusNode = __webpack_require__(157);
 	var getActiveElement = __webpack_require__(137);
 
@@ -28546,12 +28546,12 @@
 
 	"use strict";
 
-	var CallbackQueue = __webpack_require__(105);
+	var CallbackQueue = __webpack_require__(103);
 	var PooledClass = __webpack_require__(50);
 	var ReactBrowserEventEmitter = __webpack_require__(66);
 	var ReactInputSelection = __webpack_require__(124);
-	var ReactPutListenerQueue = __webpack_require__(147);
-	var Transaction = __webpack_require__(106);
+	var ReactPutListenerQueue = __webpack_require__(148);
+	var Transaction = __webpack_require__(104);
 
 	var assign = __webpack_require__(29);
 
@@ -29745,6 +29745,44 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule adler32
+	 */
+
+	/* jslint bitwise:true */
+
+	"use strict";
+
+	var MOD = 65521;
+
+	// This is a clean-room implementation of adler32 designed for detecting
+	// if markup is not what we expect it to be. It does not need to be
+	// cryptographically strong, only reasonably good at detecting if markup
+	// generated on the server is different than that on the client.
+	function adler32(data) {
+	  var a = 1;
+	  var b = 0;
+	  for (var i = 0; i < data.length; i++) {
+	    a = (a + data.charCodeAt(i)) % MOD;
+	    b = (b + a) % MOD;
+	  }
+	  return a | (b << 16);
+	}
+
+	module.exports = adler32;
+
+
+/***/ },
+/* 148 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactPutListenerQueue
 	 */
 
@@ -29791,44 +29829,6 @@
 	PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 	module.exports = ReactPutListenerQueue;
-
-
-/***/ },
-/* 148 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule adler32
-	 */
-
-	/* jslint bitwise:true */
-
-	"use strict";
-
-	var MOD = 65521;
-
-	// This is a clean-room implementation of adler32 designed for detecting
-	// if markup is not what we expect it to be. It does not need to be
-	// cryptographically strong, only reasonably good at detecting if markup
-	// generated on the server is different than that on the client.
-	function adler32(data) {
-	  var a = 1;
-	  var b = 0;
-	  for (var i = 0; i < data.length; i++) {
-	    a = (a + data.charCodeAt(i)) % MOD;
-	    b = (b + a) % MOD;
-	  }
-	  return a | (b << 16);
-	}
-
-	module.exports = adler32;
 
 
 /***/ },
@@ -30586,7 +30586,7 @@
 	"use strict";
 
 	var Danger = __webpack_require__(163);
-	var ReactMultiChildUpdateTypes = __webpack_require__(95);
+	var ReactMultiChildUpdateTypes = __webpack_require__(93);
 
 	var getTextContentAccessor = __webpack_require__(126);
 	var invariant = __webpack_require__(49);
