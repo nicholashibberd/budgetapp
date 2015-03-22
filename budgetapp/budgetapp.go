@@ -120,13 +120,24 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	start_date, err := parseDateParam(r.URL.Query()["start_date"])
 	var end_date time.Time
 	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	var datesJSONString string
+	dates := map[string]string{}
 	if err == nil {
 		q = q.
 			Filter("Start_date =", start_date).
 			Filter("End_date =", end_date)
+		// dates := map[string]string{
+		// 	"start_date": start_date.Format("02/01/2006"),
+		// 	"end_date":   end_date.Format("02/01/2006"),
+		// }
+		dates["start_date"] = start_date.Format("02/01/2006")
+		dates["end_date"] = end_date.Format("02/01/2006")
 	} else {
 		log.Print(err.Error())
 	}
+
+	datesJSON, _ := json.Marshal(dates)
+	datesJSONString = string(datesJSON)
 
 	budgetLines := []record.BudgetLine{}
 	ks, err := q.GetAll(c, &budgetLines)
@@ -156,6 +167,7 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	p := &JSONData{
 		BudgetLines: budgetLinesJSONString,
 		Tags:        tagsJSONString,
+		Dates:       datesJSONString,
 	}
 	t, _ := template.ParseFiles("budget.html")
 	t.Execute(w, p)
@@ -280,7 +292,6 @@ func handleAccountsJson(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleBudgetsJson(w http.ResponseWriter, r *http.Request) {
-	log.Print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	if r.Method == "POST" {
 		c := appengine.NewContext(r)
 
@@ -363,6 +374,7 @@ type JSONData struct {
 	Rules       string
 	Accounts    string
 	BudgetLines string
+	Dates       string
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {

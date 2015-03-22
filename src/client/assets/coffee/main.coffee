@@ -4,11 +4,15 @@ React = require('react')
 Budget = require('./../../../react_components/budget')
 
 $ ->
-  React.render(
-    Budget({
-      tags: window.tagsJSON,
-      start_date: window.start_date,
-      end_date: window.end_date
-    }), 
-    document.getElementById('react-container')
-  )
+  start_date = window.datesJSON.start_date
+  end_date = window.datesJSON.end_date
+
+  if start_date && end_date
+    React.render(
+      Budget({
+        tags: window.tagsJSON,
+        start_date: start_date,
+        end_date: end_date
+      }), 
+      document.getElementById('react-container')
+    )
