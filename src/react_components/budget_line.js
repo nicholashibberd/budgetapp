@@ -3,13 +3,13 @@
 var React = require('react/addons');
 var BudgetLine = React.createClass({
   handleChange: function(event) {
-    var total = parseInt(event.target.value);
-    this.props.updateTotal(this.props.data.tagId, total)
+    var amount = parseInt(event.target.value);
+    this.props.updateAmount(this.props.data.tag_id, amount)
   },
 
   getInitialState: function() {
     return {
-      total: 0
+      amount: 0
     }
   },
 
@@ -18,7 +18,7 @@ var BudgetLine = React.createClass({
     return (
       <tr className="budgetLine">
         <td>{data.tagName}</td>
-        <td><input onChange={this.handleChange} value={data.total}/></td>
+        <td><input onChange={this.handleChange} value={data.amount}/></td>
       </tr>
     );
   },

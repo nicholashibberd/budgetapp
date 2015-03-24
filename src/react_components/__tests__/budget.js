@@ -19,8 +19,8 @@ describe("Budget", function() {
       { Name: "Tag3", id: 3 },
     ]
     budgetLines = [
-      { tagId: 1, total: 100 },
-      { tagId: 2, total: 200 },
+      { tag_id: 1, amount: 100, id: 123 },
+      { tag_id: 2, amount: 200, id: 456 },
     ]
     start_date = '12/07/2015'
     end_date = '25/12/2015'
@@ -51,40 +51,40 @@ describe("Budget", function() {
   });
 
   describe("initial state", function() {
-    it("starts with the total at 0", function() {
-      expect(budget.state.total).toEqual(300)
+    it("starts with the amount at 0", function() {
+      expect(budget.state.amount).toEqual(300)
     });
 
     it("builds a new budget line for tags without one already", function() {
       expect(budget.state.budgetLines).toEqual(
         [
-          { tagId: 1, tagName: "Tag1", total: 100 },
-          { tagId: 2, tagName: "Tag2", total: 200 },
-          { tagId: 3, tagName: "Tag3", total: 0 }
+          { tag_id: 1, tagName: "Tag1", amount: 100, id: 123 },
+          { tag_id: 2, tagName: "Tag2", amount: 200, id: 456 },
+          { tag_id: 3, tagName: "Tag3", amount: 0 }
         ]
       )
     });
 
-    it("renders the total", function() {
-      var totalDisplay = TestUtils.findRenderedDOMComponentWithClass(
+    it("renders the amount", function() {
+      var amountDisplay = TestUtils.findRenderedDOMComponentWithClass(
         budget, 'budgetTotal'
       );
-      expect(totalDisplay.getDOMNode().textContent).toEqual('£300')
+      expect(amountDisplay.getDOMNode().textContent).toEqual('£300')
     });
   })
 
   describe("value is entered on budget line", function() {
-    it("updates the total", function() {
+    it("updates the amount", function() {
       inputs = TestUtils.scryRenderedDOMComponentsWithTag(budget, 'input');
       TestUtils.Simulate.change(inputs[0], {target: {value: '333'}})
-      expect(budget.state.total).toEqual(533);
+      expect(budget.state.amount).toEqual(533);
     });
 
     it("treats blank lines as zeroes", function() {
       inputs = TestUtils.scryRenderedDOMComponentsWithTag(budget, 'input');
       TestUtils.Simulate.change(inputs[0], {target: {value: '333'}})
       TestUtils.Simulate.change(inputs[1], {target: {value: ''}})
-      expect(budget.state.total).toEqual(333);
+      expect(budget.state.amount).toEqual(333);
     });
   });
 
@@ -99,19 +99,21 @@ describe("Budget", function() {
             start_date: "12/07/2015",
             end_date: "25/12/2015",
             tag_id: 1,
-            amount: "100",
+            amount: 100,
+            id: 123,
           },
           {
             start_date: "12/07/2015",
             end_date: "25/12/2015",
             tag_id: 2,
-            amount: "200",
+            amount: 200,
+            id: 456,
           },
           {
             start_date: "12/07/2015",
             end_date: "25/12/2015",
             tag_id: 3,
-            amount: "0",
+            amount: 0,
           }
         ]
       }

@@ -10,13 +10,13 @@ describe("BudgetLine", function() {
 
   beforeEach(function() {
     data = {
-      tagId: 1,
-      total: 110,
+      tag_id: 1,
+      amount: 110,
       tagName: 'Tag1'
     }
-    updateTotal = jasmine.createSpy('updateTotal');
+    updateAmount = jasmine.createSpy('updateAmount');
     budgetLine = TestUtils.renderIntoDocument(
-      <BudgetLine data={data} updateTotal={updateTotal}/>
+      <BudgetLine data={data} updateAmount={updateAmount}/>
     );
     element = TestUtils.findRenderedDOMComponentWithClass(
       budgetLine, 'budgetLine'
@@ -27,16 +27,16 @@ describe("BudgetLine", function() {
     expect(element.getDOMNode().innerHTML).toContain('Tag1');
   });
 
-  it("sets the value to the total", function() {
+  it("sets the value to the amount", function() {
     input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
     expect(input.getDOMNode().value).toEqual('110');
   });
 
   describe("inputting text", function() {
-    it("calls the updateTotal callback", function() {
+    it("calls the updateAmount callback", function() {
       input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
       TestUtils.Simulate.change(input, {target: {value: '120'}})
-      expect(budgetLine.props.updateTotal).toHaveBeenCalledWith(1, 120);
+      expect(budgetLine.props.updateAmount).toHaveBeenCalledWith(1, 120);
     });
   })
 });

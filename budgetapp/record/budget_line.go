@@ -15,7 +15,7 @@ type BudgetLine struct {
 	Start_date time.Time `json:"start_date"`
 	End_date   time.Time `json:"end_date"`
 	Tag_id     int64     `json:"tag_id"`
-	Amount     string    `json:"amount"`
+	Amount     int64     `json:"amount"`
 }
 
 func defaultBudgetLineList(c appengine.Context) *datastore.Key {
@@ -44,9 +44,10 @@ type BudgetLinesJson struct {
 
 type BudgetLineJson struct {
 	Tag_id    int64  `json:"tag_id"`
-	Amount    string `json:"amount"`
+	Amount    int64  `json:"amount"`
 	StartDate string `json:"start_date"`
 	EndDate   string `json:"end_date"`
+	Id        int64  `json:"id"`
 }
 
 func DecodeBudgetLines(r io.ReadCloser) ([]BudgetLine, error) {
@@ -63,18 +64,20 @@ func DecodeBudgetLines(r io.ReadCloser) ([]BudgetLine, error) {
 			data.BudgetLines[i].Amount,
 			data.BudgetLines[i].StartDate,
 			data.BudgetLines[i].EndDate,
+			data.BudgetLines[i].Id,
 		)
 		budgetLines = append(budgetLines, b)
 	}
 	return budgetLines, err
 }
 
-func NewBudgetLine(t int64, a string, s string, e string) BudgetLine {
+func NewBudgetLine(t int64, a int64, s string, e string, id int64) BudgetLine {
 	return BudgetLine{
 		Tag_id:     t,
 		Amount:     a,
 		Start_date: parse_date(s),
 		End_date:   parse_date(e),
+		Id:         id,
 	}
 }
 

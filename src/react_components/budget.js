@@ -10,30 +10,34 @@ var Budget = React.createClass({
     var _this = this;
     var budgetLines = _.map(this.props.tags, function(tag) {
       var budgetLine = _.find(_this.props.budgetLines, function(budgetLine) {
-        return budgetLine.tagId == tag.id;
+        return budgetLine.tag_id == tag.id;
       });
-      var total = budgetLine !== undefined ? budgetLine.total : 0;
-      return {
-        tagId: tag.id,
-        total: total,
+      var amount = budgetLine !== undefined ? budgetLine.amount : 0;
+      var attrs = {
+        tag_id: tag.id,
+        amount: amount,
         tagName: tag.Name,
       }
+      if (budgetLine !== undefined) {
+        attrs.id = budgetLine.id
+      }
+      return attrs;
     })
     return {
-      total: this._calculateTotal(budgetLines),
+      amount: this._calculateTotal(budgetLines),
       tags: this.props.tags,
       budgetLines: budgetLines
     }
   },
 
-  updateTotal: function(id, total) {
+  updateAmount: function(id, amount) {
     var _this = this;
     _.each(this.state.budgetLines, function(budgetLine) {
-      if (budgetLine.tagId == id) {
-        budgetLine.total = _this._isNumber(total) ? total : 0;
+      if (budgetLine.tag_id == id) {
+        budgetLine.amount = _this._isNumber(amount) ? amount : 0;
       }
     });
-    this.setState({total: this._calculateTotal(this.state.budgetLines)})
+    this.setState({amount: this._calculateTotal(this.state.budgetLines)})
   },
 
   submit: function(event) {
@@ -47,12 +51,16 @@ var Budget = React.createClass({
   _budgetLinesJson: function() {
     var _this = this;
     var budgetLines = _.map(this.state.budgetLines, function(budgetLine) {
-      return {
+      var attrs = {
         start_date: _this.props.start_date,
         end_date: _this.props.end_date,
-        tag_id: budgetLine.tagId,
-        amount: budgetLine.total.toString(),
+        tag_id: budgetLine.tag_id,
+        amount: budgetLine.amount,
       }
+      if (budgetLine.id !== undefined) {
+        attrs.id = budgetLine.id
+      }
+      return attrs;
     });
     var data = { budgetLines: budgetLines };
     return JSON.stringify(data);
@@ -61,7 +69,7 @@ var Budget = React.createClass({
   _calculateTotal: function(budgetLines) {
     var _this = this;
     return _.reduce(budgetLines, function(memo, budgetLine) {
-      var val = _this._isNumber(budgetLine.total) ? budgetLine.total : 0
+      var val = _this._isNumber(budgetLine.amount) ? budgetLine.amount : 0
       return memo + val;
     }, 0)
   },
@@ -78,11 +86,11 @@ var Budget = React.createClass({
           <thead>
             <tr>
               <th>Total</th>
-              <th className="budgetTotal">£{this.state.total}</th>
+              <th className="budgetTotal">£{this.state.amount}</th>
             </tr>
           </thead>
           {this.state.budgetLines.map(function(budgetLine) {
-            return <BudgetLine data={budgetLine} key={budgetLine.tagId} updateTotal={_this.updateTotal}/>
+            return <BudgetLine data={budgetLine} key={budgetLine.tag_id} updateAmount={_this.updateAmount}/>
           })}
         </table>
         <div>

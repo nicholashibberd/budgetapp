@@ -11,6 +11,7 @@ $ ->
     React.render(
       Budget({
         tags: window.tagsJSON,
+        budgetLines: window.budgetLinesJSON,
         start_date: start_date,
         end_date: end_date
       }), 

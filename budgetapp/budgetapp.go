@@ -126,10 +126,6 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 		q = q.
 			Filter("Start_date =", start_date).
 			Filter("End_date =", end_date)
-		// dates := map[string]string{
-		// 	"start_date": start_date.Format("02/01/2006"),
-		// 	"end_date":   end_date.Format("02/01/2006"),
-		// }
 		dates["start_date"] = start_date.Format("02/01/2006")
 		dates["end_date"] = end_date.Format("02/01/2006")
 	} else {
