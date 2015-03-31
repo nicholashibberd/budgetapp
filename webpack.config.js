@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var bourbon = require('node-bourbon').includePaths;
+
 module.exports = {
   entry: './src/client/assets/coffee/main.coffee',
   output: {
@@ -8,10 +9,12 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.coffee$/, loader: 'coffee-loader'},
-      { test: /\.js$/, loader: 'jsx-loader?harmony'}
+      { test: /\.js$/, loader: 'jsx-loader?harmony'},
+      { test: /\.scss$/, loader: "style!css!sass?includePaths[]=" + bourbon }
     ]
   },
   resolve: {
-    extensions: ['', '.js', '.coffee']
+    modulesDirectories: ['node_modules'],
+    extensions: ['', '.js', '.coffee', '.scss']
   }
 }
