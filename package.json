@@ -7,9 +7,10 @@
     "start": "./node_modules/webpack/bin/webpack.js"
   },
   "dependencies": {
-    "react": "^0.12.2",
-    "react-tools": "^0.12.2",
+    "react": "^0.13.1",
+    "react-tools": "^0.13.1",
     "jquery": "^2.1.1",
+    "jquery-ui": "^1.10.5",
     "underscore": "^1.6.0"
   },
   "devDependencies": {
@@ -19,7 +20,8 @@
     "gulp": "^3.8.11",
     "gulp-react": "^2.0.0",
     "jest-cli": "^0.4.0",
-    "jsx-loader": "^0.11.0",
+    "json-loader": "^0.5.1",
+    "jsx-loader": "^0.13.1",
     "moment": "latest",
     "node-sass": "^3.0.0-beta.1",
     "node-bourbon": "^1.2.3",

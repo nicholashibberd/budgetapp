@@ -40,14 +40,17 @@
     <div class="container">
       <div>
         <h1>Budget</h1>
-        <div id="react-container"></div>
+        <div id="budget-container"></div>
+        <div id="record-container"></div>
       </div>
     </div>
     <script src="javascripts/bundle.js"></script>
+    <script src="javascripts/lib/typeahead.bundle.js"></script>
     <script>
       var tagsJSON = JSON.parse({{.Tags}});
       var budgetLinesJSON = JSON.parse({{.BudgetLines}});
       var datesJSON = JSON.parse({{.Dates}});
+      var recordsJSON = JSON.parse({{.Records}});
     </script>
   </body>
 </html>

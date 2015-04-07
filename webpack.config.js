@@ -10,7 +10,8 @@ module.exports = {
     loaders: [
       { test: /\.coffee$/, loader: 'coffee-loader'},
       { test: /\.js$/, loader: 'jsx-loader?harmony'},
-      { test: /\.scss$/, loader: "style!css!sass?includePaths[]=" + bourbon }
+      { test: /\.scss$/, loader: "style!css!sass?includePaths[]=" + bourbon },
+      { test: /\.json$/, loader: "json-loader" }
     ]
   },
   resolve: {

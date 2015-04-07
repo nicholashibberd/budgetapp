@@ -76,7 +76,7 @@ func DecodeRecord(r io.ReadCloser) (*Record, error) {
 }
 
 func RecordKey(c appengine.Context) *datastore.Key {
-	return datastore.NewKey(c, "Record", "default_record", 0, nil)
+	return datastore.NewKey(c, "RecordList", "default", 0, nil)
 }
 
 func (r *Record) AddTag(i int64) {

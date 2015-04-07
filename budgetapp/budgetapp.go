@@ -116,11 +116,12 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html")
 
-	q := datastore.NewQuery("BudgetLine")
 	start_date, err := parseDateParam(r.URL.Query()["start_date"])
 	var end_date time.Time
 	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+
 	var datesJSONString string
+	q := datastore.NewQuery("BudgetLine")
 	dates := map[string]string{}
 	if err == nil {
 		q = q.
@@ -160,10 +161,26 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	tagsJSON, _ := json.Marshal(tags)
 	tagsJSONString := string(tagsJSON)
 
+	q = datastore.NewQuery("Record").
+		Filter("Date >=", start_date).
+		Filter("Date <=", end_date)
+	records := []record.Record{}
+	ks, err = q.GetAll(c, &records)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(records); i++ {
+		records[i].Id = ks[i].IntID()
+	}
+
+	recordsJSON, _ := json.Marshal(records)
+	recordsJSONString := string(recordsJSON)
+
 	p := &JSONData{
 		BudgetLines: budgetLinesJSONString,
 		Tags:        tagsJSONString,
 		Dates:       datesJSONString,
+		Records:     recordsJSONString,
 	}
 	t, _ := template.ParseFiles("budget.html")
 	t.Execute(w, p)
