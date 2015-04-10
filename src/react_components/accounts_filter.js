@@ -4,12 +4,31 @@ var React = require('react/addons');
 var _ = require('underscore');
 
 var AccountsFilter = React.createClass({
+  getInitialState: function() {
+    return {
+      currentAccounts: this.australianAccounts()
+    };
+  },
+
   australianAccounts: function() {
     return this._filterAccounts('Australia');
   },
 
   ukAccounts: function() {
     return this._filterAccounts('UK');
+  },
+
+  selectAccount: function(id) {
+    var account = this._findAccount(id);
+    this.setState({
+      currentAccounts: [account]
+    });
+  },
+
+  _findAccount: function(id) {
+    return _.find(this.props.accounts, function(account) {
+      return account.id == id;
+    })
   },
 
   _filterAccounts: function(region) {
@@ -19,6 +38,7 @@ var AccountsFilter = React.createClass({
   },
 
   render: function() {
+    var _this = this;
     return (
       <div className="dropdown accounts-filter">
         <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
@@ -28,7 +48,7 @@ var AccountsFilter = React.createClass({
         <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
           {this.australianAccounts().map(function(account, index) {
             return <li role="presentation" className="australian-account" key={index}>
-              <a role="menuitem" href="#">{account.name}</a>
+              <a role="menuitem" className="australian-link" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
           })}
           <li role="presentation" className="australian">
