@@ -161,6 +161,19 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	tagsJSON, _ := json.Marshal(tags)
 	tagsJSONString := string(tagsJSON)
 
+	q = datastore.NewQuery("Account")
+	accounts := []record.Account{}
+	ks, err = q.GetAll(c, &accounts)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].Id = ks[i].IntID()
+	}
+
+	accountsJSON, _ := json.Marshal(accounts)
+	accountsJSONString := string(accountsJSON)
+
 	q = datastore.NewQuery("Record").
 		Filter("Date >=", start_date).
 		Filter("Date <=", end_date)
@@ -181,6 +194,7 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 		Tags:        tagsJSONString,
 		Dates:       datesJSONString,
 		Records:     recordsJSONString,
+		Accounts:    accountsJSONString,
 	}
 	t, _ := template.ParseFiles("budget.html")
 	t.Execute(w, p)

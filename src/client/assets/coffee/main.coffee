@@ -5,6 +5,7 @@ React = require('react')
 Budget = require('./../../../react_components/budget')
 RecordList = require('./../../../react_components/record_list')
 DatePicker = require('./../../../react_components/date_picker')
+AccountsFilter = require('./../../../react_components/accounts_filter')
 
 window.jQuery = $
 
@@ -40,6 +41,15 @@ $ ->
     .pickadate(pickerOptions)
     .pickadate("picker")
     .set('select', end_date, {format: "dd/mm/yyyy"});
+
+  React.render(
+    React.createElement(
+      AccountsFilter, {
+        accounts: window.accountsJSON
+      }
+    )
+    document.getElementById('accounts-container')
+  )
 
   if start_date && end_date
     React.render(

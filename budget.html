@@ -17,22 +17,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <div id="date-form">
           </div>
-          <div id="account-controls">
-            <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                <span id="accounts-button-text">Accounts</span>
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                <li role="presentation" class="australian">
-                  <a role="menuitem" id="all_australian" tabindex="-1" href="#"><strong>All Australian Accounts</strong></a>
-                </li>
-                <li role="presentation" class="divider"></li>
-                <li role="presentation" class="uk">
-                  <a role="menuitem" id="all_uk" tabindex="-1" href="#"><strong>All UK Accounts</strong></a>
-                </li>
-              </ul>
-            </div>
+          <div id="accounts-container">
           </div>
         </div><!--/.navbar-collapse -->
       </div>
@@ -46,11 +31,13 @@
     </div>
     <script src="javascripts/bundle.js"></script>
     <script src="javascripts/lib/typeahead.bundle.js"></script>
+    <script src="javascripts/lib/bootstrap.min.js"></script>
     <script>
       var tagsJSON = JSON.parse({{.Tags}});
       var budgetLinesJSON = JSON.parse({{.BudgetLines}});
       var datesJSON = JSON.parse({{.Dates}});
       var recordsJSON = JSON.parse({{.Records}});
+      var accountsJSON = JSON.parse({{.Accounts}});
     </script>
   </body>
 </html>

@@ -44,9 +44,8 @@ describe("Record", function() {
 
   it("displays each of its tags", function() {
     var tags = TestUtils.scryRenderedDOMComponentsWithClass(element, 'tag');
-    expect(tags.length).toEqual(2);
+    expect(tags.length).toEqual(1);
     expect(element.getDOMNode().innerHTML).toContain('Bills');
-    expect(element.getDOMNode().innerHTML).toContain('Internet');
     expect(element.getDOMNode().innerHTML).not.toContain('Cash');
   });
 

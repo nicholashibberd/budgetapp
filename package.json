@@ -3,7 +3,7 @@
   "description": "Nick and Dani's Budget",
   "version": "0.0.1",
   "scripts": {
-    "test-jest": "gulp react; ./node_modules/jest-cli/bin/jest.js",
+    "test": "gulp react; ./node_modules/jest-cli/bin/jest.js",
     "start": "./node_modules/webpack/bin/webpack.js"
   },
   "dependencies": {
