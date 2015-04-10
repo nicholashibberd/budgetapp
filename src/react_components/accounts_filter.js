@@ -25,6 +25,34 @@ var AccountsFilter = React.createClass({
     });
   },
 
+  selectAll: function(region) {
+    var currentAccounts = (region == 'Australia') ? this.australianAccounts() : this.ukAccounts();
+    this.setState({ currentAccounts: currentAccounts });
+  },
+
+  displayText: function() {
+    if (this._allAustralianAccountsSelected()) {
+      return 'All Australian Accounts';
+    } else if (this._allUKAccountsSelected()) {
+      return 'All UK Accounts';
+    } else {
+      var account = this.state.currentAccounts[0];
+      return account.name;
+    }
+  },
+
+  _allAustralianAccountsSelected: function() {
+    return _.isEqual(
+      this.state.currentAccounts, this.australianAccounts()
+    );
+  },
+
+  _allUKAccountsSelected: function() {
+    return _.isEqual(
+      this.state.currentAccounts, this.ukAccounts()
+    );
+  },
+
   _findAccount: function(id) {
     return _.find(this.props.accounts, function(account) {
       return account.id == id;
@@ -42,7 +70,7 @@ var AccountsFilter = React.createClass({
     return (
       <div className="dropdown accounts-filter">
         <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-          <span id="accounts-button-text">Accounts</span>
+          <span className="accounts-button-text">{this.displayText()}</span>
           <span className="caret"></span>
         </button>
         <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
@@ -63,7 +91,7 @@ var AccountsFilter = React.createClass({
             </li>
           })}
           <li role="presentation" className="uk">
-            <a role="menuitem" className="all-uk-accounts" href="#">
+            <a role="menuitem" className="all-uk-accounts" href="#" onClick={this.selectAll.bind(null, 'Australian')}>
               <strong>All UK Accounts</strong>
             </a>
           </li>

@@ -93,10 +93,17 @@ describe("AccountsFilter", function() {
         [aussie1, aussie2]
       );
     })
+
+    it("displays All Australian Accounts", function() {
+      var element = TestUtils.findRenderedDOMComponentWithClass(
+        accountsFilter, 'accounts-button-text'
+      );
+      expect(element.getDOMNode().innerHTML).toEqual('All Australian Accounts');
+    })
   })
 
   describe("clicking an account", function() {
-    it("sets currentAccounts to just that account", function() {
+    beforeEach(function() {
       elements = TestUtils.scryRenderedDOMComponentsWithClass(
         accountsFilter, 'australian-account'
       );
@@ -104,7 +111,37 @@ describe("AccountsFilter", function() {
         elements[0], 'a'
       );
       TestUtils.Simulate.click(link)
+    });
+
+    it("sets currentAccounts to just that account", function() {
       expect(accountsFilter.state.currentAccounts).toEqual([aussie1]);
     });
+
+    it("displays that account name", function() {
+      var element = TestUtils.findRenderedDOMComponentWithClass(
+        accountsFilter, 'accounts-button-text'
+      );
+      expect(element.getDOMNode().innerHTML).toEqual('Aussie 1');
+    })
   });
+
+  describe("clicking an 'All' button", function() {
+    beforeEach(function() {
+      var element = TestUtils.findRenderedDOMComponentWithClass(
+        accountsFilter, 'all-uk-accounts'
+      );
+      TestUtils.Simulate.click(element);
+    });
+
+    it("sets currentAccounts to all those accounts", function() {
+      expect(accountsFilter.state.currentAccounts).toEqual([uk]);
+    })
+
+    it("displays that region group name", function() {
+      var element = TestUtils.findRenderedDOMComponentWithClass(
+        accountsFilter, 'accounts-button-text'
+      );
+      expect(element.getDOMNode().innerHTML).toEqual('All UK Accounts');
+    })
+  })
 });
