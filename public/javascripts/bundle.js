@@ -401,10 +401,44 @@
 	  },
 
 	  selectAccount: function(id) {
-	    debugger
+	    var account = this._findAccount(id);
 	    this.setState({
-	      currentAccounts: [this.props.accounts[0]]
+	      currentAccounts: [account]
 	    });
+	  },
+
+	  selectAll: function(region) {
+	    var currentAccounts = (region == 'Australia') ? this.australianAccounts() : this.ukAccounts();
+	    this.setState({ currentAccounts: currentAccounts });
+	  },
+
+	  displayText: function() {
+	    if (this._allAustralianAccountsSelected()) {
+	      return 'All Australian Accounts';
+	    } else if (this._allUKAccountsSelected()) {
+	      return 'All UK Accounts';
+	    } else {
+	      var account = this.state.currentAccounts[0];
+	      return account.name;
+	    }
+	  },
+
+	  _allAustralianAccountsSelected: function() {
+	    return _.isEqual(
+	      this.state.currentAccounts, this.australianAccounts()
+	    );
+	  },
+
+	  _allUKAccountsSelected: function() {
+	    return _.isEqual(
+	      this.state.currentAccounts, this.ukAccounts()
+	    );
+	  },
+
+	  _findAccount: function(id) {
+	    return _.find(this.props.accounts, function(account) {
+	      return account.id == id;
+	    })
 	  },
 
 	  _filterAccounts: function(region) {
@@ -418,28 +452,28 @@
 	    return (
 	      React.createElement("div", {className: "dropdown accounts-filter"}, 
 	        React.createElement("button", {className: "btn btn-default dropdown-toggle", type: "button", id: "dropdownMenu1", "data-toggle": "dropdown", "aria-expanded": "true"}, 
-	          React.createElement("span", {id: "accounts-button-text"}, "Accounts"), 
+	          React.createElement("span", {className: "accounts-button-text"}, this.displayText()), 
 	          React.createElement("span", {className: "caret"})
 	        ), 
 	        React.createElement("ul", {className: "dropdown-menu", role: "menu", "aria-labelledby": "dropdownMenu1"}, 
 	          this.australianAccounts().map(function(account, index) {
 	            return React.createElement("li", {role: "presentation", className: "australian-account", key: index}, 
-	              React.createElement("a", {role: "menuitem", className: "australian-link", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
+	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
 	          }), 
 	          React.createElement("li", {role: "presentation", className: "australian"}, 
-	            React.createElement("a", {role: "menuitem", className: "all-australian-accounts", href: "#"}, 
+	            React.createElement("a", {role: "menuitem", className: "all-australian-accounts", href: "#", onClick: this.selectAll.bind(null, 'Australia')}, 
 	              React.createElement("strong", null, "All Australian Accounts")
 	            )
 	          ), 
 	          React.createElement("li", {role: "presentation", className: "divider"}), 
 	          this.ukAccounts().map(function(account, index) {
 	            return React.createElement("li", {role: "presentation", className: "uk-account", key: index}, 
-	              React.createElement("a", {role: "menuitem", href: "#"}, account.name)
+	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
 	          }), 
 	          React.createElement("li", {role: "presentation", className: "uk"}, 
-	            React.createElement("a", {role: "menuitem", className: "all-uk-accounts", href: "#"}, 
+	            React.createElement("a", {role: "menuitem", className: "all-uk-accounts", href: "#", onClick: this.selectAll.bind(null, 'UK')}, 
 	              React.createElement("strong", null, "All UK Accounts")
 	            )
 	          )

@@ -12,6 +12,10 @@ a.navbar-brand {
   float: right;
 }
 
+.accounts-button-text {
+  margin-right: 6px;
+}
+
 .jumbotron {
   position: relative;
 }

@@ -76,22 +76,22 @@ var AccountsFilter = React.createClass({
         <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
           {this.australianAccounts().map(function(account, index) {
             return <li role="presentation" className="australian-account" key={index}>
-              <a role="menuitem" className="australian-link" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
+              <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
           })}
           <li role="presentation" className="australian">
-            <a role="menuitem" className="all-australian-accounts" href="#">
+            <a role="menuitem" className="all-australian-accounts" href="#" onClick={this.selectAll.bind(null, 'Australia')}>
               <strong>All Australian Accounts</strong>
             </a>
           </li>
           <li role="presentation" className="divider"></li>
           {this.ukAccounts().map(function(account, index) {
             return <li role="presentation" className="uk-account" key={index}>
-              <a role="menuitem" href="#">{account.name}</a>
+              <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
           })}
           <li role="presentation" className="uk">
-            <a role="menuitem" className="all-uk-accounts" href="#" onClick={this.selectAll.bind(null, 'Australian')}>
+            <a role="menuitem" className="all-uk-accounts" href="#" onClick={this.selectAll.bind(null, 'UK')}>
               <strong>All UK Accounts</strong>
             </a>
           </li>
