@@ -6,6 +6,7 @@ Budget = require('./../../../react_components/budget')
 RecordList = require('./../../../react_components/record_list')
 DatePicker = require('./../../../react_components/date_picker')
 AccountsFilter = require('./../../../react_components/accounts_filter')
+App = require('./../../../react_components/app')
 
 window.jQuery = $
 
@@ -28,6 +29,17 @@ $ ->
   }
 
   React.render(
+    React.createElement(App, {
+      budgetLines: window.budgetLinesJSON,
+      records: window.recordsJSON,
+      tags: window.tagsJSON,
+      start_date: start_date,
+      end_date: end_date
+    }),
+    document.getElementById('app-container')
+  )
+
+  React.render(
     React.createElement(DatePicker),
     document.getElementById('date-form')
   )
@@ -41,35 +53,3 @@ $ ->
     .pickadate(pickerOptions)
     .pickadate("picker")
     .set('select', end_date, {format: "dd/mm/yyyy"});
-
-  React.render(
-    React.createElement(
-      AccountsFilter, {
-        accounts: window.accountsJSON
-      }
-    )
-    document.getElementById('accounts-container')
-  )
-
-  if start_date && end_date
-    React.render(
-      React.createElement(
-        Budget, {
-          tags: window.tagsJSON,
-          budgetLines: window.budgetLinesJSON,
-          start_date: start_date,
-          end_date: end_date
-        }
-      ),
-      document.getElementById('budget-container')
-    )
-
-    React.render(
-      React.createElement(
-        RecordList, {
-          records: window.recordsJSON
-          tags: window.tagsJSON
-        }
-      )
-      document.getElementById('record-container')
-    )
