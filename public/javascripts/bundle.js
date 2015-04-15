@@ -81,6 +81,7 @@
 	    }
 	  };
 	  React.render(React.createElement(App, {
+	    accounts: window.accountsJSON,
 	    budgetLines: window.budgetLinesJSON,
 	    records: window.recordsJSON,
 	    tags: window.tagsJSON,
@@ -380,30 +381,32 @@
 	var _ = __webpack_require__(20);
 
 	var AccountsFilter = React.createClass({displayName: "AccountsFilter",
-	  getInitialState: function() {
-	    return {
-	      currentAccounts: this.australianAccounts()
-	    };
-	  },
+	  // getInitialState: function() {
+	  //   return {
+	  //     currentAccounts: this.australianAccounts()
+	  //   };
+	  // },
 
-	  australianAccounts: function() {
-	    return this._filterAccounts('Australia');
-	  },
+	  // australianAccounts: function() {
+	  //   return this._filterAccounts('Australia');
+	  // },
 
-	  ukAccounts: function() {
-	    return this._filterAccounts('UK');
-	  },
+	  // ukAccounts: function() {
+	  //   return this._filterAccounts('UK');
+	  // },
 
 	  selectAccount: function(id) {
 	    var account = this._findAccount(id);
-	    this.setState({
-	      currentAccounts: [account]
-	    });
+	    // this.setState({
+	    //   currentAccounts: [account]
+	    // });
+	    this.props.updateCurrentAccounts([account]);
 	  },
 
 	  selectAll: function(region) {
-	    var currentAccounts = (region == 'Australia') ? this.australianAccounts() : this.ukAccounts();
-	    this.setState({ currentAccounts: currentAccounts });
+	    var currentAccounts = (region == 'Australia') ? this.props.australianAccounts : this.props.ukAccounts;
+	    // this.setState({ currentAccounts: currentAccounts });
+	    this.props.updateCurrentAccounts(currentAccounts);
 	  },
 
 	  displayText: function() {
@@ -412,20 +415,20 @@
 	    } else if (this._allUKAccountsSelected()) {
 	      return 'All UK Accounts';
 	    } else {
-	      var account = this.state.currentAccounts[0];
+	      var account = this.props.currentAccounts[0];
 	      return account.name;
 	    }
 	  },
 
 	  _allAustralianAccountsSelected: function() {
 	    return _.isEqual(
-	      this.state.currentAccounts, this.australianAccounts()
+	      this.props.currentAccounts, this.props.australianAccounts
 	    );
 	  },
 
 	  _allUKAccountsSelected: function() {
 	    return _.isEqual(
-	      this.state.currentAccounts, this.ukAccounts()
+	      this.props.currentAccounts, this.props.ukAccounts
 	    );
 	  },
 
@@ -435,22 +438,22 @@
 	    })
 	  },
 
-	  _filterAccounts: function(region) {
-	    return _.filter(this.props.accounts, function(account) {
-	      return account.region == region;
-	    });
-	  },
+	  // _filterAccounts: function(region) {
+	  //   return _.filter(this.props.accounts, function(account) {
+	  //     return account.region == region;
+	  //   });
+	  // },
 
 	  render: function() {
 	    var _this = this;
 	    return (
 	      React.createElement("div", {className: "dropdown accounts-filter"}, 
-	        React.createElement("button", {className: "btn btn-default dropdown-toggle", type: "button", id: "dropdownMenu1", "data-toggle": "dropdown", "aria-expanded": "true"}, 
+	        React.createElement("button", {className: "btn btn-default btn-lg dropdown-toggle", type: "button", id: "dropdownMenu1", "data-toggle": "dropdown", "aria-expanded": "true"}, 
 	          React.createElement("span", {className: "accounts-button-text"}, this.displayText()), 
 	          React.createElement("span", {className: "caret"})
 	        ), 
 	        React.createElement("ul", {className: "dropdown-menu", role: "menu", "aria-labelledby": "dropdownMenu1"}, 
-	          this.australianAccounts().map(function(account, index) {
+	          this.props.australianAccounts.map(function(account, index) {
 	            return React.createElement("li", {role: "presentation", className: "australian-account", key: index}, 
 	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
@@ -461,7 +464,7 @@
 	            )
 	          ), 
 	          React.createElement("li", {role: "presentation", className: "divider"}), 
-	          this.ukAccounts().map(function(account, index) {
+	          this.props.ukAccounts.map(function(account, index) {
 	            return React.createElement("li", {role: "presentation", className: "uk-account", key: index}, 
 	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
@@ -489,38 +492,52 @@
 	var RecordList = __webpack_require__(4);
 	var AccountsFilter = __webpack_require__(6);
 	var Budget = __webpack_require__(3);
+	var _ = __webpack_require__(20);
 
 	var App = React.createClass({displayName: "App",
-	  renderAccountsFilter: function() {
-	    React.render(
-	      React.createElement(
-	        AccountsFilter, {
-	          accounts: window.accountsJSON
-	        }
-	      ),
-	      document.getElementById('accounts-container')
-	    )
+	  getInitialState: function() {
+	    return {
+	      records: this.props.records,
+	      currentAccounts: this.australianAccounts()
+	    }
 	  },
 
-	  componentDidMount: function() {
-	    this.renderAccountsFilter();
+	  australianAccounts: function() {
+	    return this._filterAccounts('Australia');
 	  },
 
-	  componentDidUpdate: function() {
-	    this.renderAccountsFilter();
+	  ukAccounts: function() {
+	    return this._filterAccounts('UK');
+	  },
+
+	  updateCurrentAccounts: function(accounts) {
+	    this.setState({ currentAccounts: accounts });
+	  },
+
+	  _filterAccounts: function(region) {
+	    return _.filter(this.props.accounts, function(account) {
+	      return account.region == region;
+	    });
 	  },
 
 	  render: function() {
 	    if (this.props.start_date && this.props.end_date) {
 	      return (
 	        React.createElement("div", null, 
+	          React.createElement(AccountsFilter, {
+	            accounts: this.props.accounts, 
+	            australianAccounts: this.australianAccounts(), 
+	            ukAccounts: this.ukAccounts(), 
+	            currentAccounts: this.state.currentAccounts, 
+	            updateCurrentAccounts: this.updateCurrentAccounts}
+	          ), 
 	          React.createElement(Budget, {
 	            budgetLines: this.props.budgetLines, 
 	            tags: this.props.tags, 
 	            start_date: this.props.start_date, 
 	            end_date: this.props.end_date}
 	          ), 
-	          React.createElement(RecordList, {records: this.props.records, tags: this.props.tags})
+	          React.createElement(RecordList, {records: this.state.records, tags: this.props.tags})
 	        )
 	      );
 	    } else {
@@ -22742,7 +22759,7 @@
 
 	'use strict';
 
-	var shallowEqual = __webpack_require__(202);
+	var shallowEqual = __webpack_require__(201);
 
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -22804,7 +22821,7 @@
 	  __webpack_require__(50)
 	);
 	var ReactCSSTransitionGroupChild = React.createFactory(
-	  __webpack_require__(201)
+	  __webpack_require__(202)
 	);
 
 	var ReactCSSTransitionGroup = React.createClass({
@@ -37018,7 +37035,7 @@
 
 	'use strict';
 
-	var EventListener = __webpack_require__(226);
+	var EventListener = __webpack_require__(227);
 	var ExecutionEnvironment = __webpack_require__(43);
 	var PooledClass = __webpack_require__(140);
 	var ReactInstanceHandles = __webpack_require__(34);
@@ -37026,8 +37043,8 @@
 	var ReactUpdates = __webpack_require__(51);
 
 	var assign = __webpack_require__(40);
-	var getEventTarget = __webpack_require__(227);
-	var getUnboundedScrollPosition = __webpack_require__(228);
+	var getEventTarget = __webpack_require__(228);
+	var getUnboundedScrollPosition = __webpack_require__(229);
 
 	/**
 	 * Finds the parent React component of `node`.
@@ -37206,7 +37223,7 @@
 
 	var DOMProperty = __webpack_require__(186);
 	var EventPluginHub = __webpack_require__(209);
-	var ReactComponentEnvironment = __webpack_require__(229);
+	var ReactComponentEnvironment = __webpack_require__(226);
 	var ReactClass = __webpack_require__(26);
 	var ReactEmptyComponent = __webpack_require__(188);
 	var ReactBrowserEventEmitter = __webpack_require__(187);
@@ -37438,7 +37455,7 @@
 	var getActiveElement = __webpack_require__(232);
 	var isTextInputElement = __webpack_require__(220);
 	var keyOf = __webpack_require__(150);
-	var shallowEqual = __webpack_require__(202);
+	var shallowEqual = __webpack_require__(201);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -39962,6 +39979,54 @@
 /* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule shallowEqual
+	 */
+
+	'use strict';
+
+	/**
+	 * Performs equality by iterating through keys on an object and returning
+	 * false when any key has values which are not strictly equal between
+	 * objA and objB. Returns true when the values of all keys are strictly equal.
+	 *
+	 * @return {boolean}
+	 */
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+	  var key;
+	  // Test for A's keys different from B.
+	  for (key in objA) {
+	    if (objA.hasOwnProperty(key) &&
+	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+	      return false;
+	    }
+	  }
+	  // Test for B's keys missing from A.
+	  for (key in objB) {
+	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = shallowEqual;
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2013-2015, Facebook, Inc.
 	 * All rights reserved.
@@ -40108,54 +40173,6 @@
 	module.exports = ReactCSSTransitionGroupChild;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
-
-/***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule shallowEqual
-	 */
-
-	'use strict';
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning
-	 * false when any key has values which are not strictly equal between
-	 * objA and objB. Returns true when the values of all keys are strictly equal.
-	 *
-	 * @return {boolean}
-	 */
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-	  var key;
-	  // Test for A's keys different from B.
-	  for (key in objA) {
-	    if (objA.hasOwnProperty(key) &&
-	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-	      return false;
-	    }
-	  }
-	  // Test for B's keys missing from A.
-	  for (key in objB) {
-	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = shallowEqual;
-
 
 /***/ },
 /* 203 */
@@ -41412,7 +41429,7 @@
 
 	'use strict';
 
-	var ReactComponentEnvironment = __webpack_require__(229);
+	var ReactComponentEnvironment = __webpack_require__(226);
 	var ReactContext = __webpack_require__(27);
 	var ReactCurrentOwner = __webpack_require__(28);
 	var ReactElement = __webpack_require__(29);
@@ -42310,7 +42327,7 @@
 
 	var assign = __webpack_require__(40);
 	var emptyFunction = __webpack_require__(195);
-	var getEventTarget = __webpack_require__(227);
+	var getEventTarget = __webpack_require__(228);
 
 	/**
 	 * @interface Event
@@ -42693,11 +42710,11 @@
 
 	'use strict';
 
-	var ReactComponentEnvironment = __webpack_require__(229);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactComponentEnvironment = __webpack_require__(226);
+	var ReactMultiChildUpdateTypes = __webpack_require__(258);
 
 	var ReactReconciler = __webpack_require__(38);
-	var ReactChildReconciler = __webpack_require__(260);
+	var ReactChildReconciler = __webpack_require__(259);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -43199,7 +43216,7 @@
 	var PooledClass = __webpack_require__(140);
 
 	var assign = __webpack_require__(40);
-	var getTextContentAccessor = __webpack_require__(258);
+	var getTextContentAccessor = __webpack_require__(260);
 
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -43614,7 +43631,7 @@
 	'use strict';
 
 	var Danger = __webpack_require__(263);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactMultiChildUpdateTypes = __webpack_require__(258);
 
 	var setTextContent = __webpack_require__(264);
 	var invariant = __webpack_require__(139);
@@ -43900,6 +43917,70 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactComponentEnvironment
+	 */
+
+	'use strict';
+
+	var invariant = __webpack_require__(139);
+
+	var injected = false;
+
+	var ReactComponentEnvironment = {
+
+	  /**
+	   * Optionally injectable environment dependent cleanup hook. (server vs.
+	   * browser etc). Example: A browser system caches DOM nodes based on component
+	   * ID and must remove that cache entry when this instance is unmounted.
+	   */
+	  unmountIDFromEnvironment: null,
+
+	  /**
+	   * Optionally injectable hook for swapping out mount images in the middle of
+	   * the tree.
+	   */
+	  replaceNodeWithMarkupByID: null,
+
+	  /**
+	   * Optionally injectable hook for processing a queue of child updates. Will
+	   * later move into MultiChildComponents.
+	   */
+	  processChildrenUpdates: null,
+
+	  injection: {
+	    injectEnvironment: function(environment) {
+	      ("production" !== process.env.NODE_ENV ? invariant(
+	        !injected,
+	        'ReactCompositeComponent: injectEnvironment() can only be called once.'
+	      ) : invariant(!injected));
+	      ReactComponentEnvironment.unmountIDFromEnvironment =
+	        environment.unmountIDFromEnvironment;
+	      ReactComponentEnvironment.replaceNodeWithMarkupByID =
+	        environment.replaceNodeWithMarkupByID;
+	      ReactComponentEnvironment.processChildrenUpdates =
+	        environment.processChildrenUpdates;
+	      injected = true;
+	    }
+	  }
+
+	};
+
+	module.exports = ReactComponentEnvironment;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+
+/***/ },
+/* 227 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2013-2015, Facebook, Inc.
 	 *
 	 * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43989,7 +44070,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44024,7 +44105,7 @@
 
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44066,70 +44147,6 @@
 
 	module.exports = getUnboundedScrollPosition;
 
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactComponentEnvironment
-	 */
-
-	'use strict';
-
-	var invariant = __webpack_require__(139);
-
-	var injected = false;
-
-	var ReactComponentEnvironment = {
-
-	  /**
-	   * Optionally injectable environment dependent cleanup hook. (server vs.
-	   * browser etc). Example: A browser system caches DOM nodes based on component
-	   * ID and must remove that cache entry when this instance is unmounted.
-	   */
-	  unmountIDFromEnvironment: null,
-
-	  /**
-	   * Optionally injectable hook for swapping out mount images in the middle of
-	   * the tree.
-	   */
-	  replaceNodeWithMarkupByID: null,
-
-	  /**
-	   * Optionally injectable hook for processing a queue of child updates. Will
-	   * later move into MultiChildComponents.
-	   */
-	  processChildrenUpdates: null,
-
-	  injection: {
-	    injectEnvironment: function(environment) {
-	      ("production" !== process.env.NODE_ENV ? invariant(
-	        !injected,
-	        'ReactCompositeComponent: injectEnvironment() can only be called once.'
-	      ) : invariant(!injected));
-	      ReactComponentEnvironment.unmountIDFromEnvironment =
-	        environment.unmountIDFromEnvironment;
-	      ReactComponentEnvironment.replaceNodeWithMarkupByID =
-	        environment.replaceNodeWithMarkupByID;
-	      ReactComponentEnvironment.processChildrenUpdates =
-	        environment.processChildrenUpdates;
-	      injected = true;
-	    }
-	  }
-
-	};
-
-	module.exports = ReactComponentEnvironment;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
 /* 230 */
@@ -44661,7 +44678,7 @@
 
 	var SyntheticEvent = __webpack_require__(212);
 
-	var getEventTarget = __webpack_require__(227);
+	var getEventTarget = __webpack_require__(228);
 
 	/**
 	 * @interface UIEvent
@@ -46118,47 +46135,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule getTextContentAccessor
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(43);
-
-	var contentKey = null;
-
-	/**
-	 * Gets the key used to access text content on a DOM node.
-	 *
-	 * @return {?string} Key used to access text content.
-	 * @internal
-	 */
-	function getTextContentAccessor() {
-	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
-	    // Prefer textContent to innerText because many browsers support both but
-	    // SVG <text> elements don't support innerText even when <div> does.
-	    contentKey = 'textContent' in document.documentElement ?
-	      'textContent' :
-	      'innerText';
-	  }
-	  return contentKey;
-	}
-
-	module.exports = getTextContentAccessor;
-
-
-/***/ },
-/* 259 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
@@ -46185,7 +46161,7 @@
 
 
 /***/ },
-/* 260 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46313,6 +46289,47 @@
 	};
 
 	module.exports = ReactChildReconciler;
+
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getTextContentAccessor
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(43);
+
+	var contentKey = null;
+
+	/**
+	 * Gets the key used to access text content on a DOM node.
+	 *
+	 * @return {?string} Key used to access text content.
+	 * @internal
+	 */
+	function getTextContentAccessor() {
+	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
+	    // Prefer textContent to innerText because many browsers support both but
+	    // SVG <text> elements don't support innerText even when <div> does.
+	    contentKey = 'textContent' in document.documentElement ?
+	      'textContent' :
+	      'innerText';
+	  }
+	  return contentKey;
+	}
+
+	module.exports = getTextContentAccessor;
 
 
 /***/ },
@@ -46655,7 +46672,7 @@
 	var ExecutionEnvironment = __webpack_require__(43);
 
 	var getNodeForCharacterOffset = __webpack_require__(272);
-	var getTextContentAccessor = __webpack_require__(258);
+	var getTextContentAccessor = __webpack_require__(260);
 
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`

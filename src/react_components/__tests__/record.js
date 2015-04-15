@@ -17,7 +17,7 @@ describe("Record", function() {
     tags = [ tag1, tag2 ];
     data = {
       id: 123456,
-      date: "2015-01-01T00:00:00Z",
+      date: "2015-01-01T10:00:00Z",
       description: "FOXTEL BILL",
       amount: "-100.00",
       account_number: "012345678910",

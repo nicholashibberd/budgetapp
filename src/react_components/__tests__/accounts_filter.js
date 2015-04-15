@@ -7,7 +7,7 @@ describe("AccountsFilter", function() {
   var React = require('react/addons');
   var AccountsFilter = require('../accounts_filter');
   var TestUtils = React.addons.TestUtils;
-  var aussie1, aussie2, uk;
+  var aussie1, aussie2, uk, accountsFilter;
 
   beforeEach(function() {
     aussie1 = {
@@ -28,9 +28,18 @@ describe("AccountsFilter", function() {
       name: 'UK Account',
       region: 'UK'
     }
+    var australianAccounts = [aussie1, aussie2];
+    var ukAccounts = [uk];
     var accounts = [aussie1, aussie2, uk];
+    var updateCurrentAccounts = jasmine.createSpy();
     accountsFilter = TestUtils.renderIntoDocument(
-      <AccountsFilter accounts={accounts}/>
+      <AccountsFilter
+        australianAccounts={australianAccounts}
+        ukAccounts={ukAccounts}
+        accounts={accounts}
+        currentAccounts={australianAccounts}
+        updateCurrentAccounts={updateCurrentAccounts}
+      />
     );
   });
 
@@ -80,7 +89,6 @@ describe("AccountsFilter", function() {
     });
   });
 
-
   it("renders a link for all UK accounts", function() {
     TestUtils.findRenderedDOMComponentWithClass(
       accountsFilter, 'all-uk-accounts'
@@ -88,12 +96,6 @@ describe("AccountsFilter", function() {
   });
 
   describe("initial state", function() {
-    it("sets currentAccounts to all australian accounts", function() {
-      expect(accountsFilter.state.currentAccounts).toEqual(
-        [aussie1, aussie2]
-      );
-    })
-
     it("displays All Australian Accounts", function() {
       var element = TestUtils.findRenderedDOMComponentWithClass(
         accountsFilter, 'accounts-button-text'
@@ -110,38 +112,24 @@ describe("AccountsFilter", function() {
       link = TestUtils.findRenderedDOMComponentWithTag(
         elements[0], 'a'
       );
-      TestUtils.Simulate.click(link)
+      TestUtils.Simulate.click(link);
     });
 
-    it("sets currentAccounts to just that account", function() {
-      expect(accountsFilter.state.currentAccounts).toEqual([aussie1]);
-    });
-
-    it("displays that account name", function() {
-      var element = TestUtils.findRenderedDOMComponentWithClass(
-        accountsFilter, 'accounts-button-text'
-      );
-      expect(element.getDOMNode().innerHTML).toEqual('Aussie 1');
+    it("calls updateCurrentAccounts with that account", function() {
+      expect(accountsFilter.props.updateCurrentAccounts).toHaveBeenCalledWith([aussie1]);
     })
   });
 
   describe("clicking an 'All' button", function() {
     beforeEach(function() {
       var element = TestUtils.findRenderedDOMComponentWithClass(
-        accountsFilter, 'all-uk-accounts'
+        accountsFilter, 'all-australian-accounts'
       );
       TestUtils.Simulate.click(element);
     });
 
-    it("sets currentAccounts to all those accounts", function() {
-      expect(accountsFilter.state.currentAccounts).toEqual([uk]);
-    })
-
-    it("displays that region group name", function() {
-      var element = TestUtils.findRenderedDOMComponentWithClass(
-        accountsFilter, 'accounts-button-text'
-      );
-      expect(element.getDOMNode().innerHTML).toEqual('All UK Accounts');
+    it("calls updateCurrentAccounts with all accounts in that region", function() {
+      expect(accountsFilter.props.updateCurrentAccounts).toHaveBeenCalledWith([aussie1, aussie2]);
     })
   })
 });

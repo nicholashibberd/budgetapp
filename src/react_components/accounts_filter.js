@@ -4,30 +4,14 @@ var React = require('react/addons');
 var _ = require('underscore');
 
 var AccountsFilter = React.createClass({
-  getInitialState: function() {
-    return {
-      currentAccounts: this.australianAccounts()
-    };
-  },
-
-  australianAccounts: function() {
-    return this._filterAccounts('Australia');
-  },
-
-  ukAccounts: function() {
-    return this._filterAccounts('UK');
-  },
-
   selectAccount: function(id) {
     var account = this._findAccount(id);
-    this.setState({
-      currentAccounts: [account]
-    });
+    this.props.updateCurrentAccounts([account]);
   },
 
   selectAll: function(region) {
-    var currentAccounts = (region == 'Australia') ? this.australianAccounts() : this.ukAccounts();
-    this.setState({ currentAccounts: currentAccounts });
+    var currentAccounts = (region == 'Australia') ? this.props.australianAccounts : this.props.ukAccounts;
+    this.props.updateCurrentAccounts(currentAccounts);
   },
 
   displayText: function() {
@@ -36,20 +20,20 @@ var AccountsFilter = React.createClass({
     } else if (this._allUKAccountsSelected()) {
       return 'All UK Accounts';
     } else {
-      var account = this.state.currentAccounts[0];
+      var account = this.props.currentAccounts[0];
       return account.name;
     }
   },
 
   _allAustralianAccountsSelected: function() {
     return _.isEqual(
-      this.state.currentAccounts, this.australianAccounts()
+      this.props.currentAccounts, this.props.australianAccounts
     );
   },
 
   _allUKAccountsSelected: function() {
     return _.isEqual(
-      this.state.currentAccounts, this.ukAccounts()
+      this.props.currentAccounts, this.props.ukAccounts
     );
   },
 
@@ -59,22 +43,22 @@ var AccountsFilter = React.createClass({
     })
   },
 
-  _filterAccounts: function(region) {
-    return _.filter(this.props.accounts, function(account) {
-      return account.region == region;
-    });
-  },
+  // _filterAccounts: function(region) {
+  //   return _.filter(this.props.accounts, function(account) {
+  //     return account.region == region;
+  //   });
+  // },
 
   render: function() {
     var _this = this;
     return (
       <div className="dropdown accounts-filter">
-        <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+        <button className="btn btn-default btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           <span className="accounts-button-text">{this.displayText()}</span>
           <span className="caret"></span>
         </button>
         <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-          {this.australianAccounts().map(function(account, index) {
+          {this.props.australianAccounts.map(function(account, index) {
             return <li role="presentation" className="australian-account" key={index}>
               <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
@@ -85,7 +69,7 @@ var AccountsFilter = React.createClass({
             </a>
           </li>
           <li role="presentation" className="divider"></li>
-          {this.ukAccounts().map(function(account, index) {
+          {this.props.ukAccounts.map(function(account, index) {
             return <li role="presentation" className="uk-account" key={index}>
               <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>

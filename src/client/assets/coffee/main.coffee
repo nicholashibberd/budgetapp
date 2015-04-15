@@ -30,6 +30,7 @@ $ ->
 
   React.render(
     React.createElement(App, {
+      accounts: window.accountsJSON,
       budgetLines: window.budgetLinesJSON,
       records: window.recordsJSON,
       tags: window.tagsJSON,
