@@ -1,8 +1,5 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../date_picker');
-jest.dontMock('moment');
-
 describe("DatePicker", function() {
   var React = require('react/addons');
   var DatePicker = require('../date_picker');

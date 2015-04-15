@@ -1,7 +1,5 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../budget_line')
-
 describe("BudgetLine", function() {
   var React = require('react/addons');
   var BudgetLine = require('../budget_line');

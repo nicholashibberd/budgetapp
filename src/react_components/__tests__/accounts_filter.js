@@ -1,8 +1,5 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../accounts_filter');
-jest.dontMock('underscore');
-
 describe("AccountsFilter", function() {
   var React = require('react/addons');
   var AccountsFilter = require('../accounts_filter');

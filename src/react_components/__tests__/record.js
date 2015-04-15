@@ -1,9 +1,5 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../record');
-jest.dontMock('moment');
-jest.dontMock('underscore');
-
 describe("Record", function() {
   var React = require('react/addons');
   var TestUtils = React.addons.TestUtils;

@@ -5,6 +5,7 @@ var RecordList = require('./record_list');
 var AccountsFilter = require('./accounts_filter');
 var Budget = require('./budget');
 var _ = require('underscore');
+var $ = require('jquery');
 
 var App = React.createClass({
   getInitialState: function() {
@@ -23,12 +24,49 @@ var App = React.createClass({
   },
 
   updateCurrentAccounts: function(accounts) {
-    this.setState({ currentAccounts: accounts });
+    var records = this._filterRecords(accounts);
+    this.setState({
+      currentAccounts: accounts,
+      records: records
+    });
+  },
+
+  updateRecord: function(recordIndex, tagName) {
+    var records = this.state.records.slice();
+    var record = records[recordIndex];
+    var tagIds;
+
+    if (tagName !== undefined) {
+      var tag = _.find(this.props.tags, function(tag) {
+        return tag.Name == tagName
+      })
+      tagIds = [tag.id]
+    } else {
+      tagIds = [];
+    }
+    record.tag_ids = tagIds;
+
+    this.setState({records: records});
+    $.ajax({
+      url: '/records/' + record.id,
+      method: 'POST',
+      data: JSON.stringify(record),
+      contentType: 'application/json'
+    })
   },
 
   _filterAccounts: function(region) {
     return _.filter(this.props.accounts, function(account) {
       return account.region == region;
+    });
+  },
+
+  _filterRecords: function(accounts) {
+    var accountIds = _.map(accounts, function(account) {
+      return account.accountNumber;
+    });
+    return _.filter(this.props.records, function(record) {
+      return _.contains(accountIds, record.account_number);
     });
   },
 
@@ -49,7 +87,11 @@ var App = React.createClass({
             start_date={this.props.start_date}
             end_date={this.props.end_date}
           />
-          <RecordList records={this.state.records} tags={this.props.tags} />
+          <RecordList
+            records={this.state.records}
+            tags={this.props.tags}
+            updateRecord={this.updateRecord}
+          />
         </div>
       );
     } else {

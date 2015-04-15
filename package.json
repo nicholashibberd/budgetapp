@@ -33,6 +33,12 @@
   },
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
-    "unmockedModulePathPatterns": ["<rootDir>/node_modules/react"]
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/react",
+      "<rootDir>/node_modules/moment",
+      "<rootDir>/node_modules/underscore",
+      "<rootDir>/node_modules/jquery",
+      "<rootDir>/src/react_components"
+    ]
   }
 }

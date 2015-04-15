@@ -1,9 +1,5 @@
 /** @jsx React.DOM */
 
-jest.dontMock('../budget')
-jest.dontMock('../budget_line')
-jest.dontMock('underscore')
-
 describe("Budget", function() {
   var React = require('react/addons');
   var TestUtils = React.addons.TestUtils;
