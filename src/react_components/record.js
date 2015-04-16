@@ -89,6 +89,7 @@ var Record = React.createClass({
 
     return (
       <tr className="record">
+        <td>{data.account_name}</td>
         <td>{this.displayDate()}</td>
         <td>{data.description}</td>
         <td>{data.amount}</td>

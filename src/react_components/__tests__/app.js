@@ -70,6 +70,10 @@ describe("AccountsFilter", function() {
   });
 
   describe("initial state", function() {
+    it("sets the account name on each record", function() {
+      expect(app.state.records[0].account_name).toEqual('Aussie 1');
+    });
+
     it("sets currentAccounts to all australian accounts", function() {
       expect(app.state.currentAccounts).toEqual([aussie1, aussie2]
       );
@@ -119,7 +123,8 @@ describe("AccountsFilter", function() {
           description: "FOXTEL BILL",
           amount: "-100.00",
           account_number: "aussie_account_number1",
-          tag_ids: [12345]
+          tag_ids: [12345],
+          account_name: "Aussie 1",
         }),
         contentType: 'application/json'
       });

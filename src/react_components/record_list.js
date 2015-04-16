@@ -6,30 +6,6 @@ var _ = require('underscore');
 var $ = require('jquery');
 
 var RecordList = React.createClass({
-  // updateRecord: function(recordIndex, tagName) {
-  //   var records = this.state.records.slice();
-  //   var record = records[recordIndex];
-  //   var tagIds;
-
-  //   if (tagName !== undefined) {
-  //     var tag = _.find(this.props.tags, function(tag) {
-  //       return tag.Name == tagName
-  //     })
-  //     tagIds = [tag.id]
-  //   } else {
-  //     tagIds = [];
-  //   }
-  //   record.tag_ids = tagIds;
-
-  //   this.setState({records: records});
-  //   $.ajax({
-  //     url: '/records/' + record.id,
-  //     method: 'POST',
-  //     data: JSON.stringify(record),
-  //     contentType: 'application/json'
-  //   })
-  // },
-
   render: function() {
     var _this = this;
     return (
@@ -37,20 +13,23 @@ var RecordList = React.createClass({
         <table className="recordList table table-striped">
           <thead>
             <tr>
+              <th>Account</th>
               <th>Date</th>
               <th>Description</th>
               <th>Amount</th>
               <th></th>
             </tr>
           </thead>
-          {this.props.records.map(function(record, index) {
-            return <Record
-              data={record}
-              tags={_this.props.tags}
-              key={index}
-              updateRecord={_this.props.updateRecord.bind(null, index)}
-            />
-          })}
+          <tbody>
+            {this.props.records.map(function(record, index) {
+              return <Record
+                data={record}
+                tags={_this.props.tags}
+                key={index}
+                updateRecord={_this.props.updateRecord.bind(null, index)}
+              />
+            })}
+          </tbody>
         </table>
       </div>
     );

@@ -17,6 +17,7 @@ describe("Record", function() {
       description: "FOXTEL BILL",
       amount: "-100.00",
       account_number: "012345678910",
+      account_name: "Test Account Name",
       tag_ids: [12345, 98765]
     };
     updateRecord = jasmine.createSpy('updateRecord');
@@ -29,6 +30,7 @@ describe("Record", function() {
   });
 
   it("displays each value", function() {
+    expect(element.getDOMNode().innerHTML).toContain('Test Account Name');
     expect(element.getDOMNode().innerHTML).toContain('Thu 1st Jan');
     expect(element.getDOMNode().innerHTML).toContain('FOXTEL BILL');
     expect(element.getDOMNode().innerHTML).toContain('-100.00');

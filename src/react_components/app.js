@@ -9,6 +9,10 @@ var $ = require('jquery');
 
 var App = React.createClass({
   getInitialState: function() {
+    var _this = this;
+    _.each(this.props.records, function(record) {
+      record.account_name = _this._getAccountName(record.account_number);
+    });
     return {
       records: this.props.records,
       currentAccounts: this.australianAccounts()
@@ -68,6 +72,13 @@ var App = React.createClass({
     return _.filter(this.props.records, function(record) {
       return _.contains(accountIds, record.account_number);
     });
+  },
+
+  _getAccountName: function(accountNumber) {
+    var account = _.find(this.props.accounts, function(account) {
+      return account.accountNumber == accountNumber;
+    });
+    return account.name;
   },
 
   render: function() {
