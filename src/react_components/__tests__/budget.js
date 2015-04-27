@@ -65,7 +65,7 @@ describe("Budget", function() {
       var amountDisplay = TestUtils.findRenderedDOMComponentWithClass(
         budget, 'budgetTotal'
       );
-      expect(amountDisplay.getDOMNode().textContent).toEqual('£300')
+      expect(amountDisplay.getDOMNode().textContent).toEqual('$300')
     });
   })
 

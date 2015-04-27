@@ -217,17 +217,30 @@
 	  render: function() {
 	    var _this = this;
 	    return (
-	      React.createElement("div", {className: "budgetLineList"}, 
+	      React.createElement("div", null, 
 	        React.createElement("div", null, 
-	          React.createElement("span", {className: "budgetTotal"}, "£", this.state.amount)
+	          React.createElement("div", {className: "summary-total"}, 
+	            "Budget: ", React.createElement("strong", {className: "budgetTotal"}, "$", this.state.amount)
+	          ), 
+	          React.createElement("div", {className: "summary-total"}, 
+	            "Money In: ", React.createElement("strong", null, "$", this.props.moneyIn)
+	          ), 
+	          React.createElement("div", {className: "summary-total"}, 
+	            "Money Out: ", React.createElement("strong", null, "$", this.props.moneyOut)
+	          ), 
+	          React.createElement("div", {className: "summary-total"}, 
+	            "Balance: ", React.createElement("strong", null, "$", this.props.balance)
+	          )
 	        ), 
-	        this.state.budgetLines.map(function(budgetLine) {
-	          return React.createElement(BudgetLine, {data: budgetLine, key: budgetLine.tag_id, updateAmount: _this.updateAmount})
-	        }), 
-	        React.createElement("div", {className: "row"}, 
-	          React.createElement("div", {className: "col-md-3 col-sm-4 col-xs-7"}, 
-	            React.createElement("div", {className: "submitButtonCell"}, 
-	              React.createElement("input", {onClick: this.submit, className: "btn btn-success submitButton", type: "submit", value: "Submit"})
+	        React.createElement("div", {className: "budgetLineList"}, 
+	          this.state.budgetLines.map(function(budgetLine) {
+	            return React.createElement(BudgetLine, {data: budgetLine, key: budgetLine.tag_id, updateAmount: _this.updateAmount})
+	          }), 
+	          React.createElement("div", {className: "row"}, 
+	            React.createElement("div", {className: "col-md-3 col-sm-4 col-xs-7"}, 
+	              React.createElement("div", {className: "submitButtonCell"}, 
+	                React.createElement("input", {onClick: this.submit, className: "btn btn-success submitButton", type: "submit", value: "Submit"})
+	              )
 	            )
 	          )
 	        )
@@ -457,7 +470,7 @@
 	    });
 	    return {
 	      records: this.props.records,
-	      currentAccounts: this.australianAccounts()
+	      currentAccounts: this.australianAccounts(),
 	    }
 	  },
 
@@ -467,6 +480,42 @@
 
 	  ukAccounts: function() {
 	    return this._filterAccounts('UK');
+	  },
+
+	  tagsSummary: function() {
+	    var tags = {};
+	    _.each(this.state.records, function(record) {
+	      _.each(record.tag_ids, function(tag_id) {
+	        var amount = parseInt(record.amount);
+	        if (tags[tag_id] !== undefined) {
+	          tags[tag_id]['recordTotal'] += amount;
+	        } else {
+	          tags[tag_id] = {
+	            recordTotal: amount,
+	            budgetTotal: 0
+	          };
+	        }
+	      });
+	    });
+	    return tags;
+	  },
+
+	  moneyOut: function() {
+	    return _.reduce(this.tagsSummary(), function(memo, tag) {
+	      var val = (tag.recordTotal < 0) ? tag.recordTotal : 0;
+	      return memo + val;
+	    }, 0);
+	  },
+
+	  moneyIn: function() {
+	    return _.reduce(this.tagsSummary(), function(memo, tag) {
+	      var val = (tag.recordTotal > 0) ? tag.recordTotal : 0;
+	      return memo + val;
+	    }, 0);
+	  },
+
+	  balance: function() {
+	    return this.moneyIn() + this.moneyOut();
 	  },
 
 	  updateCurrentAccounts: function(accounts) {
@@ -540,7 +589,10 @@
 	                budgetLines: this.props.budgetLines, 
 	                tags: this.props.tags, 
 	                start_date: this.props.start_date, 
-	                end_date: this.props.end_date}
+	                end_date: this.props.end_date, 
+	                moneyIn: this.moneyIn(), 
+	                moneyOut: this.moneyOut(), 
+	                balance: this.balance()}
 	              )
 	            )
 	          ), 
@@ -37059,7 +37111,7 @@
 
 	'use strict';
 
-	var EventListener = __webpack_require__(229);
+	var EventListener = __webpack_require__(226);
 	var ExecutionEnvironment = __webpack_require__(43);
 	var PooledClass = __webpack_require__(140);
 	var ReactInstanceHandles = __webpack_require__(34);
@@ -37067,8 +37119,8 @@
 	var ReactUpdates = __webpack_require__(51);
 
 	var assign = __webpack_require__(40);
-	var getEventTarget = __webpack_require__(230);
-	var getUnboundedScrollPosition = __webpack_require__(231);
+	var getEventTarget = __webpack_require__(227);
+	var getUnboundedScrollPosition = __webpack_require__(228);
 
 	/**
 	 * Finds the parent React component of `node`.
@@ -37247,7 +37299,7 @@
 
 	var DOMProperty = __webpack_require__(186);
 	var EventPluginHub = __webpack_require__(209);
-	var ReactComponentEnvironment = __webpack_require__(226);
+	var ReactComponentEnvironment = __webpack_require__(229);
 	var ReactClass = __webpack_require__(26);
 	var ReactEmptyComponent = __webpack_require__(188);
 	var ReactBrowserEventEmitter = __webpack_require__(187);
@@ -37295,8 +37347,8 @@
 	var CallbackQueue = __webpack_require__(204);
 	var PooledClass = __webpack_require__(140);
 	var ReactBrowserEventEmitter = __webpack_require__(187);
-	var ReactInputSelection = __webpack_require__(227);
-	var ReactPutListenerQueue = __webpack_require__(228);
+	var ReactInputSelection = __webpack_require__(230);
+	var ReactPutListenerQueue = __webpack_require__(231);
 	var Transaction = __webpack_require__(205);
 
 	var assign = __webpack_require__(40);
@@ -37473,7 +37525,7 @@
 
 	var EventConstants = __webpack_require__(138);
 	var EventPropagators = __webpack_require__(210);
-	var ReactInputSelection = __webpack_require__(227);
+	var ReactInputSelection = __webpack_require__(230);
 	var SyntheticEvent = __webpack_require__(212);
 
 	var getActiveElement = __webpack_require__(232);
@@ -39684,7 +39736,7 @@
 
 	var PooledClass = __webpack_require__(140);
 	var CallbackQueue = __webpack_require__(204);
-	var ReactPutListenerQueue = __webpack_require__(228);
+	var ReactPutListenerQueue = __webpack_require__(231);
 	var Transaction = __webpack_require__(205);
 
 	var assign = __webpack_require__(40);
@@ -40994,7 +41046,7 @@
 	 * @typechecks
 	 */
 
-	var performance = __webpack_require__(250);
+	var performance = __webpack_require__(252);
 
 	/**
 	 * Detect if we can use `window.performance.now()` and gracefully fallback to
@@ -41030,8 +41082,8 @@
 	var EventPluginRegistry = __webpack_require__(241);
 	var EventPluginUtils = __webpack_require__(23);
 
-	var accumulateInto = __webpack_require__(251);
-	var forEachAccumulated = __webpack_require__(252);
+	var accumulateInto = __webpack_require__(250);
+	var forEachAccumulated = __webpack_require__(251);
 	var invariant = __webpack_require__(139);
 
 	/**
@@ -41311,8 +41363,8 @@
 	var EventConstants = __webpack_require__(138);
 	var EventPluginHub = __webpack_require__(209);
 
-	var accumulateInto = __webpack_require__(251);
-	var forEachAccumulated = __webpack_require__(252);
+	var accumulateInto = __webpack_require__(250);
+	var forEachAccumulated = __webpack_require__(251);
 
 	var PropagationPhases = EventConstants.PropagationPhases;
 	var getListener = EventPluginHub.getListener;
@@ -41453,7 +41505,7 @@
 
 	'use strict';
 
-	var ReactComponentEnvironment = __webpack_require__(226);
+	var ReactComponentEnvironment = __webpack_require__(229);
 	var ReactContext = __webpack_require__(27);
 	var ReactCurrentOwner = __webpack_require__(28);
 	var ReactElement = __webpack_require__(29);
@@ -42351,7 +42403,7 @@
 
 	var assign = __webpack_require__(40);
 	var emptyFunction = __webpack_require__(195);
-	var getEventTarget = __webpack_require__(230);
+	var getEventTarget = __webpack_require__(227);
 
 	/**
 	 * @interface Event
@@ -42734,7 +42786,7 @@
 
 	'use strict';
 
-	var ReactComponentEnvironment = __webpack_require__(226);
+	var ReactComponentEnvironment = __webpack_require__(229);
 	var ReactMultiChildUpdateTypes = __webpack_require__(258);
 
 	var ReactReconciler = __webpack_require__(38);
@@ -43481,7 +43533,7 @@
 	var SyntheticUIEvent = __webpack_require__(238);
 	var ViewportMetrics = __webpack_require__(243);
 
-	var getEventModifierState = __webpack_require__(261);
+	var getEventModifierState = __webpack_require__(262);
 
 	/**
 	 * @interface MouseEvent
@@ -43563,7 +43615,7 @@
 
 	'use strict';
 
-	var focusNode = __webpack_require__(262);
+	var focusNode = __webpack_require__(261);
 
 	var AutoFocusMixin = {
 	  componentDidMount: function() {
@@ -43595,8 +43647,8 @@
 
 	var ReactBrowserEventEmitter = __webpack_require__(187);
 
-	var accumulateInto = __webpack_require__(251);
-	var forEachAccumulated = __webpack_require__(252);
+	var accumulateInto = __webpack_require__(250);
+	var forEachAccumulated = __webpack_require__(251);
 	var invariant = __webpack_require__(139);
 
 	function remove(event) {
@@ -43941,6 +43993,178 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 * http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 *
+	 * @providesModule EventListener
+	 * @typechecks
+	 */
+
+	var emptyFunction = __webpack_require__(195);
+
+	/**
+	 * Upstream version of event listener. Does not take into account specific
+	 * nature of platform.
+	 */
+	var EventListener = {
+	  /**
+	   * Listen to DOM events during the bubble phase.
+	   *
+	   * @param {DOMEventTarget} target DOM element to register listener on.
+	   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+	   * @param {function} callback Callback function.
+	   * @return {object} Object with a `remove` method.
+	   */
+	  listen: function(target, eventType, callback) {
+	    if (target.addEventListener) {
+	      target.addEventListener(eventType, callback, false);
+	      return {
+	        remove: function() {
+	          target.removeEventListener(eventType, callback, false);
+	        }
+	      };
+	    } else if (target.attachEvent) {
+	      target.attachEvent('on' + eventType, callback);
+	      return {
+	        remove: function() {
+	          target.detachEvent('on' + eventType, callback);
+	        }
+	      };
+	    }
+	  },
+
+	  /**
+	   * Listen to DOM events during the capture phase.
+	   *
+	   * @param {DOMEventTarget} target DOM element to register listener on.
+	   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
+	   * @param {function} callback Callback function.
+	   * @return {object} Object with a `remove` method.
+	   */
+	  capture: function(target, eventType, callback) {
+	    if (!target.addEventListener) {
+	      if ("production" !== process.env.NODE_ENV) {
+	        console.error(
+	          'Attempted to listen to events during the capture phase on a ' +
+	          'browser that does not support the capture phase. Your application ' +
+	          'will not receive some events.'
+	        );
+	      }
+	      return {
+	        remove: emptyFunction
+	      };
+	    } else {
+	      target.addEventListener(eventType, callback, true);
+	      return {
+	        remove: function() {
+	          target.removeEventListener(eventType, callback, true);
+	        }
+	      };
+	    }
+	  },
+
+	  registerDefault: function() {}
+	};
+
+	module.exports = EventListener;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
+
+/***/ },
+/* 227 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getEventTarget
+	 * @typechecks static-only
+	 */
+
+	'use strict';
+
+	/**
+	 * Gets the target node from a native browser event by accounting for
+	 * inconsistencies in browser DOM APIs.
+	 *
+	 * @param {object} nativeEvent Native browser event.
+	 * @return {DOMEventTarget} Target node.
+	 */
+	function getEventTarget(nativeEvent) {
+	  var target = nativeEvent.target || nativeEvent.srcElement || window;
+	  // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
+	  // @see http://www.quirksmode.org/js/events_properties.html
+	  return target.nodeType === 3 ? target.parentNode : target;
+	}
+
+	module.exports = getEventTarget;
+
+
+/***/ },
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getUnboundedScrollPosition
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	/**
+	 * Gets the scroll position of the supplied element or window.
+	 *
+	 * The return values are unbounded, unlike `getScrollPosition`. This means they
+	 * may be negative or exceed the element boundaries (which is possible using
+	 * inertial scrolling).
+	 *
+	 * @param {DOMWindow|DOMElement} scrollable
+	 * @return {object} Map with `x` and `y` keys.
+	 */
+	function getUnboundedScrollPosition(scrollable) {
+	  if (scrollable === window) {
+	    return {
+	      x: window.pageXOffset || document.documentElement.scrollLeft,
+	      y: window.pageYOffset || document.documentElement.scrollTop
+	    };
+	  }
+	  return {
+	    x: scrollable.scrollLeft,
+	    y: scrollable.scrollTop
+	  };
+	}
+
+	module.exports = getUnboundedScrollPosition;
+
+
+/***/ },
+/* 229 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2014-2015, Facebook, Inc.
 	 * All rights reserved.
 	 *
@@ -44001,7 +44225,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 227 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44020,7 +44244,7 @@
 	var ReactDOMSelection = __webpack_require__(265);
 
 	var containsNode = __webpack_require__(190);
-	var focusNode = __webpack_require__(262);
+	var focusNode = __webpack_require__(261);
 	var getActiveElement = __webpack_require__(232);
 
 	function isInDocument(node) {
@@ -44140,7 +44364,7 @@
 
 
 /***/ },
-/* 228 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44197,178 +44421,6 @@
 	PooledClass.addPoolingTo(ReactPutListenerQueue);
 
 	module.exports = ReactPutListenerQueue;
-
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 * http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 *
-	 * @providesModule EventListener
-	 * @typechecks
-	 */
-
-	var emptyFunction = __webpack_require__(195);
-
-	/**
-	 * Upstream version of event listener. Does not take into account specific
-	 * nature of platform.
-	 */
-	var EventListener = {
-	  /**
-	   * Listen to DOM events during the bubble phase.
-	   *
-	   * @param {DOMEventTarget} target DOM element to register listener on.
-	   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-	   * @param {function} callback Callback function.
-	   * @return {object} Object with a `remove` method.
-	   */
-	  listen: function(target, eventType, callback) {
-	    if (target.addEventListener) {
-	      target.addEventListener(eventType, callback, false);
-	      return {
-	        remove: function() {
-	          target.removeEventListener(eventType, callback, false);
-	        }
-	      };
-	    } else if (target.attachEvent) {
-	      target.attachEvent('on' + eventType, callback);
-	      return {
-	        remove: function() {
-	          target.detachEvent('on' + eventType, callback);
-	        }
-	      };
-	    }
-	  },
-
-	  /**
-	   * Listen to DOM events during the capture phase.
-	   *
-	   * @param {DOMEventTarget} target DOM element to register listener on.
-	   * @param {string} eventType Event type, e.g. 'click' or 'mouseover'.
-	   * @param {function} callback Callback function.
-	   * @return {object} Object with a `remove` method.
-	   */
-	  capture: function(target, eventType, callback) {
-	    if (!target.addEventListener) {
-	      if ("production" !== process.env.NODE_ENV) {
-	        console.error(
-	          'Attempted to listen to events during the capture phase on a ' +
-	          'browser that does not support the capture phase. Your application ' +
-	          'will not receive some events.'
-	        );
-	      }
-	      return {
-	        remove: emptyFunction
-	      };
-	    } else {
-	      target.addEventListener(eventType, callback, true);
-	      return {
-	        remove: function() {
-	          target.removeEventListener(eventType, callback, true);
-	        }
-	      };
-	    }
-	  },
-
-	  registerDefault: function() {}
-	};
-
-	module.exports = EventListener;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
-
-/***/ },
-/* 230 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getEventTarget
-	 * @typechecks static-only
-	 */
-
-	'use strict';
-
-	/**
-	 * Gets the target node from a native browser event by accounting for
-	 * inconsistencies in browser DOM APIs.
-	 *
-	 * @param {object} nativeEvent Native browser event.
-	 * @return {DOMEventTarget} Target node.
-	 */
-	function getEventTarget(nativeEvent) {
-	  var target = nativeEvent.target || nativeEvent.srcElement || window;
-	  // Safari may fire events on text nodes (Node.TEXT_NODE is 3).
-	  // @see http://www.quirksmode.org/js/events_properties.html
-	  return target.nodeType === 3 ? target.parentNode : target;
-	}
-
-	module.exports = getEventTarget;
-
-
-/***/ },
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getUnboundedScrollPosition
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	/**
-	 * Gets the scroll position of the supplied element or window.
-	 *
-	 * The return values are unbounded, unlike `getScrollPosition`. This means they
-	 * may be negative or exceed the element boundaries (which is possible using
-	 * inertial scrolling).
-	 *
-	 * @param {DOMWindow|DOMElement} scrollable
-	 * @return {object} Map with `x` and `y` keys.
-	 */
-	function getUnboundedScrollPosition(scrollable) {
-	  if (scrollable === window) {
-	    return {
-	      x: window.pageXOffset || document.documentElement.scrollLeft,
-	      y: window.pageYOffset || document.documentElement.scrollTop
-	    };
-	  }
-	  return {
-	    x: scrollable.scrollLeft,
-	    y: scrollable.scrollTop
-	  };
-	}
-
-	module.exports = getUnboundedScrollPosition;
 
 
 /***/ },
@@ -44518,7 +44570,7 @@
 
 	var getEventCharCode = __webpack_require__(240);
 	var getEventKey = __webpack_require__(266);
-	var getEventModifierState = __webpack_require__(261);
+	var getEventModifierState = __webpack_require__(262);
 
 	/**
 	 * @interface KeyboardEvent
@@ -44650,7 +44702,7 @@
 
 	var SyntheticUIEvent = __webpack_require__(238);
 
-	var getEventModifierState = __webpack_require__(261);
+	var getEventModifierState = __webpack_require__(262);
 
 	/**
 	 * @interface TouchEvent
@@ -44702,7 +44754,7 @@
 
 	var SyntheticEvent = __webpack_require__(212);
 
-	var getEventTarget = __webpack_require__(230);
+	var getEventTarget = __webpack_require__(227);
 
 	/**
 	 * @interface UIEvent
@@ -45700,38 +45752,6 @@
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule performance
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ExecutionEnvironment = __webpack_require__(43);
-
-	var performance;
-
-	if (ExecutionEnvironment.canUseDOM) {
-	  performance =
-	    window.performance ||
-	    window.msPerformance ||
-	    window.webkitPerformance;
-	}
-
-	module.exports = performance || {};
-
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2014-2015, Facebook, Inc.
 	 * All rights reserved.
@@ -45798,7 +45818,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(45)))
 
 /***/ },
-/* 252 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45830,6 +45850,38 @@
 	};
 
 	module.exports = forEachAccumulated;
+
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule performance
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ExecutionEnvironment = __webpack_require__(43);
+
+	var performance;
+
+	if (ExecutionEnvironment.canUseDOM) {
+	  performance =
+	    window.performance ||
+	    window.msPerformance ||
+	    window.webkitPerformance;
+	}
+
+	module.exports = performance || {};
 
 
 /***/ },
@@ -46361,6 +46413,39 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule focusNode
+	 */
+
+	"use strict";
+
+	/**
+	 * @param {DOMElement} node input/textarea to focus
+	 */
+	function focusNode(node) {
+	  // IE8 can throw "Can't move focus to the control because it is invisible,
+	  // not enabled, or of a type that does not accept the focus." for all kinds of
+	  // reasons that are too expensive and fragile to test.
+	  try {
+	    node.focus();
+	  } catch(e) {
+	  }
+	}
+
+	module.exports = focusNode;
+
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * Copyright 2013-2015, Facebook, Inc.
 	 * All rights reserved.
 	 *
@@ -46405,39 +46490,6 @@
 	}
 
 	module.exports = getEventModifierState;
-
-
-/***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule focusNode
-	 */
-
-	"use strict";
-
-	/**
-	 * @param {DOMElement} node input/textarea to focus
-	 */
-	function focusNode(node) {
-	  // IE8 can throw "Can't move focus to the control because it is invisible,
-	  // not enabled, or of a type that does not accept the focus." for all kinds of
-	  // reasons that are too expensive and fragile to test.
-	  try {
-	    node.focus();
-	  } catch(e) {
-	  }
-	}
-
-	module.exports = focusNode;
 
 
 /***/ },

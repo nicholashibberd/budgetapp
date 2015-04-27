@@ -121,10 +121,23 @@ td.tag-controls {
   margin: 0;
 }
 
+/** summary row **/
+
+.accounts-filter {
+  float: left;
+  margin-right: 30px;
+}
+
+.summary-total {
+  display: inline-block;
+  margin-right: 20px;
+}
+
 /** budgetLineList **/
 
 .budgetLineList {
   font-size: 14px;
+  margin-top: 20px;
 }
 
 .budgetLineList td {

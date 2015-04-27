@@ -7,7 +7,7 @@ describe("AccountsFilter", function() {
   var Record = require('../record');
   var TestUtils = React.addons.TestUtils;
   var moment = require('moment');
-  var app, aussie1, aussie2, uk, aussie_record1, uk_record1;
+  var app, accounts, aussie1, aussie2, uk, aussie_record1, uk_record1;
 
   beforeEach(function() {
     aussie1 = {
@@ -44,8 +44,8 @@ describe("AccountsFilter", function() {
       account_number: "uk_account_number",
       tag_ids: []
     };
+    accounts = [aussie1, aussie2, uk];
     var tags = [ { id: 12345, Name: 'Bills' } ];
-    var accounts = [aussie1, aussie2, uk];
     var records = [aussie_record1, uk_record1];
     app = TestUtils.renderIntoDocument(
       <App
@@ -130,4 +130,88 @@ describe("AccountsFilter", function() {
       });
     })
   })
+
+  describe("tag summary", function() {
+    beforeEach(function() {
+      record1 = {
+        id: 123456,
+        date: "2015-01-01T10:00:00Z",
+        description: "FOXTEL BILL",
+        amount: "-100.00",
+        account_number: "aussie_account_number1",
+        tag_ids: [12345]
+      };
+      record2 = {
+        id: 123456,
+        date: "2015-01-01T10:00:00Z",
+        description: "FOXTEL BILL",
+        amount: "-200.00",
+        account_number: "aussie_account_number1",
+        tag_ids: [12345]
+      };
+      record3 = {
+        id: 123456,
+        date: "2015-01-01T10:00:00Z",
+        description: "FOXTEL BILL",
+        amount: "150.00",
+        account_number: "aussie_account_number1",
+        tag_ids: [54321]
+      };
+      record4 = {
+        id: 123456,
+        date: "2015-01-01T10:00:00Z",
+        description: "FOXTEL BILL",
+        amount: "-75.00",
+        account_number: "aussie_account_number1",
+        tag_ids: [98765]
+      };
+      var tags = [
+        { id: 12345, Name: 'Bills' },
+        { id: 54321, Name: 'Internet' },
+        { id: 98765, Name: 'Cash' }
+      ];
+      var records = [record1, record2, record3, record4];
+      app = TestUtils.renderIntoDocument(
+        <App
+          accounts={accounts}
+          budgetLines={[]}
+          records={records}
+          tags={tags}
+          start_date={moment()}
+          end_date={moment()}
+        />
+      );
+    })
+
+    it("it calculates the balance of each tag", function() {
+      expect(app.tagsSummary()).toEqual(
+        {
+          12345: {
+            recordTotal: -300.00,
+            budgetTotal: 0
+          },
+          54321: {
+            recordTotal: 150.00,
+            budgetTotal: 0
+          },
+          98765: {
+            recordTotal: -75.00,
+            budgetTotal: 0
+          }
+        }
+      );
+    });
+
+    it("it calculates the money out", function() {
+      expect(app.moneyOut()).toEqual(-375);
+    });
+
+    it("it calculates the money in", function() {
+      expect(app.moneyIn()).toEqual(150);
+    });
+
+    it("it calculates the balance", function() {
+      expect(app.balance()).toEqual(-225);
+    });
+  });
 });

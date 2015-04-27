@@ -15,7 +15,7 @@ var App = React.createClass({
     });
     return {
       records: this.props.records,
-      currentAccounts: this.australianAccounts()
+      currentAccounts: this.australianAccounts(),
     }
   },
 
@@ -25,6 +25,42 @@ var App = React.createClass({
 
   ukAccounts: function() {
     return this._filterAccounts('UK');
+  },
+
+  tagsSummary: function() {
+    var tags = {};
+    _.each(this.state.records, function(record) {
+      _.each(record.tag_ids, function(tag_id) {
+        var amount = parseInt(record.amount);
+        if (tags[tag_id] !== undefined) {
+          tags[tag_id]['recordTotal'] += amount;
+        } else {
+          tags[tag_id] = {
+            recordTotal: amount,
+            budgetTotal: 0
+          };
+        }
+      });
+    });
+    return tags;
+  },
+
+  moneyOut: function() {
+    return _.reduce(this.tagsSummary(), function(memo, tag) {
+      var val = (tag.recordTotal < 0) ? tag.recordTotal : 0;
+      return memo + val;
+    }, 0);
+  },
+
+  moneyIn: function() {
+    return _.reduce(this.tagsSummary(), function(memo, tag) {
+      var val = (tag.recordTotal > 0) ? tag.recordTotal : 0;
+      return memo + val;
+    }, 0);
+  },
+
+  balance: function() {
+    return this.moneyIn() + this.moneyOut();
   },
 
   updateCurrentAccounts: function(accounts) {
@@ -99,6 +135,9 @@ var App = React.createClass({
                 tags={this.props.tags}
                 start_date={this.props.start_date}
                 end_date={this.props.end_date}
+                moneyIn={this.moneyIn()}
+                moneyOut={this.moneyOut()}
+                balance={this.balance()}
               />
             </div>
           </div>
