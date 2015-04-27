@@ -16,10 +16,20 @@ var BudgetLine = React.createClass({
   render: function() {
     var data = this.props.data;
     return (
-      <tr className="budgetLine">
-        <td>{data.tagName}</td>
-        <td><input onChange={this.handleChange} value={data.amount}/></td>
-      </tr>
+      <div className="budgetLine row">
+        <div className="col-md-3 col-sm-4 col-xs-7">
+          <div className="input-group input-group budgetLine-budget-input">
+            <span className="input-group-addon" id="sizing-addon1">£</span>
+            <input className="form-control" onChange={this.handleChange} value={data.amount}/>
+          </div>
+          <div className="budgetLine-tag-name">{data.tagName}</div>
+        </div>
+        <div className="budgetLine-summary-bar col-md-9 col-sm-8 col-xs-5">
+          <div className="negative-summary-bar" style={{width: '100%'}}>
+            <div className="tag-summary-bar" style={{width: '40%'}}></div>
+          </div>
+        </div>
+      </div>
     );
   },
 });

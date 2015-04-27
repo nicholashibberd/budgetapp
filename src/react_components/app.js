@@ -85,24 +85,30 @@ var App = React.createClass({
     if (this.props.start_date && this.props.end_date) {
       return (
         <div>
-          <AccountsFilter
-            accounts={this.props.accounts}
-            australianAccounts={this.australianAccounts()}
-            ukAccounts={this.ukAccounts()}
-            currentAccounts={this.state.currentAccounts}
-            updateCurrentAccounts={this.updateCurrentAccounts}
-          />
-          <Budget
-            budgetLines={this.props.budgetLines}
-            tags={this.props.tags}
-            start_date={this.props.start_date}
-            end_date={this.props.end_date}
-          />
-          <RecordList
-            records={this.state.records}
-            tags={this.props.tags}
-            updateRecord={this.updateRecord}
-          />
+          <div className="jumbotron">
+            <div className="container">
+              <AccountsFilter
+                accounts={this.props.accounts}
+                australianAccounts={this.australianAccounts()}
+                ukAccounts={this.ukAccounts()}
+                currentAccounts={this.state.currentAccounts}
+                updateCurrentAccounts={this.updateCurrentAccounts}
+              />
+              <Budget
+                budgetLines={this.props.budgetLines}
+                tags={this.props.tags}
+                start_date={this.props.start_date}
+                end_date={this.props.end_date}
+              />
+            </div>
+          </div>
+          <div className="container">
+            <RecordList
+              records={this.state.records}
+              tags={this.props.tags}
+              updateRecord={this.updateRecord}
+            />
+          </div>
         </div>
       );
     } else {

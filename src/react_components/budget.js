@@ -81,20 +81,19 @@ var Budget = React.createClass({
   render: function() {
     var _this = this;
     return (
-      <div>
-        <table className="budgetLineList table table-striped">
-          <thead>
-            <tr>
-              <th>Total</th>
-              <th className="budgetTotal">£{this.state.amount}</th>
-            </tr>
-          </thead>
-          {this.state.budgetLines.map(function(budgetLine) {
-            return <BudgetLine data={budgetLine} key={budgetLine.tag_id} updateAmount={_this.updateAmount}/>
-          })}
-        </table>
+      <div className="budgetLineList">
         <div>
-          <input onClick={this.submit} className="btn btn-success submitButton" type="submit" value="Submit" />
+          <span className="budgetTotal">£{this.state.amount}</span>
+        </div>
+        {this.state.budgetLines.map(function(budgetLine) {
+          return <BudgetLine data={budgetLine} key={budgetLine.tag_id} updateAmount={_this.updateAmount}/>
+        })}
+        <div className="row">
+          <div className="col-md-3 col-sm-4 col-xs-7">
+            <div className="submitButtonCell">
+              <input onClick={this.submit} className="btn btn-success submitButton" type="submit" value="Submit" />
+            </div>
+          </div>
         </div>
       </div>
     );

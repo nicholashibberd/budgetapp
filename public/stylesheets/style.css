@@ -1,6 +1,5 @@
 header {
   background: #333;
-  margin-bottom: 20px;
 }
 
 a.navbar-brand {
@@ -122,3 +121,39 @@ td.tag-controls {
   margin: 0;
 }
 
+/** budgetLineList **/
+
+.budgetLineList {
+  font-size: 14px;
+}
+
+.budgetLineList td {
+  padding-right: 10px;
+}
+
+.submitButtonCell {
+  text-align: right;
+  padding-top: 10px;
+}
+
+.budgetLine input {
+  width: 50px;
+}
+
+.budgetLine-summary-bar {
+  padding-top: 7px;
+}
+
+.negative-summary-bar {
+  background: red;
+}
+
+.tag-summary-bar {
+  height: 20px;
+  background: green;
+}
+
+.budgetLine-budget-input {
+  float: right;
+  width: 100px;
+}
