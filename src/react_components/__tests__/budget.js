@@ -14,6 +14,11 @@ describe("Budget", function() {
       { Name: "Tag2", id: 2 },
       { Name: "Tag3", id: 3 },
     ]
+    var tagsSummary = {
+      1: { recordTotal: -100 },
+      2: { recordTotal: -200 },
+      3: { recordTotal: -300 }
+    }
     budgetLines = [
       { tag_id: 1, amount: 100, id: 123 },
       { tag_id: 2, amount: 200, id: 456 },
@@ -26,6 +31,7 @@ describe("Budget", function() {
         budgetLines={budgetLines}
         start_date={start_date}
         end_date={end_date}
+        tagsSummary={tagsSummary}
       />
     );
     elements = TestUtils.scryRenderedComponentsWithType(

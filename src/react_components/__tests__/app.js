@@ -168,7 +168,8 @@ describe("AccountsFilter", function() {
       var tags = [
         { id: 12345, Name: 'Bills' },
         { id: 54321, Name: 'Internet' },
-        { id: 98765, Name: 'Cash' }
+        { id: 98765, Name: 'Cash' },
+        { id: 56789, Name: 'Recreation' }
       ];
       var records = [record1, record2, record3, record4];
       app = TestUtils.renderIntoDocument(
@@ -183,7 +184,7 @@ describe("AccountsFilter", function() {
       );
     })
 
-    it("it calculates the balance of each tag", function() {
+    it("calculates the balance of each tag", function() {
       expect(app.tagsSummary()).toEqual(
         {
           12345: {
@@ -196,6 +197,10 @@ describe("AccountsFilter", function() {
           },
           98765: {
             recordTotal: -75.00,
+            budgetTotal: 0
+          },
+          56789: {
+            recordTotal: 0,
             budgetTotal: 0
           }
         }

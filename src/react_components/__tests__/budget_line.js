@@ -4,7 +4,7 @@ describe("BudgetLine", function() {
   var React = require('react/addons');
   var BudgetLine = require('../budget_line');
   var TestUtils = React.addons.TestUtils;
-  var data, budgetLine, element;
+  var data, budgetLine, element, tagsSummary, updateAmount;
 
   beforeEach(function() {
     data = {
@@ -12,9 +12,16 @@ describe("BudgetLine", function() {
       amount: 110,
       tagName: 'Tag1'
     }
+    tagsSummary = {
+      recordTotal: -350,
+    }
     updateAmount = jasmine.createSpy('updateAmount');
     budgetLine = TestUtils.renderIntoDocument(
-      <BudgetLine data={data} updateAmount={updateAmount}/>
+      <BudgetLine
+        data={data}
+        updateAmount={updateAmount}
+        tagsSummary={tagsSummary}
+      />
     );
     element = TestUtils.findRenderedDOMComponentWithClass(
       budgetLine, 'budgetLine'
@@ -26,8 +33,26 @@ describe("BudgetLine", function() {
   });
 
   it("sets the value to the amount", function() {
-    input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
+    var input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
     expect(input.getDOMNode().value).toEqual('110');
+  });
+
+  it("sets the class to negative if the value record total is negative", function() {
+    TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'negative-summary-bar');
+  });
+
+  it("sets the class to positive if the value record total is positive", function() {
+    tagsSummary = {
+      recordTotal: 350,
+    }
+    budgetLine = TestUtils.renderIntoDocument(
+      <BudgetLine
+        data={data}
+        updateAmount={updateAmount}
+        tagsSummary={tagsSummary}
+      />
+    );
+    TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'positive-summary-bar');
   });
 
   describe("inputting text", function() {

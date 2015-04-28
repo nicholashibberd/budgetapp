@@ -42,6 +42,15 @@ var App = React.createClass({
         }
       });
     });
+
+    _.each(this.props.tags, function(tag) {
+      if (tags[tag.id] === undefined) {
+        tags[tag.id] = {
+          recordTotal: 0,
+          budgetTotal: 0
+        };
+      }
+    });
     return tags;
   },
 
@@ -138,6 +147,7 @@ var App = React.createClass({
                 moneyIn={this.moneyIn()}
                 moneyOut={this.moneyOut()}
                 balance={this.balance()}
+                tagsSummary={this.tagsSummary()}
               />
             </div>
           </div>

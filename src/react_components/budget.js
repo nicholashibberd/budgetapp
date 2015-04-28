@@ -98,7 +98,13 @@ var Budget = React.createClass({
         </div>
         <div className="budgetLineList">
           {this.state.budgetLines.map(function(budgetLine) {
-            return <BudgetLine data={budgetLine} key={budgetLine.tag_id} updateAmount={_this.updateAmount}/>
+            var tagsSummary = _this.props.tagsSummary[budgetLine.tag_id];
+            return <BudgetLine
+              data={budgetLine}
+              key={budgetLine.tag_id}
+              updateAmount={_this.updateAmount}
+              tagsSummary={tagsSummary}
+            />
           })}
           <div className="row">
             <div className="col-md-3 col-sm-4 col-xs-7">

@@ -13,6 +13,17 @@ var BudgetLine = React.createClass({
     }
   },
 
+  positiveNegativeStatus: function() {
+    var total = this.props.tagsSummary.recordTotal;
+    if (total > 0) {
+      return 'positive'
+    } else if (total < 0) {
+      return 'negative'
+    } else {
+      return 'zero'
+    }
+  },
+
   render: function() {
     var data = this.props.data;
     return (
@@ -25,7 +36,7 @@ var BudgetLine = React.createClass({
           <div className="budgetLine-tag-name">{data.tagName}</div>
         </div>
         <div className="budgetLine-summary-bar col-md-9 col-sm-8 col-xs-5">
-          <div className="negative-summary-bar" style={{width: '100%'}}>
+          <div className={this.positiveNegativeStatus() + '-summary-bar'} style={{width: '100%'}}>
             <div className="tag-summary-bar" style={{width: '40%'}}></div>
           </div>
         </div>
