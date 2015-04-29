@@ -37,23 +37,55 @@ describe("BudgetLine", function() {
     expect(input.getDOMNode().value).toEqual('110');
   });
 
-  it("sets the class to negative if the value record total is negative", function() {
-    TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'negative-summary-bar');
-  });
+  describe("positive record total", function() {
+    beforeEach(function() {
+      tagsSummary = {
+        recordTotal: 200,
+      }
+      budgetLine = TestUtils.renderIntoDocument(
+        <BudgetLine
+          data={data}
+          updateAmount={updateAmount}
+          tagsSummary={tagsSummary}
+          moneyIn={1000}
+          moneyOut={2000}
+        />
+      );
+    })
 
-  it("sets the class to positive if the value record total is positive", function() {
-    tagsSummary = {
-      recordTotal: 350,
-    }
-    budgetLine = TestUtils.renderIntoDocument(
-      <BudgetLine
-        data={data}
-        updateAmount={updateAmount}
-        tagsSummary={tagsSummary}
-      />
-    );
-    TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'positive-summary-bar');
-  });
+    it("sets the class to positive", function() {
+      TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'positive-summary-bar');
+    });
+
+    it("sets the width to the percentage of the money in", function() {
+      expect(budgetLine.width()).toEqual('20%');
+    })
+  })
+
+  describe("negative record total", function() {
+    beforeEach(function() {
+      tagsSummary = {
+        recordTotal: -200,
+      }
+      budgetLine = TestUtils.renderIntoDocument(
+        <BudgetLine
+          data={data}
+          updateAmount={updateAmount}
+          tagsSummary={tagsSummary}
+          moneyIn={1000}
+          moneyOut={2000}
+        />
+      );
+    })
+
+    it("sets the class to negative", function() {
+      TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'negative-summary-bar');
+    });
+
+    it("sets the width to the percentage of the money out", function() {
+      expect(budgetLine.width()).toEqual('10%');
+    })
+  })
 
   describe("inputting text", function() {
     it("calls the updateAmount callback", function() {

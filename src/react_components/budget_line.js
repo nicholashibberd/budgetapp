@@ -24,6 +24,20 @@ var BudgetLine = React.createClass({
     }
   },
 
+  width: function() {
+    var recordTotal = this.props.tagsSummary.recordTotal;
+    var percentage
+    if (recordTotal > 0) {
+      percentage = (recordTotal / this.props.moneyIn) * 100;
+    } else if (recordTotal < 0) {
+      var val = (recordTotal / this.props.moneyOut) * 100;
+      percentage = Math.abs(val);
+    } else {
+      percentage = 0;
+    }
+    return percentage + '%';
+  },
+
   render: function() {
     var data = this.props.data;
     return (
@@ -37,7 +51,7 @@ var BudgetLine = React.createClass({
         </div>
         <div className="budgetLine-summary-bar col-md-9 col-sm-8 col-xs-5">
           <div className={this.positiveNegativeStatus() + '-summary-bar'} style={{width: '100%'}}>
-            <div className="tag-summary-bar" style={{width: '40%'}}></div>
+            <div className="tag-summary-bar" style={{width: this.width()}}></div>
           </div>
         </div>
       </div>

@@ -104,6 +104,8 @@ var Budget = React.createClass({
               key={budgetLine.tag_id}
               updateAmount={_this.updateAmount}
               tagsSummary={tagsSummary}
+              moneyIn={_this.props.moneyIn}
+              moneyOut={_this.props.moneyOut}
             />
           })}
           <div className="row">
