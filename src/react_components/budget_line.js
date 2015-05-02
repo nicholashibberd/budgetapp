@@ -1,5 +1,4 @@
 /** @jsx React.DOM */
-
 var React = require('react/addons');
 var _ = require('underscore');
 var BudgetLine = React.createClass({
@@ -62,16 +61,17 @@ var BudgetLine = React.createClass({
     var data = this.props.data;
     return (
       <div className="budgetLine row">
-        <div className="col-md-3 col-sm-4 col-xs-7">
+        <div className="col-md-4 col-sm-4 col-xs-7">
           <div className="input-group input-group budgetLine-budget-input">
-            <span className="input-group-addon" id="sizing-addon1">£</span>
+            <span className="input-group-addon">{this.props.currencySymbol}</span>
+            <span className="input-group-addon record-addon">
+              {this.props.tagsSummary.recordTotal}
+            </span>
             <input className="form-control" onChange={this.handleChange} value={data.amount}/>
           </div>
-          <div className="budgetLine-tag-name">
-            {data.tagName} <strong>(${this.props.tagsSummary.recordTotal})</strong>
-          </div>
+          <div className="budgetLine-tag-name"> {data.tagName} </div>
         </div>
-        <div className="summary-bar col-md-9 col-sm-8 col-xs-5">
+        <div className="summary-bar col-md-8 col-sm-8 col-xs-5">
           <div
             className={this.statusClasses() + ' summary-bar-outer'}
             style={{width: this.outerWidth() + "%"}}

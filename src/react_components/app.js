@@ -16,6 +16,7 @@ var App = React.createClass({
     return {
       records: this.props.records,
       currentAccounts: this.australianAccounts(),
+      currencySymbol: '$'
     }
   },
 
@@ -74,9 +75,11 @@ var App = React.createClass({
 
   updateCurrentAccounts: function(accounts) {
     var records = this._filterRecords(accounts);
+    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
     this.setState({
       currentAccounts: accounts,
-      records: records
+      records: records,
+      currencySymbol: currencySymbol
     });
   },
 
@@ -148,6 +151,7 @@ var App = React.createClass({
                 moneyOut={this.moneyOut()}
                 balance={this.balance()}
                 tagsSummary={this.tagsSummary()}
+                currencySymbol={this.state.currencySymbol}
               />
             </div>
           </div>

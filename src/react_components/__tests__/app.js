@@ -82,6 +82,10 @@ describe("AccountsFilter", function() {
     it("sets records from props", function() {
       expect(app.state.records).toEqual([aussie_record1, uk_record1]);
     });
+
+    it("sets currencySymbol to $", function() {
+      expect(app.state.currencySymbol).toEqual('$');
+    });
   });
 
   describe("updateCurrentAccounts", function() {
@@ -93,6 +97,11 @@ describe("AccountsFilter", function() {
     it("filters the records", function() {
       app.updateCurrentAccounts([uk]);
       expect(app.state.records).toEqual([uk_record1]);
+    });
+
+    it("sets currencySymbol to £", function() {
+      app.updateCurrentAccounts([uk]);
+      expect(app.state.currencySymbol).toEqual('£');
     });
   });
 

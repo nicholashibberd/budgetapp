@@ -3,6 +3,7 @@
 var React = require('react/addons');
 var BudgetLine = require('./budget_line');
 var _ = require('underscore');
+var utils = require('../utils/common');
 var $ = require('jquery');
 
 var Budget = React.createClass({
@@ -96,16 +97,16 @@ var Budget = React.createClass({
       <div>
         <div>
           <div className="summary-total">
-            Budget: <strong className="budgetTotal">${this.state.amount}</strong>
+            Budget: <strong className="budgetTotal">{utils.displayAmount(this.state.amount, this.props.currencySymbol)}</strong>
           </div>
           <div className="summary-total">
-            Money In: <strong>${this.props.moneyIn}</strong>
+            Money In: <strong>{utils.displayAmount(this.props.moneyIn, this.props.currencySymbol)}</strong>
           </div>
           <div className="summary-total">
-            Money Out: <strong>${this.props.moneyOut}</strong>
+            Money Out: <strong>{utils.displayAmount(this.props.moneyOut, this.props.currencySymbol)}</strong>
           </div>
           <div className="summary-total">
-            Balance: <strong>${this.props.balance}</strong>
+            Balance: <strong>{utils.displayAmount(this.props.balance, this.props.currencySymbol)}</strong>
           </div>
         </div>
         <div className="budgetLineList">
@@ -117,10 +118,11 @@ var Budget = React.createClass({
               updateAmount={_this.updateAmount}
               tagsSummary={tagsSummary}
               maximumValue={_this.maximumValue()}
+              currencySymbol={_this.props.currencySymbol}
             />
           })}
           <div className="row">
-            <div className="col-md-3 col-sm-4 col-xs-7">
+            <div className="col-md-4 col-sm-4 col-xs-7">
               <div className="submitButtonCell">
                 <input onClick={this.submit} className="btn btn-success submitButton" type="submit" value="Submit" />
               </div>
