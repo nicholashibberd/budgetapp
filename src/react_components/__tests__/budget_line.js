@@ -55,14 +55,6 @@ describe("BudgetLine", function() {
     it("sets the class to positive", function() {
       TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'positive-summary-bar');
     });
-
-    it("sets the recordWidth to the percentage of the highest of moneyIn, moneyOut and budget", function() {
-      expect(budgetLine.recordWidth()).toEqual(5);
-    })
-
-    it("sets the budget width to the percentage of the highest of moneyIn, moneyOut and budget", function() {
-      expect(budgetLine.budgetWidth()).toEqual(2.5);
-    })
   })
 
   describe("negative record total", function() {
@@ -83,10 +75,6 @@ describe("BudgetLine", function() {
     it("sets the class to negative", function() {
       TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'negative-summary-bar');
     });
-
-    it("sets the recordWidth to the percentage of the highest of moneyIn, moneyOut and budget", function() {
-      expect(budgetLine.recordWidth()).toEqual(10);
-    })
   })
 
   describe("inputting text", function() {

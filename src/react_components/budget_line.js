@@ -17,22 +17,28 @@ var BudgetLine = React.createClass({
   positiveNegativeStatus: function() {
     var total = this.props.tagsSummary.recordTotal;
     if (total > 0) {
-      return 'positive'
+      return 'positive-summary-bar'
     } else if (total < 0) {
-      return 'negative'
+      return 'negative-summary-bar'
     } else {
-      return 'zero'
+      return 'zero-summary-bar'
     }
   },
 
-  recordWidth: function() {
+  budgetStatus: function() {
     var recordTotal = Math.abs(this.props.tagsSummary.recordTotal);
-    return (this.props.maximumValue > 0) ? (recordTotal / this.props.maximumValue) * 100 : 0;
+    var budgetTotal = Math.abs(this.props.data.amount);
+    if (recordTotal > budgetTotal) {
+      return 'over-budget'
+    } else if (recordTotal < budgetTotal) {
+      return 'within-budget'
+    } else {
+      return 'equal-to-budget'
+    }
   },
 
-  budgetWidth: function() {
-    var budgetTotal = Math.abs(this.props.data.amount);
-    return (this.props.maximumValue > 0) ? (budgetTotal / this.props.maximumValue) * 100 : 0;
+  statusClasses: function() {
+    return this.positiveNegativeStatus() + ' ' + this.budgetStatus();
   },
 
   outerWidth: function() {
@@ -66,7 +72,10 @@ var BudgetLine = React.createClass({
           </div>
         </div>
         <div className="summary-bar col-md-9 col-sm-8 col-xs-5">
-          <div className={this.positiveNegativeStatus() + '-summary-bar summary-bar-outer'} style={{width: this.outerWidth() + "%"}}>
+          <div
+            className={this.statusClasses() + ' summary-bar-outer'}
+            style={{width: this.outerWidth() + "%"}}
+          >
             <div className="summary-bar-inner" style={{width: this.innerWidth() + '%'}}></div>
           </div>
         </div>

@@ -157,21 +157,32 @@ td.tag-controls {
   background: orange;
 }
 
+.positive-summary-bar.within-budget.summary-bar-outer {
+  background: #87C3A2;
+}
+
+.positive-summary-bar.over-budget.summary-bar-outer {
+  background: #226544;
+}
+
 .positive-summary-bar .summary-bar-inner {
   background: #009966;
 }
 
-.negative-summary-bar .summary-bar-inner {
-  background: #006699;
+.negative-summary-bar.within-budget.summary-bar-outer {
+  background: #6BA2C2;
 }
 
-.summary-bar-outer {
-  background: black;
+.negative-summary-bar.over-budget.summary-bar-outer {
+  background: #005480;
+}
+
+.negative-summary-bar .summary-bar-inner {
+  background: #0075B2;
 }
 
 .summary-bar-inner {
   height: 20px;
-  background: green;
 }
 
 .budgetLine-budget-input {
