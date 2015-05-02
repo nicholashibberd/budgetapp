@@ -52,18 +52,6 @@ span.tag-name {
   font-weight: 500;
 }
 
-.positive-summary-bar .tag-summary-bar {
-  background: #009966;
-}
-
-.negative-summary-bar .tag-summary-bar {
-  background: #428bca;
-}
-
-.positive-summary-bar, .negative-summary-bar {
-  background: #ccc;
-}
-
 .new-tag input {
   width: 50%;
 }
@@ -153,15 +141,35 @@ td.tag-controls {
   width: 50px;
 }
 
-.budgetLine-summary-bar {
+.summary-bar {
   padding-top: 7px;
 }
 
-.negative-summary-bar {
-  background: red;
+.positive-summary-bar, .negative-summary-bar {
+  background: #ccc;
 }
 
-.tag-summary-bar {
+.negative-summary-bar {
+  background: #6BA2C2;
+}
+
+.zero-summary-bar {
+  background: orange;
+}
+
+.positive-summary-bar .summary-bar-inner {
+  background: #009966;
+}
+
+.negative-summary-bar .summary-bar-inner {
+  background: #006699;
+}
+
+.summary-bar-outer {
+  background: black;
+}
+
+.summary-bar-inner {
   height: 20px;
   background: green;
 }

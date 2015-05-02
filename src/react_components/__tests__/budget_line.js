@@ -9,7 +9,7 @@ describe("BudgetLine", function() {
   beforeEach(function() {
     data = {
       tag_id: 1,
-      amount: 110,
+      amount: -100,
       tagName: 'Tag1'
     }
     tagsSummary = {
@@ -34,7 +34,7 @@ describe("BudgetLine", function() {
 
   it("sets the value to the amount", function() {
     var input = TestUtils.findRenderedDOMComponentWithTag(budgetLine, 'input');
-    expect(input.getDOMNode().value).toEqual('110');
+    expect(input.getDOMNode().value).toEqual('-100');
   });
 
   describe("positive record total", function() {
@@ -47,8 +47,7 @@ describe("BudgetLine", function() {
           data={data}
           updateAmount={updateAmount}
           tagsSummary={tagsSummary}
-          moneyIn={1000}
-          moneyOut={2000}
+          maximumValue={4000}
         />
       );
     })
@@ -57,8 +56,12 @@ describe("BudgetLine", function() {
       TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'positive-summary-bar');
     });
 
-    it("sets the width to the percentage of the money in", function() {
-      expect(budgetLine.width()).toEqual('20%');
+    it("sets the recordWidth to the percentage of the highest of moneyIn, moneyOut and budget", function() {
+      expect(budgetLine.recordWidth()).toEqual(5);
+    })
+
+    it("sets the budget width to the percentage of the highest of moneyIn, moneyOut and budget", function() {
+      expect(budgetLine.budgetWidth()).toEqual(2.5);
     })
   })
 
@@ -72,8 +75,7 @@ describe("BudgetLine", function() {
           data={data}
           updateAmount={updateAmount}
           tagsSummary={tagsSummary}
-          moneyIn={1000}
-          moneyOut={2000}
+          maximumValue={2000}
         />
       );
     })
@@ -82,8 +84,8 @@ describe("BudgetLine", function() {
       TestUtils.findRenderedDOMComponentWithClass(budgetLine, 'negative-summary-bar');
     });
 
-    it("sets the width to the percentage of the money out", function() {
-      expect(budgetLine.width()).toEqual('10%');
+    it("sets the recordWidth to the percentage of the highest of moneyIn, moneyOut and budget", function() {
+      expect(budgetLine.recordWidth()).toEqual(10);
     })
   })
 

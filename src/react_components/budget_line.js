@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons');
+var _ = require('underscore');
 var BudgetLine = React.createClass({
   handleChange: function(event) {
     var amount = parseInt(event.target.value);
@@ -24,18 +25,31 @@ var BudgetLine = React.createClass({
     }
   },
 
-  width: function() {
-    var recordTotal = this.props.tagsSummary.recordTotal;
-    var percentage
-    if (recordTotal > 0) {
-      percentage = (recordTotal / this.props.moneyIn) * 100;
-    } else if (recordTotal < 0) {
-      var val = (recordTotal / this.props.moneyOut) * 100;
-      percentage = Math.abs(val);
-    } else {
-      percentage = 0;
-    }
-    return percentage + '%';
+  recordWidth: function() {
+    var recordTotal = Math.abs(this.props.tagsSummary.recordTotal);
+    return (this.props.maximumValue > 0) ? (recordTotal / this.props.maximumValue) * 100 : 0;
+  },
+
+  budgetWidth: function() {
+    var budgetTotal = Math.abs(this.props.data.amount);
+    return (this.props.maximumValue > 0) ? (budgetTotal / this.props.maximumValue) * 100 : 0;
+  },
+
+  outerWidth: function() {
+    var vals = [
+      Math.abs(this.props.tagsSummary.recordTotal),
+      Math.abs(this.props.data.amount)
+    ];
+    return (this.props.maximumValue > 0) ? (_.max(vals) / this.props.maximumValue) * 100 : 0;
+  },
+
+  innerWidth: function() {
+    var vals = [
+      Math.abs(this.props.tagsSummary.recordTotal),
+      Math.abs(this.props.data.amount)
+    ];
+    var sortedVals = _.sortBy(vals, function(val) { return val; });
+    return (sortedVals[0] / sortedVals[1]) * 100;
   },
 
   render: function() {
@@ -47,11 +61,13 @@ var BudgetLine = React.createClass({
             <span className="input-group-addon" id="sizing-addon1">£</span>
             <input className="form-control" onChange={this.handleChange} value={data.amount}/>
           </div>
-          <div className="budgetLine-tag-name">{data.tagName}</div>
+          <div className="budgetLine-tag-name">
+            {data.tagName} <strong>(${this.props.tagsSummary.recordTotal})</strong>
+          </div>
         </div>
-        <div className="budgetLine-summary-bar col-md-9 col-sm-8 col-xs-5">
-          <div className={this.positiveNegativeStatus() + '-summary-bar'} style={{width: '100%'}}>
-            <div className="tag-summary-bar" style={{width: this.width()}}></div>
+        <div className="summary-bar col-md-9 col-sm-8 col-xs-5">
+          <div className={this.positiveNegativeStatus() + '-summary-bar summary-bar-outer'} style={{width: this.outerWidth() + "%"}}>
+            <div className="summary-bar-inner" style={{width: this.innerWidth() + '%'}}></div>
           </div>
         </div>
       </div>

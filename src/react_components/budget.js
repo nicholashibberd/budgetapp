@@ -78,6 +78,18 @@ var Budget = React.createClass({
     return !isNaN(parseFloat(n) && isFinite(n));
   },
 
+  maximumValue: function() {
+    var budgetLineAmounts = _.map(this.state.budgetLines, function(budgetLine) {
+      return Math.abs(budgetLine.amount);
+    });
+    var allValues = budgetLineAmounts.concat([
+      Math.abs(this.state.amount),
+      this.props.moneyIn,
+      Math.abs(this.props.moneyOut)
+    ]);
+    return _.max(allValues);
+  },
+
   render: function() {
     var _this = this;
     return (
@@ -104,8 +116,7 @@ var Budget = React.createClass({
               key={budgetLine.tag_id}
               updateAmount={_this.updateAmount}
               tagsSummary={tagsSummary}
-              moneyIn={_this.props.moneyIn}
-              moneyOut={_this.props.moneyOut}
+              maximumValue={_this.maximumValue()}
             />
           })}
           <div className="row">

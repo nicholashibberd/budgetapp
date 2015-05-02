@@ -6,7 +6,7 @@ describe("Budget", function() {
   var $ = require('jquery');
   var Budget = require('../budget');
   var BudgetLine = require('../budget_line');
-  var tags, start_date, end_date, budget, elements;
+  var tags, tagsSummary, start_date, end_date, budget, elements;
 
   beforeEach(function() {
     tags = [
@@ -14,7 +14,7 @@ describe("Budget", function() {
       { Name: "Tag2", id: 2 },
       { Name: "Tag3", id: 3 },
     ]
-    var tagsSummary = {
+    tagsSummary = {
       1: { recordTotal: -100 },
       2: { recordTotal: -200 },
       3: { recordTotal: -300 }
@@ -74,6 +74,29 @@ describe("Budget", function() {
       expect(amountDisplay.getDOMNode().textContent).toEqual('$300')
     });
   })
+
+  describe("maximum value", function() {
+    it("returns the total budget", function() {
+      expect(budget.maximumValue()).toEqual(300);
+    })
+
+    it("returns the value of the highest budget line if higher than total budget", function() {
+      budgetLines = [
+        { tag_id: 1, amount: 1000, id: 123 },
+        { tag_id: 2, amount: -3000, id: 456 },
+      ]
+      budget = TestUtils.renderIntoDocument(
+        <Budget
+          tags={tags}
+          budgetLines={budgetLines}
+          start_date={start_date}
+          end_date={end_date}
+          tagsSummary={tagsSummary}
+        />
+      );
+      expect(budget.maximumValue()).toEqual(3000);
+    })
+  });
 
   describe("value is entered on budget line", function() {
     it("updates the amount", function() {
