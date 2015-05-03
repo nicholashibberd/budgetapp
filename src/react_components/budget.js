@@ -83,11 +83,10 @@ var Budget = React.createClass({
     var budgetLineAmounts = _.map(this.state.budgetLines, function(budgetLine) {
       return Math.abs(budgetLine.amount);
     });
-    var allValues = budgetLineAmounts.concat([
-      Math.abs(this.state.amount),
-      this.props.moneyIn,
-      Math.abs(this.props.moneyOut)
-    ]);
+    var recordTotals = _.map(this.props.tagsSummary, function(tag) {
+      return Math.abs(tag.recordTotal);
+    });
+    var allValues = budgetLineAmounts.concat(recordTotals);
     return _.max(allValues);
   },
 

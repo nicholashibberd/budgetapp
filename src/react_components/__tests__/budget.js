@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+jest.dontMock('../../utils/common');
+
 describe("Budget", function() {
   var React = require('react/addons');
   var TestUtils = React.addons.TestUtils;
@@ -32,6 +34,7 @@ describe("Budget", function() {
         start_date={start_date}
         end_date={end_date}
         tagsSummary={tagsSummary}
+        currencySymbol={'$'}
       />
     );
     elements = TestUtils.scryRenderedComponentsWithType(
@@ -76,15 +79,16 @@ describe("Budget", function() {
   })
 
   describe("maximum value", function() {
-    it("returns the total budget", function() {
+    it("returns the highest individual tag or budget line", function() {
       expect(budget.maximumValue()).toEqual(300);
     })
 
     it("returns the value of the highest budget line if higher than total budget", function() {
-      budgetLines = [
-        { tag_id: 1, amount: 1000, id: 123 },
-        { tag_id: 2, amount: -3000, id: 456 },
-      ]
+      tagsSummary = {
+        1: { recordTotal: -100 },
+        2: { recordTotal: -200 },
+        3: { recordTotal: -300 }
+      }
       budget = TestUtils.renderIntoDocument(
         <Budget
           tags={tags}
@@ -92,9 +96,10 @@ describe("Budget", function() {
           start_date={start_date}
           end_date={end_date}
           tagsSummary={tagsSummary}
+          moneyIn={400}
         />
       );
-      expect(budget.maximumValue()).toEqual(3000);
+      expect(budget.maximumValue()).toEqual(300);
     })
   });
 

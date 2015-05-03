@@ -25,8 +25,8 @@ var BudgetLine = React.createClass({
   },
 
   budgetStatus: function() {
-    var recordTotal = Math.abs(this.props.tagsSummary.recordTotal);
-    var budgetTotal = Math.abs(this.props.data.amount);
+    var recordTotal = this.props.tagsSummary.recordTotal;
+    var budgetTotal = this.props.data.amount;
     if (recordTotal > budgetTotal) {
       return 'over-budget'
     } else if (recordTotal < budgetTotal) {

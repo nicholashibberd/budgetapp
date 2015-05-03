@@ -166,28 +166,47 @@ td.tag-controls {
   background: #6BA2C2;
 }
 
+$light_blue: #6BA2C2;
+$mid_blue: #0075B2;
+$dark_blue: #005480;
+$light_green: #87C3A2;
+$mid_green: #009966;
+$dark_green: #226544;
+
+.zero-summary-bar {
+  &.within-budget {
+    background: $light_green;
+  }
+}
+
+.zero-summary-bar {
+  &.over-budget {
+    background: $light_blue;
+  }
+}
+
 .positive-summary-bar.within-budget.summary-bar-outer {
-  background: #87C3A2;
+  background: $light_green;
 }
 
 .positive-summary-bar.over-budget.summary-bar-outer {
-  background: #226544;
+  background: $dark_green;
 }
 
 .positive-summary-bar .summary-bar-inner {
-  background: #009966;
+  background: $mid_green;
 }
 
 .negative-summary-bar.within-budget.summary-bar-outer {
-  background: #6BA2C2;
+  background: $light_blue;
 }
 
 .negative-summary-bar.over-budget.summary-bar-outer {
-  background: #005480;
+  background: $dark_blue;
 }
 
 .negative-summary-bar .summary-bar-inner {
-  background: #0075B2;
+  background: $mid_blue;
 }
 
 .summary-bar-inner {
