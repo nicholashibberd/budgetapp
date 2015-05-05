@@ -14,7 +14,7 @@ var BudgetLine = React.createClass({
   },
 
   positiveNegativeStatus: function() {
-    var total = this.props.tagsSummary.recordTotal;
+    var total = this.props.data.recordTotal;
     if (total > 0) {
       return 'positive-summary-bar'
     } else if (total < 0) {
@@ -25,7 +25,7 @@ var BudgetLine = React.createClass({
   },
 
   budgetStatus: function() {
-    var recordTotal = this.props.tagsSummary.recordTotal;
+    var recordTotal = this.props.data.recordTotal;
     var budgetTotal = this.props.data.amount;
     if (recordTotal > budgetTotal) {
       return 'over-budget'
@@ -42,7 +42,7 @@ var BudgetLine = React.createClass({
 
   outerWidth: function() {
     var vals = [
-      Math.abs(this.props.tagsSummary.recordTotal),
+      Math.abs(this.props.data.recordTotal),
       Math.abs(this.props.data.amount)
     ];
     return (this.props.maximumValue > 0) ? (_.max(vals) / this.props.maximumValue) * 100 : 0;
@@ -50,7 +50,7 @@ var BudgetLine = React.createClass({
 
   innerWidth: function() {
     var vals = [
-      Math.abs(this.props.tagsSummary.recordTotal),
+      Math.abs(this.props.data.recordTotal),
       Math.abs(this.props.data.amount)
     ];
     var sortedVals = _.sortBy(vals, function(val) { return val; });
@@ -65,7 +65,7 @@ var BudgetLine = React.createClass({
           <div className="input-group input-group budgetLine-budget-input">
             <span className="input-group-addon">{this.props.currencySymbol}</span>
             <span className="input-group-addon record-addon">
-              {this.props.tagsSummary.recordTotal}
+              {this.props.data.recordTotal}
             </span>
             <input className="form-control" onChange={this.handleChange} value={data.amount}/>
           </div>

@@ -144,22 +144,7 @@
 
 	var Budget = React.createClass({displayName: "Budget",
 	  getInitialState: function() {
-	    var _this = this;
-	    var budgetLines = _.map(this.props.tags, function(tag) {
-	      var budgetLine = _.find(_this.props.budgetLines, function(budgetLine) {
-	        return budgetLine.tag_id == tag.id;
-	      });
-	      var amount = budgetLine !== undefined ? budgetLine.amount : 0;
-	      var attrs = {
-	        tag_id: tag.id,
-	        amount: amount,
-	        tagName: tag.Name,
-	      }
-	      if (budgetLine !== undefined) {
-	        attrs.id = budgetLine.id
-	      }
-	      return attrs;
-	    })
+	    var budgetLines = this._budgetLines(this.props);
 	    return {
 	      amount: this._calculateTotal(budgetLines),
 	      tags: this.props.tags,
@@ -220,10 +205,48 @@
 	      return Math.abs(budgetLine.amount);
 	    });
 	    var recordTotals = _.map(this.props.tagsSummary, function(tag) {
-	      return Math.abs(tag.recordTotal);
+	      return Math.abs(tag);
 	    });
 	    var allValues = budgetLineAmounts.concat(recordTotals);
 	    return _.max(allValues);
+	  },
+
+	  _budgetLines: function(props) {
+	    var _this = this;
+	    var budgetLines = _.map(props.tags, function(tag) {
+	      var budgetLine = _.find(props.budgetLines, function(budgetLine) {
+	        return budgetLine.tag_id == tag.id;
+	      });
+	      var amount = budgetLine !== undefined ? budgetLine.amount : 0;
+	      var recordTotal = props.tagsSummary[tag.id];
+	      var attrs = {
+	        tag_id: tag.id,
+	        amount: amount,
+	        tagName: tag.Name,
+	        recordTotal: recordTotal
+	      }
+	      if (budgetLine !== undefined) {
+	        attrs.id = budgetLine.id
+	      }
+	      return attrs;
+	    })
+	    var sortedBudgetLines = _.sortBy(budgetLines, function(budgetLine) {
+	      var total = budgetLine.recordTotal
+	      if (total > 0) {
+	        return total + 200000;
+	      } else if (total < 0) {
+	        return Math.abs(total) + 100000;
+	      } else {
+	        return 0;
+	      }
+	    });
+	    return sortedBudgetLines.reverse();
+	  },
+
+	  componentWillReceiveProps: function(newProps) {
+	    this.setState({
+	      budgetLines: this._budgetLines(newProps)
+	    })
 	  },
 
 	  render: function() {
@@ -251,7 +274,6 @@
 	              data: budgetLine, 
 	              key: budgetLine.tag_id, 
 	              updateAmount: _this.updateAmount, 
-	              tagsSummary: tagsSummary, 
 	              maximumValue: _this.maximumValue(), 
 	              currencySymbol: _this.props.currencySymbol}
 	            )
@@ -509,22 +531,16 @@
 	      _.each(record.tag_ids, function(tag_id) {
 	        var amount = parseInt(record.amount);
 	        if (tags[tag_id] !== undefined) {
-	          tags[tag_id]['recordTotal'] += amount;
+	          tags[tag_id] += amount;
 	        } else {
-	          tags[tag_id] = {
-	            recordTotal: amount,
-	            budgetTotal: 0
-	          };
+	          tags[tag_id] = amount;
 	        }
 	      });
 	    });
 
 	    _.each(this.props.tags, function(tag) {
 	      if (tags[tag.id] === undefined) {
-	        tags[tag.id] = {
-	          recordTotal: 0,
-	          budgetTotal: 0
-	        };
+	        tags[tag.id] = 0;
 	      }
 	    });
 	    return tags;
@@ -532,14 +548,14 @@
 
 	  moneyOut: function() {
 	    return _.reduce(this.tagsSummary(), function(memo, tag) {
-	      var val = (tag.recordTotal < 0) ? tag.recordTotal : 0;
+	      var val = (tag < 0) ? tag : 0;
 	      return memo + val;
 	    }, 0);
 	  },
 
 	  moneyIn: function() {
 	    return _.reduce(this.tagsSummary(), function(memo, tag) {
-	      var val = (tag.recordTotal > 0) ? tag.recordTotal : 0;
+	      var val = (tag > 0) ? tag : 0;
 	      return memo + val;
 	    }, 0);
 	  },
@@ -12615,7 +12631,7 @@
 	  },
 
 	  positiveNegativeStatus: function() {
-	    var total = this.props.tagsSummary.recordTotal;
+	    var total = this.props.data.recordTotal;
 	    if (total > 0) {
 	      return 'positive-summary-bar'
 	    } else if (total < 0) {
@@ -12626,7 +12642,7 @@
 	  },
 
 	  budgetStatus: function() {
-	    var recordTotal = this.props.tagsSummary.recordTotal;
+	    var recordTotal = this.props.data.recordTotal;
 	    var budgetTotal = this.props.data.amount;
 	    if (recordTotal > budgetTotal) {
 	      return 'over-budget'
@@ -12643,7 +12659,7 @@
 
 	  outerWidth: function() {
 	    var vals = [
-	      Math.abs(this.props.tagsSummary.recordTotal),
+	      Math.abs(this.props.data.recordTotal),
 	      Math.abs(this.props.data.amount)
 	    ];
 	    return (this.props.maximumValue > 0) ? (_.max(vals) / this.props.maximumValue) * 100 : 0;
@@ -12651,7 +12667,7 @@
 
 	  innerWidth: function() {
 	    var vals = [
-	      Math.abs(this.props.tagsSummary.recordTotal),
+	      Math.abs(this.props.data.recordTotal),
 	      Math.abs(this.props.data.amount)
 	    ];
 	    var sortedVals = _.sortBy(vals, function(val) { return val; });
@@ -12666,7 +12682,7 @@
 	          React.createElement("div", {className: "input-group input-group budgetLine-budget-input"}, 
 	            React.createElement("span", {className: "input-group-addon"}, this.props.currencySymbol), 
 	            React.createElement("span", {className: "input-group-addon record-addon"}, 
-	              this.props.tagsSummary.recordTotal
+	              this.props.data.recordTotal
 	            ), 
 	            React.createElement("input", {className: "form-control", onChange: this.handleChange, value: data.amount})
 	          ), 
@@ -22934,8 +22950,8 @@
 
 	'use strict';
 
-	var ReactLink = __webpack_require__(202);
-	var ReactStateSetters = __webpack_require__(203);
+	var ReactLink = __webpack_require__(200);
+	var ReactStateSetters = __webpack_require__(201);
 
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -22978,7 +22994,7 @@
 
 	'use strict';
 
-	var shallowEqual = __webpack_require__(200);
+	var shallowEqual = __webpack_require__(202);
 
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -23040,7 +23056,7 @@
 	  __webpack_require__(51)
 	);
 	var ReactCSSTransitionGroupChild = React.createFactory(
-	  __webpack_require__(201)
+	  __webpack_require__(203)
 	);
 
 	var ReactCSSTransitionGroup = React.createClass({
@@ -23294,7 +23310,7 @@
 	'use strict';
 
 	var React = __webpack_require__(20);
-	var ReactTransitionChildMapping = __webpack_require__(206);
+	var ReactTransitionChildMapping = __webpack_require__(204);
 
 	var assign = __webpack_require__(41);
 	var cloneWithProps = __webpack_require__(54);
@@ -23527,12 +23543,12 @@
 
 	'use strict';
 
-	var CallbackQueue = __webpack_require__(204);
+	var CallbackQueue = __webpack_require__(205);
 	var PooledClass = __webpack_require__(141);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactPerf = __webpack_require__(37);
 	var ReactReconciler = __webpack_require__(39);
-	var Transaction = __webpack_require__(205);
+	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(41);
 	var invariant = __webpack_require__(140);
@@ -34683,9 +34699,9 @@
 	var EventConstants = __webpack_require__(139);
 	var EventPropagators = __webpack_require__(211);
 	var ExecutionEnvironment = __webpack_require__(44);
-	var FallbackCompositionState = __webpack_require__(219);
-	var SyntheticCompositionEvent = __webpack_require__(220);
-	var SyntheticInputEvent = __webpack_require__(221);
+	var FallbackCompositionState = __webpack_require__(218);
+	var SyntheticCompositionEvent = __webpack_require__(219);
+	var SyntheticInputEvent = __webpack_require__(220);
 
 	var keyOf = __webpack_require__(152);
 
@@ -35186,7 +35202,7 @@
 	var SyntheticEvent = __webpack_require__(213);
 
 	var isEventSupported = __webpack_require__(217);
-	var isTextInputElement = __webpack_require__(218);
+	var isTextInputElement = __webpack_require__(221);
 	var keyOf = __webpack_require__(152);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
@@ -36093,7 +36109,7 @@
 	'use strict';
 
 	var ReactUpdates = __webpack_require__(52);
-	var Transaction = __webpack_require__(205);
+	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(41);
 	var emptyFunction = __webpack_require__(196);
@@ -37354,12 +37370,12 @@
 
 	'use strict';
 
-	var CallbackQueue = __webpack_require__(204);
+	var CallbackQueue = __webpack_require__(205);
 	var PooledClass = __webpack_require__(141);
 	var ReactBrowserEventEmitter = __webpack_require__(188);
 	var ReactInputSelection = __webpack_require__(231);
 	var ReactPutListenerQueue = __webpack_require__(232);
-	var Transaction = __webpack_require__(205);
+	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(41);
 
@@ -37539,9 +37555,9 @@
 	var SyntheticEvent = __webpack_require__(213);
 
 	var getActiveElement = __webpack_require__(233);
-	var isTextInputElement = __webpack_require__(218);
+	var isTextInputElement = __webpack_require__(221);
 	var keyOf = __webpack_require__(152);
-	var shallowEqual = __webpack_require__(200);
+	var shallowEqual = __webpack_require__(202);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -39746,9 +39762,9 @@
 	'use strict';
 
 	var PooledClass = __webpack_require__(141);
-	var CallbackQueue = __webpack_require__(204);
+	var CallbackQueue = __webpack_require__(205);
 	var ReactPutListenerQueue = __webpack_require__(232);
-	var Transaction = __webpack_require__(205);
+	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(41);
 	var emptyFunction = __webpack_require__(196);
@@ -39887,6 +39903,193 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+
+	'use strict';
+
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   this._handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+
+	var React = __webpack_require__(20);
+
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ?
+	      React.PropTypes.any.isRequired :
+	      linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+
+	module.exports = ReactLink;
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactStateSetters
+	 */
+
+	'use strict';
+
+	var ReactStateSetters = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function(component, funcReturningState) {
+	    return function(a, b, c, d, e, f) {
+	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
+	      if (partialState) {
+	        component.setState(partialState);
+	      }
+	    };
+	  },
+
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function(component, key) {
+	    // Memoize the setters.
+	    var cache = component.__keySetters || (component.__keySetters = {});
+	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
+	  }
+	};
+
+	function createStateKeySetter(component, key) {
+	  // Partial state is allocated outside of the function closure so it can be
+	  // reused with every call, avoiding memory allocation when this function
+	  // is called.
+	  var partialState = {};
+	  return function stateKeySetter(value) {
+	    partialState[key] = value;
+	    component.setState(partialState);
+	  };
+	}
+
+	ReactStateSetters.Mixin = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateSetter(function(xValue) {
+	   *     return {x: xValue};
+	   *   })(1);
+	   *
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function(funcReturningState) {
+	    return ReactStateSetters.createStateSetter(this, funcReturningState);
+	  },
+
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateKeySetter('x')(1);
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function(key) {
+	    return ReactStateSetters.createStateKeySetter(this, key);
+	  }
+	};
+
+	module.exports = ReactStateSetters;
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule shallowEqual
 	 */
 
@@ -39924,7 +40127,7 @@
 
 
 /***/ },
-/* 201 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -40075,194 +40278,116 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLink
-	 * @typechecks static-only
-	 */
-
-	'use strict';
-
-	/**
-	 * ReactLink encapsulates a common pattern in which a component wants to modify
-	 * a prop received from its parent. ReactLink allows the parent to pass down a
-	 * value coupled with a callback that, when invoked, expresses an intent to
-	 * modify that value. For example:
-	 *
-	 * React.createClass({
-	 *   getInitialState: function() {
-	 *     return {value: ''};
-	 *   },
-	 *   render: function() {
-	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
-	 *     return <input valueLink={valueLink} />;
-	 *   },
-	 *   this._handleValueChange: function(newValue) {
-	 *     this.setState({value: newValue});
-	 *   }
-	 * });
-	 *
-	 * We have provided some sugary mixins to make the creation and
-	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
-	 */
-
-	var React = __webpack_require__(20);
-
-	/**
-	 * @param {*} value current value of the link
-	 * @param {function} requestChange callback to request a change
-	 */
-	function ReactLink(value, requestChange) {
-	  this.value = value;
-	  this.requestChange = requestChange;
-	}
-
-	/**
-	 * Creates a PropType that enforces the ReactLink API and optionally checks the
-	 * type of the value being passed inside the link. Example:
-	 *
-	 * MyComponent.propTypes = {
-	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
-	 * }
-	 */
-	function createLinkTypeChecker(linkType) {
-	  var shapes = {
-	    value: typeof linkType === 'undefined' ?
-	      React.PropTypes.any.isRequired :
-	      linkType.isRequired,
-	    requestChange: React.PropTypes.func.isRequired
-	  };
-	  return React.PropTypes.shape(shapes);
-	}
-
-	ReactLink.PropTypes = {
-	  link: createLinkTypeChecker
-	};
-
-	module.exports = ReactLink;
-
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactStateSetters
-	 */
-
-	'use strict';
-
-	var ReactStateSetters = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function(component, funcReturningState) {
-	    return function(a, b, c, d, e, f) {
-	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
-	      if (partialState) {
-	        component.setState(partialState);
-	      }
-	    };
-	  },
-
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function(component, key) {
-	    // Memoize the setters.
-	    var cache = component.__keySetters || (component.__keySetters = {});
-	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
-	  }
-	};
-
-	function createStateKeySetter(component, key) {
-	  // Partial state is allocated outside of the function closure so it can be
-	  // reused with every call, avoiding memory allocation when this function
-	  // is called.
-	  var partialState = {};
-	  return function stateKeySetter(value) {
-	    partialState[key] = value;
-	    component.setState(partialState);
-	  };
-	}
-
-	ReactStateSetters.Mixin = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateSetter(function(xValue) {
-	   *     return {x: xValue};
-	   *   })(1);
-	   *
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function(funcReturningState) {
-	    return ReactStateSetters.createStateSetter(this, funcReturningState);
-	  },
-
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateKeySetter('x')(1);
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function(key) {
-	    return ReactStateSetters.createStateKeySetter(this, key);
-	  }
-	};
-
-	module.exports = ReactStateSetters;
-
-
-/***/ },
 /* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @typechecks static-only
+	 * @providesModule ReactTransitionChildMapping
+	 */
+
+	'use strict';
+
+	var ReactChildren = __webpack_require__(25);
+	var ReactFragment = __webpack_require__(50);
+
+	var ReactTransitionChildMapping = {
+	  /**
+	   * Given `this.props.children`, return an object mapping key to child. Just
+	   * simple syntactic sugar around ReactChildren.map().
+	   *
+	   * @param {*} children `this.props.children`
+	   * @return {object} Mapping of key to child
+	   */
+	  getChildMapping: function(children) {
+	    if (!children) {
+	      return children;
+	    }
+	    return ReactFragment.extract(ReactChildren.map(children, function(child) {
+	      return child;
+	    }));
+	  },
+
+	  /**
+	   * When you're adding or removing children some may be added or removed in the
+	   * same render pass. We want to show *both* since we want to simultaneously
+	   * animate elements in and out. This function takes a previous set of keys
+	   * and a new set of keys and merges them with its best guess of the correct
+	   * ordering. In the future we may expose some of the utilities in
+	   * ReactMultiChild to make this easy, but for now React itself does not
+	   * directly have this concept of the union of prevChildren and nextChildren
+	   * so we implement it here.
+	   *
+	   * @param {object} prev prev children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @param {object} next next children as returned from
+	   * `ReactTransitionChildMapping.getChildMapping()`.
+	   * @return {object} a key set that contains all keys in `prev` and all keys
+	   * in `next` in a reasonable order.
+	   */
+	  mergeChildMappings: function(prev, next) {
+	    prev = prev || {};
+	    next = next || {};
+
+	    function getValueForKey(key) {
+	      if (next.hasOwnProperty(key)) {
+	        return next[key];
+	      } else {
+	        return prev[key];
+	      }
+	    }
+
+	    // For each key of `next`, the list of keys to insert before that key in
+	    // the combined list
+	    var nextKeysPending = {};
+
+	    var pendingKeys = [];
+	    for (var prevKey in prev) {
+	      if (next.hasOwnProperty(prevKey)) {
+	        if (pendingKeys.length) {
+	          nextKeysPending[prevKey] = pendingKeys;
+	          pendingKeys = [];
+	        }
+	      } else {
+	        pendingKeys.push(prevKey);
+	      }
+	    }
+
+	    var i;
+	    var childMapping = {};
+	    for (var nextKey in next) {
+	      if (nextKeysPending.hasOwnProperty(nextKey)) {
+	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
+	          var pendingNextKey = nextKeysPending[nextKey][i];
+	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(
+	            pendingNextKey
+	          );
+	        }
+	      }
+	      childMapping[nextKey] = getValueForKey(nextKey);
+	    }
+
+	    // Finally, add the keys which didn't appear before any key in `next`
+	    for (i = 0; i < pendingKeys.length; i++) {
+	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
+	    }
+
+	    return childMapping;
+	  }
+	};
+
+	module.exports = ReactTransitionChildMapping;
+
+
+/***/ },
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -40365,7 +40490,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -40607,115 +40732,6 @@
 	module.exports = Transaction;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks static-only
-	 * @providesModule ReactTransitionChildMapping
-	 */
-
-	'use strict';
-
-	var ReactChildren = __webpack_require__(25);
-	var ReactFragment = __webpack_require__(50);
-
-	var ReactTransitionChildMapping = {
-	  /**
-	   * Given `this.props.children`, return an object mapping key to child. Just
-	   * simple syntactic sugar around ReactChildren.map().
-	   *
-	   * @param {*} children `this.props.children`
-	   * @return {object} Mapping of key to child
-	   */
-	  getChildMapping: function(children) {
-	    if (!children) {
-	      return children;
-	    }
-	    return ReactFragment.extract(ReactChildren.map(children, function(child) {
-	      return child;
-	    }));
-	  },
-
-	  /**
-	   * When you're adding or removing children some may be added or removed in the
-	   * same render pass. We want to show *both* since we want to simultaneously
-	   * animate elements in and out. This function takes a previous set of keys
-	   * and a new set of keys and merges them with its best guess of the correct
-	   * ordering. In the future we may expose some of the utilities in
-	   * ReactMultiChild to make this easy, but for now React itself does not
-	   * directly have this concept of the union of prevChildren and nextChildren
-	   * so we implement it here.
-	   *
-	   * @param {object} prev prev children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @param {object} next next children as returned from
-	   * `ReactTransitionChildMapping.getChildMapping()`.
-	   * @return {object} a key set that contains all keys in `prev` and all keys
-	   * in `next` in a reasonable order.
-	   */
-	  mergeChildMappings: function(prev, next) {
-	    prev = prev || {};
-	    next = next || {};
-
-	    function getValueForKey(key) {
-	      if (next.hasOwnProperty(key)) {
-	        return next[key];
-	      } else {
-	        return prev[key];
-	      }
-	    }
-
-	    // For each key of `next`, the list of keys to insert before that key in
-	    // the combined list
-	    var nextKeysPending = {};
-
-	    var pendingKeys = [];
-	    for (var prevKey in prev) {
-	      if (next.hasOwnProperty(prevKey)) {
-	        if (pendingKeys.length) {
-	          nextKeysPending[prevKey] = pendingKeys;
-	          pendingKeys = [];
-	        }
-	      } else {
-	        pendingKeys.push(prevKey);
-	      }
-	    }
-
-	    var i;
-	    var childMapping = {};
-	    for (var nextKey in next) {
-	      if (nextKeysPending.hasOwnProperty(nextKey)) {
-	        for (i = 0; i < nextKeysPending[nextKey].length; i++) {
-	          var pendingNextKey = nextKeysPending[nextKey][i];
-	          childMapping[nextKeysPending[nextKey][i]] = getValueForKey(
-	            pendingNextKey
-	          );
-	        }
-	      }
-	      childMapping[nextKey] = getValueForKey(nextKey);
-	    }
-
-	    // Finally, add the keys which didn't appear before any key in `next`
-	    for (i = 0; i < pendingKeys.length; i++) {
-	      childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
-	    }
-
-	    return childMapping;
-	  }
-	};
-
-	module.exports = ReactTransitionChildMapping;
-
 
 /***/ },
 /* 207 */
@@ -43302,53 +43318,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule isTextInputElement
-	 */
-
-	'use strict';
-
-	/**
-	 * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
-	 */
-	var supportedInputTypes = {
-	  'color': true,
-	  'date': true,
-	  'datetime': true,
-	  'datetime-local': true,
-	  'email': true,
-	  'month': true,
-	  'number': true,
-	  'password': true,
-	  'range': true,
-	  'search': true,
-	  'tel': true,
-	  'text': true,
-	  'time': true,
-	  'url': true,
-	  'week': true
-	};
-
-	function isTextInputElement(elem) {
-	  return elem && (
-	    (elem.nodeName === 'INPUT' && supportedInputTypes[elem.type] || elem.nodeName === 'TEXTAREA')
-	  );
-	}
-
-	module.exports = isTextInputElement;
-
-
-/***/ },
-/* 219 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule FallbackCompositionState
 	 * @typechecks static-only
 	 */
@@ -43433,7 +43402,7 @@
 
 
 /***/ },
-/* 220 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43482,7 +43451,7 @@
 
 
 /***/ },
-/* 221 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43529,6 +43498,53 @@
 	);
 
 	module.exports = SyntheticInputEvent;
+
+
+/***/ },
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule isTextInputElement
+	 */
+
+	'use strict';
+
+	/**
+	 * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
+	 */
+	var supportedInputTypes = {
+	  'color': true,
+	  'date': true,
+	  'datetime': true,
+	  'datetime-local': true,
+	  'email': true,
+	  'month': true,
+	  'number': true,
+	  'password': true,
+	  'range': true,
+	  'search': true,
+	  'tel': true,
+	  'text': true,
+	  'time': true,
+	  'url': true,
+	  'week': true
+	};
+
+	function isTextInputElement(elem) {
+	  return elem && (
+	    (elem.nodeName === 'INPUT' && supportedInputTypes[elem.type] || elem.nodeName === 'TEXTAREA')
+	  );
+	}
+
+	module.exports = isTextInputElement;
 
 
 /***/ },

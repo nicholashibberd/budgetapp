@@ -196,22 +196,10 @@ describe("AccountsFilter", function() {
     it("calculates the balance of each tag", function() {
       expect(app.tagsSummary()).toEqual(
         {
-          12345: {
-            recordTotal: -300.00,
-            budgetTotal: 0
-          },
-          54321: {
-            recordTotal: 150.00,
-            budgetTotal: 0
-          },
-          98765: {
-            recordTotal: -75.00,
-            budgetTotal: 0
-          },
-          56789: {
-            recordTotal: 0,
-            budgetTotal: 0
-          }
+          12345:  -300.00,
+          54321: 150.00,
+          98765: -75.00,
+          56789: 0
         }
       );
     });

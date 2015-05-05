@@ -34,22 +34,16 @@ var App = React.createClass({
       _.each(record.tag_ids, function(tag_id) {
         var amount = parseInt(record.amount);
         if (tags[tag_id] !== undefined) {
-          tags[tag_id]['recordTotal'] += amount;
+          tags[tag_id] += amount;
         } else {
-          tags[tag_id] = {
-            recordTotal: amount,
-            budgetTotal: 0
-          };
+          tags[tag_id] = amount;
         }
       });
     });
 
     _.each(this.props.tags, function(tag) {
       if (tags[tag.id] === undefined) {
-        tags[tag.id] = {
-          recordTotal: 0,
-          budgetTotal: 0
-        };
+        tags[tag.id] = 0;
       }
     });
     return tags;
@@ -57,14 +51,14 @@ var App = React.createClass({
 
   moneyOut: function() {
     return _.reduce(this.tagsSummary(), function(memo, tag) {
-      var val = (tag.recordTotal < 0) ? tag.recordTotal : 0;
+      var val = (tag < 0) ? tag : 0;
       return memo + val;
     }, 0);
   },
 
   moneyIn: function() {
     return _.reduce(this.tagsSummary(), function(memo, tag) {
-      var val = (tag.recordTotal > 0) ? tag.recordTotal : 0;
+      var val = (tag > 0) ? tag : 0;
       return memo + val;
     }, 0);
   },

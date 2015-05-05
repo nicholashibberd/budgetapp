@@ -8,22 +8,7 @@ var $ = require('jquery');
 
 var Budget = React.createClass({
   getInitialState: function() {
-    var _this = this;
-    var budgetLines = _.map(this.props.tags, function(tag) {
-      var budgetLine = _.find(_this.props.budgetLines, function(budgetLine) {
-        return budgetLine.tag_id == tag.id;
-      });
-      var amount = budgetLine !== undefined ? budgetLine.amount : 0;
-      var attrs = {
-        tag_id: tag.id,
-        amount: amount,
-        tagName: tag.Name,
-      }
-      if (budgetLine !== undefined) {
-        attrs.id = budgetLine.id
-      }
-      return attrs;
-    })
+    var budgetLines = this._budgetLines(this.props);
     return {
       amount: this._calculateTotal(budgetLines),
       tags: this.props.tags,
@@ -84,10 +69,48 @@ var Budget = React.createClass({
       return Math.abs(budgetLine.amount);
     });
     var recordTotals = _.map(this.props.tagsSummary, function(tag) {
-      return Math.abs(tag.recordTotal);
+      return Math.abs(tag);
     });
     var allValues = budgetLineAmounts.concat(recordTotals);
     return _.max(allValues);
+  },
+
+  _budgetLines: function(props) {
+    var _this = this;
+    var budgetLines = _.map(props.tags, function(tag) {
+      var budgetLine = _.find(props.budgetLines, function(budgetLine) {
+        return budgetLine.tag_id == tag.id;
+      });
+      var amount = budgetLine !== undefined ? budgetLine.amount : 0;
+      var recordTotal = props.tagsSummary[tag.id];
+      var attrs = {
+        tag_id: tag.id,
+        amount: amount,
+        tagName: tag.Name,
+        recordTotal: recordTotal
+      }
+      if (budgetLine !== undefined) {
+        attrs.id = budgetLine.id
+      }
+      return attrs;
+    })
+    var sortedBudgetLines = _.sortBy(budgetLines, function(budgetLine) {
+      var total = budgetLine.recordTotal
+      if (total > 0) {
+        return total + 200000;
+      } else if (total < 0) {
+        return Math.abs(total) + 100000;
+      } else {
+        return 0;
+      }
+    });
+    return sortedBudgetLines.reverse();
+  },
+
+  componentWillReceiveProps: function(newProps) {
+    this.setState({
+      budgetLines: this._budgetLines(newProps)
+    })
   },
 
   render: function() {
@@ -115,7 +138,6 @@ var Budget = React.createClass({
               data={budgetLine}
               key={budgetLine.tag_id}
               updateAmount={_this.updateAmount}
-              tagsSummary={tagsSummary}
               maximumValue={_this.maximumValue()}
               currencySymbol={_this.props.currencySymbol}
             />

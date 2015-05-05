@@ -10,17 +10,14 @@ describe("BudgetLine", function() {
     data = {
       tag_id: 1,
       amount: -100,
-      tagName: 'Tag1'
-    }
-    tagsSummary = {
-      recordTotal: -350,
+      tagName: 'Tag1',
+      recordTotal: -350
     }
     updateAmount = jasmine.createSpy('updateAmount');
     budgetLine = TestUtils.renderIntoDocument(
       <BudgetLine
         data={data}
         updateAmount={updateAmount}
-        tagsSummary={tagsSummary}
       />
     );
     element = TestUtils.findRenderedDOMComponentWithClass(
@@ -39,14 +36,13 @@ describe("BudgetLine", function() {
 
   describe("positive record total", function() {
     beforeEach(function() {
-      tagsSummary = {
-        recordTotal: 200,
+      data = {
+        recordTotal: 200
       }
       budgetLine = TestUtils.renderIntoDocument(
         <BudgetLine
           data={data}
           updateAmount={updateAmount}
-          tagsSummary={tagsSummary}
           maximumValue={4000}
         />
       );
@@ -59,14 +55,13 @@ describe("BudgetLine", function() {
 
   describe("negative record total", function() {
     beforeEach(function() {
-      tagsSummary = {
-        recordTotal: -200,
+      data = {
+        recordTotal: -200
       }
       budgetLine = TestUtils.renderIntoDocument(
         <BudgetLine
           data={data}
           updateAmount={updateAmount}
-          tagsSummary={tagsSummary}
           maximumValue={2000}
         />
       );
