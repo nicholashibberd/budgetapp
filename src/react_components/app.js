@@ -31,14 +31,22 @@ var App = React.createClass({
   tagsSummary: function() {
     var tags = {};
     _.each(this.state.records, function(record) {
+      var amount = parseInt(record.amount);
       _.each(record.tag_ids, function(tag_id) {
-        var amount = parseInt(record.amount);
         if (tags[tag_id] !== undefined) {
           tags[tag_id] += amount;
         } else {
           tags[tag_id] = amount;
         }
       });
+
+      if (record.tag_ids === undefined || !record.tag_ids.length) {
+        if (tags.untagged !== undefined) {
+          tags.untagged += amount;
+        } else {
+          tags.untagged = amount;
+        }
+      }
     });
 
     _.each(this.props.tags, function(tag) {
