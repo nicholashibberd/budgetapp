@@ -180,6 +180,7 @@ describe("AccountsFilter", function() {
         description: "FOXTEL BILL",
         amount: "-500.00",
         account_number: "aussie_account_number1",
+        tag_ids: null
       };
       var tags = [
         { id: 12345, Name: 'Bills' },

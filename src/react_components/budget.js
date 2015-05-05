@@ -104,7 +104,14 @@ var Budget = React.createClass({
         return 0;
       }
     });
-    return sortedBudgetLines.reverse();
+    var untaggedTotal = (props.tagsSummary['untagged'] !== undefined) ? props.tagsSummary['untagged'] : 0;
+    var untagged = {
+      tag_id: 'untagged',
+      amount: 0,
+      tagName: 'Untagged',
+      recordTotal: untaggedTotal
+    }
+    return sortedBudgetLines.reverse().concat(untagged);
   },
 
   componentWillReceiveProps: function(newProps) {

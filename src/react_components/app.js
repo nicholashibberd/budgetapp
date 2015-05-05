@@ -40,7 +40,7 @@ var App = React.createClass({
         }
       });
 
-      if (record.tag_ids === undefined || !record.tag_ids.length) {
+      if (!record.tag_ids || !record.tag_ids.length) {
         if (tags.untagged !== undefined) {
           tags.untagged += amount;
         } else {
