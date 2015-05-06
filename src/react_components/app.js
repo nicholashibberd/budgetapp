@@ -16,7 +16,8 @@ var App = React.createClass({
     return {
       records: this.props.records,
       currentAccounts: this.australianAccounts(),
-      currencySymbol: '$'
+      currencySymbol: '$',
+      showAll: true
     }
   },
 
@@ -111,7 +112,10 @@ var App = React.createClass({
 
   handleClick: function(tag_id) {
     var records = this._filterRecordsByTag(tag_id);
-    this.setState({records: records});
+    this.setState({
+      records: records,
+      showAll: false
+    });
   },
 
   _filterAccounts: function(region) {
@@ -131,7 +135,11 @@ var App = React.createClass({
 
   _filterRecordsByTag: function(tag_id) {
     return _.filter(this.props.records, function(record) {
-      return _.contains(record.tag_ids, tag_id);
+      if (tag_id === 'untagged') {
+        return record.tag_ids === null || !record.tag_ids.length;
+      } else {
+        return _.contains(record.tag_ids, tag_id);
+      }
     });
   },
 
@@ -166,6 +174,7 @@ var App = React.createClass({
                 tagsSummary={this.tagsSummary()}
                 currencySymbol={this.state.currencySymbol}
                 handleClick={this.handleClick}
+                showAll={this.state.showAll}
               />
             </div>
           </div>

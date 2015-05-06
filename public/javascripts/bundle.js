@@ -172,7 +172,7 @@
 
 	  _budgetLinesJson: function() {
 	    var _this = this;
-	    var budgetLines = _.map(this.state.budgetLines, function(budgetLine) {
+	    var budgetLines = _.map(this._budgetLinesExcludingUntagged(), function(budgetLine) {
 	      var attrs = {
 	        start_date: _this.props.start_date,
 	        end_date: _this.props.end_date,
@@ -247,7 +247,20 @@
 	      tagName: 'Untagged',
 	      recordTotal: untaggedTotal
 	    }
-	    return sortedBudgetLines.reverse().concat(untagged);
+	    var allBudgetLines = sortedBudgetLines.reverse().concat(untagged);
+	    if (!props.showAll) {
+	      return _.filter(allBudgetLines, function(budgetLine) {
+	        return budgetLine.recordTotal !== 0;
+	      });
+	    } else {
+	      return allBudgetLines;
+	    }
+	  },
+
+	  _budgetLinesExcludingUntagged: function() {
+	    return _.filter(this.state.budgetLines, function(budgetLine) {
+	      return budgetLine.tag_id !== 'untagged';
+	    });
 	  },
 
 	  componentWillReceiveProps: function(newProps) {
@@ -521,7 +534,8 @@
 	    return {
 	      records: this.props.records,
 	      currentAccounts: this.australianAccounts(),
-	      currencySymbol: '$'
+	      currencySymbol: '$',
+	      showAll: true
 	    }
 	  },
 
@@ -616,7 +630,10 @@
 
 	  handleClick: function(tag_id) {
 	    var records = this._filterRecordsByTag(tag_id);
-	    this.setState({records: records});
+	    this.setState({
+	      records: records,
+	      showAll: false
+	    });
 	  },
 
 	  _filterAccounts: function(region) {
@@ -636,7 +653,11 @@
 
 	  _filterRecordsByTag: function(tag_id) {
 	    return _.filter(this.props.records, function(record) {
-	      return _.contains(record.tag_ids, tag_id);
+	      if (tag_id === 'untagged') {
+	        return record.tag_ids === null || !record.tag_ids.length;
+	      } else {
+	        return _.contains(record.tag_ids, tag_id);
+	      }
 	    });
 	  },
 
@@ -670,7 +691,8 @@
 	                balance: this.balance(), 
 	                tagsSummary: this.tagsSummary(), 
 	                currencySymbol: this.state.currencySymbol, 
-	                handleClick: this.handleClick}
+	                handleClick: this.handleClick, 
+	                showAll: this.state.showAll}
 	              )
 	            )
 	          ), 
@@ -42856,10 +42878,10 @@
 	'use strict';
 
 	var ReactComponentEnvironment = __webpack_require__(230);
-	var ReactMultiChildUpdateTypes = __webpack_require__(260);
+	var ReactMultiChildUpdateTypes = __webpack_require__(259);
 
 	var ReactReconciler = __webpack_require__(39);
-	var ReactChildReconciler = __webpack_require__(261);
+	var ReactChildReconciler = __webpack_require__(260);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -43361,7 +43383,7 @@
 	var PooledClass = __webpack_require__(141);
 
 	var assign = __webpack_require__(41);
-	var getTextContentAccessor = __webpack_require__(259);
+	var getTextContentAccessor = __webpack_require__(261);
 
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -43776,7 +43798,7 @@
 	'use strict';
 
 	var Danger = __webpack_require__(264);
-	var ReactMultiChildUpdateTypes = __webpack_require__(260);
+	var ReactMultiChildUpdateTypes = __webpack_require__(259);
 
 	var setTextContent = __webpack_require__(265);
 	var invariant = __webpack_require__(140);
@@ -46284,47 +46306,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule getTextContentAccessor
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(44);
-
-	var contentKey = null;
-
-	/**
-	 * Gets the key used to access text content on a DOM node.
-	 *
-	 * @return {?string} Key used to access text content.
-	 * @internal
-	 */
-	function getTextContentAccessor() {
-	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
-	    // Prefer textContent to innerText because many browsers support both but
-	    // SVG <text> elements don't support innerText even when <div> does.
-	    contentKey = 'textContent' in document.documentElement ?
-	      'textContent' :
-	      'innerText';
-	  }
-	  return contentKey;
-	}
-
-	module.exports = getTextContentAccessor;
-
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
@@ -46351,7 +46332,7 @@
 
 
 /***/ },
-/* 261 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46479,6 +46460,47 @@
 	};
 
 	module.exports = ReactChildReconciler;
+
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getTextContentAccessor
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(44);
+
+	var contentKey = null;
+
+	/**
+	 * Gets the key used to access text content on a DOM node.
+	 *
+	 * @return {?string} Key used to access text content.
+	 * @internal
+	 */
+	function getTextContentAccessor() {
+	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
+	    // Prefer textContent to innerText because many browsers support both but
+	    // SVG <text> elements don't support innerText even when <div> does.
+	    contentKey = 'textContent' in document.documentElement ?
+	      'textContent' :
+	      'innerText';
+	  }
+	  return contentKey;
+	}
+
+	module.exports = getTextContentAccessor;
 
 
 /***/ },
@@ -46821,7 +46843,7 @@
 	var ExecutionEnvironment = __webpack_require__(44);
 
 	var getNodeForCharacterOffset = __webpack_require__(273);
-	var getTextContentAccessor = __webpack_require__(259);
+	var getTextContentAccessor = __webpack_require__(261);
 
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`
