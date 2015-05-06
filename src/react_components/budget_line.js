@@ -13,6 +13,10 @@ var BudgetLine = React.createClass({
     }
   },
 
+  handleClick: function() {
+    this.props.handleClick(this.props.data.tag_id)
+  },
+
   positiveNegativeStatus: function() {
     var total = this.props.data.recordTotal;
     if (total > 0) {
@@ -69,7 +73,9 @@ var BudgetLine = React.createClass({
             </span>
             <input className="form-control" onChange={this.handleChange} value={data.amount}/>
           </div>
-          <div className="budgetLine-tag-name"> {data.tagName} </div>
+          <div className="budgetLine-tag-name">
+            <a href="#" onClick={this.handleClick}>{data.tagName}</a>
+          </div>
         </div>
         <div className="summary-bar col-md-8 col-sm-8 col-xs-5">
           <div

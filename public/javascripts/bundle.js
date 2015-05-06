@@ -282,7 +282,8 @@
 	              key: budgetLine.tag_id, 
 	              updateAmount: _this.updateAmount, 
 	              maximumValue: _this.maximumValue(), 
-	              currencySymbol: _this.props.currencySymbol}
+	              currencySymbol: _this.props.currencySymbol, 
+	              handleClick: _this.props.handleClick}
 	            )
 	          }), 
 	          React.createElement("div", {className: "row"}, 
@@ -580,7 +581,7 @@
 	  },
 
 	  updateCurrentAccounts: function(accounts) {
-	    var records = this._filterRecords(accounts);
+	    var records = this._filterRecordsByAccounts(accounts);
 	    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
 	    this.setState({
 	      currentAccounts: accounts,
@@ -613,18 +614,29 @@
 	    })
 	  },
 
+	  handleClick: function(tag_id) {
+	    var records = this._filterRecordsByTag(tag_id);
+	    this.setState({records: records});
+	  },
+
 	  _filterAccounts: function(region) {
 	    return _.filter(this.props.accounts, function(account) {
 	      return account.region == region;
 	    });
 	  },
 
-	  _filterRecords: function(accounts) {
+	  _filterRecordsByAccounts: function(accounts) {
 	    var accountIds = _.map(accounts, function(account) {
 	      return account.accountNumber;
 	    });
 	    return _.filter(this.props.records, function(record) {
 	      return _.contains(accountIds, record.account_number);
+	    });
+	  },
+
+	  _filterRecordsByTag: function(tag_id) {
+	    return _.filter(this.props.records, function(record) {
+	      return _.contains(record.tag_ids, tag_id);
 	    });
 	  },
 
@@ -657,7 +669,8 @@
 	                moneyOut: this.moneyOut(), 
 	                balance: this.balance(), 
 	                tagsSummary: this.tagsSummary(), 
-	                currencySymbol: this.state.currencySymbol}
+	                currencySymbol: this.state.currencySymbol, 
+	                handleClick: this.handleClick}
 	              )
 	            )
 	          ), 
@@ -12645,6 +12658,10 @@
 	    }
 	  },
 
+	  handleClick: function() {
+	    this.props.handleClick(this.props.data.tag_id)
+	  },
+
 	  positiveNegativeStatus: function() {
 	    var total = this.props.data.recordTotal;
 	    if (total > 0) {
@@ -12701,7 +12718,9 @@
 	            ), 
 	            React.createElement("input", {className: "form-control", onChange: this.handleChange, value: data.amount})
 	          ), 
-	          React.createElement("div", {className: "budgetLine-tag-name"}, " ", data.tagName, " ")
+	          React.createElement("div", {className: "budgetLine-tag-name"}, 
+	            React.createElement("a", {href: "#", onClick: this.handleClick}, data.tagName)
+	          )
 	        ), 
 	        React.createElement("div", {className: "summary-bar col-md-8 col-sm-8 col-xs-5"}, 
 	          React.createElement("div", {
@@ -18287,17 +18306,17 @@
 	var ReactComponent = __webpack_require__(26);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
-	var ReactErrorUtils = __webpack_require__(145);
-	var ReactInstanceMap = __webpack_require__(146);
-	var ReactLifeCycle = __webpack_require__(147);
-	var ReactPropTypeLocations = __webpack_require__(148);
-	var ReactPropTypeLocationNames = __webpack_require__(149);
+	var ReactErrorUtils = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
+	var ReactLifeCycle = __webpack_require__(148);
+	var ReactPropTypeLocations = __webpack_require__(149);
+	var ReactPropTypeLocationNames = __webpack_require__(150);
 	var ReactUpdateQueue = __webpack_require__(144);
 
 	var assign = __webpack_require__(41);
 	var invariant = __webpack_require__(140);
-	var keyMirror = __webpack_require__(150);
-	var keyOf = __webpack_require__(151);
+	var keyMirror = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var warning = __webpack_require__(143);
 
 	var MIXINS_KEY = keyOf({mixins: null});
@@ -19234,7 +19253,7 @@
 	'use strict';
 
 	var assign = __webpack_require__(41);
-	var emptyObject = __webpack_require__(152);
+	var emptyObject = __webpack_require__(145);
 	var warning = __webpack_require__(143);
 
 	var didWarn = false;
@@ -19672,8 +19691,8 @@
 
 	var ReactElement = __webpack_require__(30);
 	var ReactFragment = __webpack_require__(50);
-	var ReactPropTypeLocations = __webpack_require__(148);
-	var ReactPropTypeLocationNames = __webpack_require__(149);
+	var ReactPropTypeLocations = __webpack_require__(149);
+	var ReactPropTypeLocationNames = __webpack_require__(150);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactNativeComponent = __webpack_require__(153);
 
@@ -20941,14 +20960,14 @@
 	var ReactElementValidator = __webpack_require__(31);
 	var ReactEmptyComponent = __webpack_require__(189);
 	var ReactInstanceHandles = __webpack_require__(35);
-	var ReactInstanceMap = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
 	var ReactMarkupChecksum = __webpack_require__(190);
 	var ReactPerf = __webpack_require__(37);
 	var ReactReconciler = __webpack_require__(39);
 	var ReactUpdateQueue = __webpack_require__(144);
 	var ReactUpdates = __webpack_require__(52);
 
-	var emptyObject = __webpack_require__(152);
+	var emptyObject = __webpack_require__(145);
 	var containsNode = __webpack_require__(191);
 	var getReactRootElementInContainer = __webpack_require__(192);
 	var instantiateReactComponent = __webpack_require__(193);
@@ -21937,7 +21956,7 @@
 
 	var ReactElement = __webpack_require__(30);
 	var ReactFragment = __webpack_require__(50);
-	var ReactPropTypeLocationNames = __webpack_require__(149);
+	var ReactPropTypeLocationNames = __webpack_require__(150);
 
 	var emptyFunction = __webpack_require__(196);
 
@@ -22421,7 +22440,7 @@
 	var ReactServerRenderingTransaction =
 	  __webpack_require__(198);
 
-	var emptyObject = __webpack_require__(152);
+	var emptyObject = __webpack_require__(145);
 	var instantiateReactComponent = __webpack_require__(193);
 	var invariant = __webpack_require__(140);
 
@@ -22555,7 +22574,7 @@
 	'use strict';
 
 	var ReactCurrentOwner = __webpack_require__(29);
-	var ReactInstanceMap = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
 	var ReactMount = __webpack_require__(36);
 
 	var invariant = __webpack_require__(140);
@@ -23906,7 +23925,7 @@
 	var ReactElement = __webpack_require__(30);
 	var ReactPropTransferer = __webpack_require__(207);
 
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var warning = __webpack_require__(143);
 
 	var CHILDREN_PROP = keyOf({children: null});
@@ -23967,7 +23986,7 @@
 	'use strict';
 
 	var assign = __webpack_require__(41);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var invariant = __webpack_require__(140);
 	var hasOwnProperty = {}.hasOwnProperty;
 
@@ -24417,7 +24436,7 @@
 	var ReactBrowserEventEmitter = __webpack_require__(188);
 	var ReactCompositeComponent = __webpack_require__(212);
 	var ReactInstanceHandles = __webpack_require__(35);
-	var ReactInstanceMap = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
 	var ReactMount = __webpack_require__(36);
 	var ReactUpdates = __webpack_require__(52);
 	var SyntheticEvent = __webpack_require__(213);
@@ -32501,7 +32520,7 @@
 
 	'use strict';
 
-	var keyMirror = __webpack_require__(150);
+	var keyMirror = __webpack_require__(151);
 
 	var PropagationPhases = keyMirror({bubbled: null, captured: null});
 
@@ -33078,10 +33097,10 @@
 
 	'use strict';
 
-	var ReactLifeCycle = __webpack_require__(147);
+	var ReactLifeCycle = __webpack_require__(148);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
-	var ReactInstanceMap = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
 	var ReactUpdates = __webpack_require__(52);
 
 	var assign = __webpack_require__(41);
@@ -33367,6 +33386,33 @@
 /* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule emptyObject
+	 */
+
+	"use strict";
+
+	var emptyObject = {};
+
+	if ("production" !== process.env.NODE_ENV) {
+	  Object.freeze(emptyObject);
+	}
+
+	module.exports = emptyObject;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
+
+/***/ },
+/* 146 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/**
 	 * Copyright 2013-2015, Facebook, Inc.
 	 * All rights reserved.
@@ -33400,7 +33446,7 @@
 
 
 /***/ },
-/* 146 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33453,7 +33499,7 @@
 
 
 /***/ },
-/* 147 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33494,7 +33540,7 @@
 
 
 /***/ },
-/* 148 */
+/* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33510,7 +33556,7 @@
 
 	'use strict';
 
-	var keyMirror = __webpack_require__(150);
+	var keyMirror = __webpack_require__(151);
 
 	var ReactPropTypeLocations = keyMirror({
 	  prop: null,
@@ -33522,7 +33568,7 @@
 
 
 /***/ },
-/* 149 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -33553,7 +33599,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ },
-/* 150 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -33611,7 +33657,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ },
-/* 151 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33649,33 +33695,6 @@
 
 	module.exports = keyOf;
 
-
-/***/ },
-/* 152 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule emptyObject
-	 */
-
-	"use strict";
-
-	var emptyObject = {};
-
-	if ("production" !== process.env.NODE_ENV) {
-	  Object.freeze(emptyObject);
-	}
-
-	module.exports = emptyObject;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
 /***/ },
 /* 153 */
@@ -34172,7 +34191,7 @@
 	var escapeTextContentForBrowser = __webpack_require__(159);
 	var invariant = __webpack_require__(140);
 	var isEventSupported = __webpack_require__(217);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var warning = __webpack_require__(143);
 
 	var deleteListener = ReactBrowserEventEmitter.deleteListener;
@@ -34718,7 +34737,7 @@
 	var SyntheticCompositionEvent = __webpack_require__(219);
 	var SyntheticInputEvent = __webpack_require__(220);
 
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 
 	var END_KEYCODES = [9, 13, 27, 32]; // Tab, Return, Esc, Space
 	var START_KEYCODE = 229;
@@ -35218,7 +35237,7 @@
 
 	var isEventSupported = __webpack_require__(217);
 	var isTextInputElement = __webpack_require__(221);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -35624,7 +35643,7 @@
 
 	'use strict';
 
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 
 	/**
 	 * Module that is injectable into `EventPluginHub`, that specifies a
@@ -35673,7 +35692,7 @@
 	var SyntheticMouseEvent = __webpack_require__(222);
 
 	var ReactMount = __webpack_require__(36);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 	var getFirstReactDOM = ReactMount.getFirstReactDOM;
@@ -36205,7 +36224,7 @@
 	var ReactClass = __webpack_require__(27);
 	var ReactElement = __webpack_require__(30);
 
-	var keyMirror = __webpack_require__(150);
+	var keyMirror = __webpack_require__(151);
 
 	var button = ReactElement.createFactory('button');
 
@@ -37571,7 +37590,7 @@
 
 	var getActiveElement = __webpack_require__(233);
 	var isTextInputElement = __webpack_require__(221);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var shallowEqual = __webpack_require__(202);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
@@ -37814,7 +37833,7 @@
 	var getEventCharCode = __webpack_require__(241);
 
 	var invariant = __webpack_require__(140);
-	var keyOf = __webpack_require__(151);
+	var keyOf = __webpack_require__(152);
 	var warning = __webpack_require__(143);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
@@ -39085,7 +39104,7 @@
 	'use strict';
 
 	var ReactElement = __webpack_require__(30);
-	var ReactInstanceMap = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(147);
 
 	var invariant = __webpack_require__(140);
 
@@ -41552,17 +41571,17 @@
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
 	var ReactElementValidator = __webpack_require__(31);
-	var ReactInstanceMap = __webpack_require__(146);
-	var ReactLifeCycle = __webpack_require__(147);
+	var ReactInstanceMap = __webpack_require__(147);
+	var ReactLifeCycle = __webpack_require__(148);
 	var ReactNativeComponent = __webpack_require__(153);
 	var ReactPerf = __webpack_require__(37);
-	var ReactPropTypeLocations = __webpack_require__(148);
-	var ReactPropTypeLocationNames = __webpack_require__(149);
+	var ReactPropTypeLocations = __webpack_require__(149);
+	var ReactPropTypeLocationNames = __webpack_require__(150);
 	var ReactReconciler = __webpack_require__(39);
 	var ReactUpdates = __webpack_require__(52);
 
 	var assign = __webpack_require__(41);
-	var emptyObject = __webpack_require__(152);
+	var emptyObject = __webpack_require__(145);
 	var invariant = __webpack_require__(140);
 	var shouldUpdateReactComponent = __webpack_require__(195);
 	var warning = __webpack_require__(143);
@@ -42837,10 +42856,10 @@
 	'use strict';
 
 	var ReactComponentEnvironment = __webpack_require__(230);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactMultiChildUpdateTypes = __webpack_require__(260);
 
 	var ReactReconciler = __webpack_require__(39);
-	var ReactChildReconciler = __webpack_require__(260);
+	var ReactChildReconciler = __webpack_require__(261);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -43342,7 +43361,7 @@
 	var PooledClass = __webpack_require__(141);
 
 	var assign = __webpack_require__(41);
-	var getTextContentAccessor = __webpack_require__(261);
+	var getTextContentAccessor = __webpack_require__(259);
 
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -43757,7 +43776,7 @@
 	'use strict';
 
 	var Danger = __webpack_require__(264);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactMultiChildUpdateTypes = __webpack_require__(260);
 
 	var setTextContent = __webpack_require__(265);
 	var invariant = __webpack_require__(140);
@@ -46265,12 +46284,53 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule getTextContentAccessor
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(44);
+
+	var contentKey = null;
+
+	/**
+	 * Gets the key used to access text content on a DOM node.
+	 *
+	 * @return {?string} Key used to access text content.
+	 * @internal
+	 */
+	function getTextContentAccessor() {
+	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
+	    // Prefer textContent to innerText because many browsers support both but
+	    // SVG <text> elements don't support innerText even when <div> does.
+	    contentKey = 'textContent' in document.documentElement ?
+	      'textContent' :
+	      'innerText';
+	  }
+	  return contentKey;
+	}
+
+	module.exports = getTextContentAccessor;
+
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
 	'use strict';
 
-	var keyMirror = __webpack_require__(150);
+	var keyMirror = __webpack_require__(151);
 
 	/**
 	 * When a component's children are updated, a series of update configuration
@@ -46291,7 +46351,7 @@
 
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46419,47 +46479,6 @@
 	};
 
 	module.exports = ReactChildReconciler;
-
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getTextContentAccessor
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(44);
-
-	var contentKey = null;
-
-	/**
-	 * Gets the key used to access text content on a DOM node.
-	 *
-	 * @return {?string} Key used to access text content.
-	 * @internal
-	 */
-	function getTextContentAccessor() {
-	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
-	    // Prefer textContent to innerText because many browsers support both but
-	    // SVG <text> elements don't support innerText even when <div> does.
-	    contentKey = 'textContent' in document.documentElement ?
-	      'textContent' :
-	      'innerText';
-	  }
-	  return contentKey;
-	}
-
-	module.exports = getTextContentAccessor;
 
 
 /***/ },
@@ -46802,7 +46821,7 @@
 	var ExecutionEnvironment = __webpack_require__(44);
 
 	var getNodeForCharacterOffset = __webpack_require__(273);
-	var getTextContentAccessor = __webpack_require__(261);
+	var getTextContentAccessor = __webpack_require__(259);
 
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`

@@ -36,7 +36,7 @@ var Budget = React.createClass({
 
   _budgetLinesJson: function() {
     var _this = this;
-    var budgetLines = _.map(this.state.budgetLines, function(budgetLine) {
+    var budgetLines = _.map(this._budgetLinesExcludingUntagged(), function(budgetLine) {
       var attrs = {
         start_date: _this.props.start_date,
         end_date: _this.props.end_date,
@@ -114,6 +114,12 @@ var Budget = React.createClass({
     return sortedBudgetLines.reverse().concat(untagged);
   },
 
+  _budgetLinesExcludingUntagged: function() {
+    return _.filter(this.state.budgetLines, function(budgetLine) {
+      return budgetLine.tag_id !== 'untagged';
+    });
+  },
+
   componentWillReceiveProps: function(newProps) {
     this.setState({
       budgetLines: this._budgetLines(newProps)
@@ -147,6 +153,7 @@ var Budget = React.createClass({
               updateAmount={_this.updateAmount}
               maximumValue={_this.maximumValue()}
               currencySymbol={_this.props.currencySymbol}
+              handleClick={_this.props.handleClick}
             />
           })}
           <div className="row">

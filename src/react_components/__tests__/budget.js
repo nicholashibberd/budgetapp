@@ -43,7 +43,7 @@ describe("Budget", function() {
   });
 
   it("renders a budget line for each tag", function() {
-    expect(elements.length).toEqual(3);
+    expect(elements.length).toEqual(4);
   });
 
   it("prints the name of each tag", function() {
@@ -65,7 +65,8 @@ describe("Budget", function() {
         [
           { tag_id: 3, tagName: "Tag3", amount: 0, recordTotal: -300 },
           { tag_id: 2, tagName: "Tag2", amount: 200, id: 456, recordTotal: -200 },
-          { tag_id: 1, tagName: "Tag1", amount: 100, id: 123, recordTotal: -100 }
+          { tag_id: 1, tagName: "Tag1", amount: 100, id: 123, recordTotal: -100 },
+          { tag_id: 'untagged', tagName: "Untagged", amount: 0, recordTotal: 0 }
         ]
       )
     });

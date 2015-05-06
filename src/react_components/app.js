@@ -76,7 +76,7 @@ var App = React.createClass({
   },
 
   updateCurrentAccounts: function(accounts) {
-    var records = this._filterRecords(accounts);
+    var records = this._filterRecordsByAccounts(accounts);
     var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
     this.setState({
       currentAccounts: accounts,
@@ -109,18 +109,29 @@ var App = React.createClass({
     })
   },
 
+  handleClick: function(tag_id) {
+    var records = this._filterRecordsByTag(tag_id);
+    this.setState({records: records});
+  },
+
   _filterAccounts: function(region) {
     return _.filter(this.props.accounts, function(account) {
       return account.region == region;
     });
   },
 
-  _filterRecords: function(accounts) {
+  _filterRecordsByAccounts: function(accounts) {
     var accountIds = _.map(accounts, function(account) {
       return account.accountNumber;
     });
     return _.filter(this.props.records, function(record) {
       return _.contains(accountIds, record.account_number);
+    });
+  },
+
+  _filterRecordsByTag: function(tag_id) {
+    return _.filter(this.props.records, function(record) {
+      return _.contains(record.tag_ids, tag_id);
     });
   },
 
@@ -154,6 +165,7 @@ var App = React.createClass({
                 balance={this.balance()}
                 tagsSummary={this.tagsSummary()}
                 currencySymbol={this.state.currencySymbol}
+                handleClick={this.handleClick}
               />
             </div>
           </div>
