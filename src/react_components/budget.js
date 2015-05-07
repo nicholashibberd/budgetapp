@@ -75,6 +75,11 @@ var Budget = React.createClass({
     return _.max(allValues);
   },
 
+  handleShowAll: function(evt) {
+    evt.preventDefault();
+    this.props.handleShowAll();
+  },
+
   _budgetLines: function(props) {
     var _this = this;
     var budgetLines = _.map(props.tags, function(tag) {
@@ -135,6 +140,7 @@ var Budget = React.createClass({
 
   render: function() {
     var _this = this;
+    var showAll = this.props.showAll ? "" : React.createElement('a', {href: '#', onClick: this.handleShowAll}, 'Show All');
     return (
       <div>
         <div>
@@ -168,6 +174,7 @@ var Budget = React.createClass({
               <div className="submitButtonCell">
                 <input onClick={this.submit} className="btn btn-success submitButton" type="submit" value="Submit" />
               </div>
+              {showAll}
             </div>
           </div>
         </div>

@@ -118,6 +118,13 @@ var App = React.createClass({
     });
   },
 
+  handleShowAll: function() {
+    this.setState({
+      records: this.props.records,
+      showAll: true
+    });
+  },
+
   _filterAccounts: function(region) {
     return _.filter(this.props.accounts, function(account) {
       return account.region == region;
@@ -175,6 +182,7 @@ var App = React.createClass({
                 currencySymbol={this.state.currencySymbol}
                 handleClick={this.handleClick}
                 showAll={this.state.showAll}
+                handleShowAll={this.handleShowAll}
               />
             </div>
           </div>

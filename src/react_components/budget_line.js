@@ -13,7 +13,8 @@ var BudgetLine = React.createClass({
     }
   },
 
-  handleClick: function() {
+  handleClick: function(evt) {
+    evt.preventDefault();
     this.props.handleClick(this.props.data.tag_id)
   },
 
