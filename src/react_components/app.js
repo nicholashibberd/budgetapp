@@ -13,9 +13,10 @@ var App = React.createClass({
     _.each(this.props.records, function(record) {
       record.account_name = _this._getAccountName(record.account_number);
     });
+    var accounts = this.australianAccounts();
     return {
-      records: this.props.records,
-      currentAccounts: this.australianAccounts(),
+      records: this._filterRecordsByAccounts(accounts),
+      currentAccounts: accounts,
       currencySymbol: '$',
       showAll: true
     }
