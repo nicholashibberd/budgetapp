@@ -15,6 +15,7 @@ var App = React.createClass({
     });
     var accounts = this.australianAccounts();
     return {
+      region: 'australia',
       records: this._filterRecordsByAccounts(accounts),
       currentAccounts: accounts,
       currencySymbol: '$',
@@ -111,6 +112,11 @@ var App = React.createClass({
     })
   },
 
+  changeRegion: function() {
+    var region = this.state.region == 'australia' ? 'uk' : 'australia'
+    this.setState({region: region});
+  },
+
   handleClick: function(tag_id) {
     var records = this._filterRecordsByTag(tag_id);
     this.setState({
@@ -170,6 +176,8 @@ var App = React.createClass({
                 ukAccounts={this.ukAccounts()}
                 currentAccounts={this.state.currentAccounts}
                 updateCurrentAccounts={this.updateCurrentAccounts}
+                region={this.state.region}
+                changeRegion={this.changeRegion}
               />
               <Budget
                 budgetLines={this.props.budgetLines}

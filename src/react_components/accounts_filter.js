@@ -43,16 +43,16 @@ var AccountsFilter = React.createClass({
     })
   },
 
-  // _filterAccounts: function(region) {
-  //   return _.filter(this.props.accounts, function(account) {
-  //     return account.region == region;
-  //   });
-  // },
-
   render: function() {
     var _this = this;
     return (
-      <div className="dropdown accounts-filter">
+      <div className="dropdown accounts-filter btn-group">
+        <button
+          onClick={this.props.changeRegion}
+          className="btn btn-default btn-lg"
+          type="button">
+          <img src={"/images/" + this.props.region + "_flag.gif"} className="flag" />
+        </button>
         <button className="btn btn-default btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
           <span className="accounts-button-text">{this.displayText()}</span>
           <span className="caret"></span>

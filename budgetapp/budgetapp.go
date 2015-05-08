@@ -471,6 +471,7 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 func init() {
 	http.Handle("/javascripts/", http.FileServer(http.Dir("public/")))
 	http.Handle("/stylesheets/", http.FileServer(http.Dir("public/")))
+	http.Handle("/images/", http.FileServer(http.Dir("public/")))
 	http.HandleFunc("/records/", handleRecordJson)
 	http.HandleFunc("/tags", handleTagsJson)
 	http.HandleFunc("/rules", handleRulesJson)
