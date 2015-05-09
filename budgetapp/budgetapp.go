@@ -327,7 +327,6 @@ func handleBudgetsJson(w http.ResponseWriter, r *http.Request) {
 			log.Printf(err.Error())
 		}
 
-		log.Printf("!!:: %v", budgetLines)
 		for i := 0; i < len(budgetLines); i++ {
 			k := datastore.NewKey(c, "BudgetLine", "", budgetLines[i].Id, record.BudgetLineKey(c))
 			_, err = datastore.Put(c, k, &budgetLines[i])

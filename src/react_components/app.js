@@ -13,14 +13,10 @@ var App = React.createClass({
     _.each(this.props.records, function(record) {
       record.account_name = _this._getAccountName(record.account_number);
     });
-    var accounts = this.australianAccounts();
-    return {
-      region: 'australia',
-      records: this._filterRecordsByAccounts(accounts),
-      currentAccounts: accounts,
-      currencySymbol: '$',
-      showAll: true
+    var state = {
+      budgetLines: this.props.budgetLines
     }
+    return _.extend(state, this._stateRegionAustralia());
   },
 
   australianAccounts: function() {
@@ -29,6 +25,106 @@ var App = React.createClass({
 
   ukAccounts: function() {
     return this._filterAccounts('UK');
+  },
+
+  changeRegion: function() {
+    this.state.region == 'australia' ? this.setRegion('uk') : this.setRegion('australia');
+  },
+
+  setRegion: function(region) {
+    var state = (region == 'australia') ? this._stateRegionAustralia() : this._stateRegionUk();
+    this.setState(state);
+  },
+
+  _stateRegionAustralia: function() {
+    var accounts = this.australianAccounts();
+    return {
+      region: 'australia',
+      currencySymbol: '$',
+      currentAccounts: accounts,
+      records: this._filterRecordsByAccounts(accounts),
+      showAll: true
+    };
+  },
+
+  _stateRegionUk: function() {
+    var accounts = this.ukAccounts();
+    return {
+      region: 'uk',
+      currencySymbol: '£',
+      currentAccounts: accounts,
+      records: this._filterRecordsByAccounts(accounts),
+      showAll: true
+    };
+  },
+
+  submitBudgetLines: function(budgetLines) {
+    this.updateBudgetLines(budgetLines);
+    var data = JSON.stringify({ budgetLines: budgetLines });
+    $.ajax('/budgets', {
+      method: 'POST',
+      data: data
+    })
+  },
+
+  updateBudgetLines: function(newBudgetLines) {
+    var stateBudgetLines = this.state.budgetLines;
+    _.each(newBudgetLines, function(newBudgetLine) {
+      stateBudgetLine = _.find(stateBudgetLines, function(stateBudgetLine) {
+        return stateBudgetLine.id === newBudgetLine.id;
+      });
+      stateBudgetLine.amount = newBudgetLine.amount
+    });
+    this.setState({budgetLines: stateBudgetLines});
+  },
+
+  updateCurrentAccounts: function(accounts) {
+    var records = this._filterRecordsByAccounts(accounts);
+    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
+    this.setState({
+      currentAccounts: accounts,
+      records: records,
+      currencySymbol: currencySymbol
+    });
+  },
+
+  updateRecord: function(recordIndex, tagName) {
+    var records = this.state.records.slice();
+    var record = records[recordIndex];
+    var tagIds;
+
+    if (tagName !== undefined) {
+      var tag = _.find(this.props.tags, function(tag) {
+        return tag.Name == tagName
+      })
+      tagIds = [tag.id]
+    } else {
+      tagIds = [];
+    }
+    record.tag_ids = tagIds;
+
+    this.setState({records: records});
+    $.ajax({
+      url: '/records/' + record.id,
+      method: 'POST',
+      data: JSON.stringify(record),
+      contentType: 'application/json'
+    })
+  },
+
+  handleClick: function(tag_id) {
+    var records = this._filterRecordsByTag(tag_id);
+    this.setState({
+      records: records,
+      showAll: false
+    });
+  },
+
+  handleShowAll: function() {
+    this.setState({
+      records: this.props.records,
+      showAll: true
+    });
   },
 
   tagsSummary: function() {
@@ -78,59 +174,6 @@ var App = React.createClass({
     return this.moneyIn() + this.moneyOut();
   },
 
-  updateCurrentAccounts: function(accounts) {
-    var records = this._filterRecordsByAccounts(accounts);
-    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
-    this.setState({
-      currentAccounts: accounts,
-      records: records,
-      currencySymbol: currencySymbol
-    });
-  },
-
-  updateRecord: function(recordIndex, tagName) {
-    var records = this.state.records.slice();
-    var record = records[recordIndex];
-    var tagIds;
-
-    if (tagName !== undefined) {
-      var tag = _.find(this.props.tags, function(tag) {
-        return tag.Name == tagName
-      })
-      tagIds = [tag.id]
-    } else {
-      tagIds = [];
-    }
-    record.tag_ids = tagIds;
-
-    this.setState({records: records});
-    $.ajax({
-      url: '/records/' + record.id,
-      method: 'POST',
-      data: JSON.stringify(record),
-      contentType: 'application/json'
-    })
-  },
-
-  changeRegion: function() {
-    var region = this.state.region == 'australia' ? 'uk' : 'australia'
-    this.setState({region: region});
-  },
-
-  handleClick: function(tag_id) {
-    var records = this._filterRecordsByTag(tag_id);
-    this.setState({
-      records: records,
-      showAll: false
-    });
-  },
-
-  handleShowAll: function() {
-    this.setState({
-      records: this.props.records,
-      showAll: true
-    });
-  },
 
   _filterAccounts: function(region) {
     return _.filter(this.props.accounts, function(account) {
@@ -180,7 +223,7 @@ var App = React.createClass({
                 changeRegion={this.changeRegion}
               />
               <Budget
-                budgetLines={this.props.budgetLines}
+                budgetLines={this.state.budgetLines}
                 tags={this.props.tags}
                 start_date={this.props.start_date}
                 end_date={this.props.end_date}
@@ -192,6 +235,8 @@ var App = React.createClass({
                 handleClick={this.handleClick}
                 showAll={this.state.showAll}
                 handleShowAll={this.handleShowAll}
+                region={this.state.region}
+                submitBudgetLines={this.submitBudgetLines}
               />
             </div>
           </div>

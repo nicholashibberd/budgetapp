@@ -22,8 +22,8 @@ describe("Budget", function() {
       3: -300
     }
     budgetLines = [
-      { tag_id: 1, amount: 100, id: 123 },
-      { tag_id: 2, amount: 200, id: 456 },
+      { tag_id: 1, amount: 100, id: 123, region: 'australia' },
+      { tag_id: 2, amount: 200, id: 456, region: 'australia' },
     ]
     start_date = '12/07/2015'
     end_date = '25/12/2015'
@@ -35,6 +35,8 @@ describe("Budget", function() {
         end_date={end_date}
         tagsSummary={tagsSummary}
         currencySymbol={'$'}
+        submitBudgetLines={jasmine.createSpy('submitBudgetLines')}
+        region="australia"
       />
     );
     elements = TestUtils.scryRenderedComponentsWithType(
@@ -121,40 +123,34 @@ describe("Budget", function() {
 
   describe("clicking the submit button", function() {
     it("sends the current state", function() {
-      spyOn($, 'ajax')
       submit = TestUtils.findRenderedDOMComponentWithClass(budget, 'submitButton');
       TestUtils.Simulate.click(submit)
-      var budgetLines = {
-        budgetLines: [
-          {
-            start_date: "12/07/2015",
-            end_date: "25/12/2015",
-            tag_id: 3,
-            amount: 0,
-          },
-          {
-            start_date: "12/07/2015",
-            end_date: "25/12/2015",
-            tag_id: 2,
-            amount: 200,
-            id: 456,
-          },
-          {
-            start_date: "12/07/2015",
-            end_date: "25/12/2015",
-            tag_id: 1,
-            amount: 100,
-            id: 123,
-          }
-        ]
-      }
-      expect($.ajax).toHaveBeenCalledWith(
-        '/budgets',
+      budgetLines = [
         {
-          method: 'POST',
-          data: JSON.stringify(budgetLines)
+          start_date: "12/07/2015",
+          end_date: "25/12/2015",
+          tag_id: 3,
+          amount: 0,
+          region: 'australia'
+        },
+        {
+          start_date: "12/07/2015",
+          end_date: "25/12/2015",
+          tag_id: 2,
+          amount: 200,
+          id: 456,
+          region: 'australia'
+        },
+        {
+          start_date: "12/07/2015",
+          end_date: "25/12/2015",
+          tag_id: 1,
+          amount: 100,
+          id: 123,
+          region: 'australia'
         }
-      );
+      ]
+      expect(budget.props.submitBudgetLines).toHaveBeenCalledWith(budgetLines);
     });
   });
 });

@@ -149,6 +149,22 @@ describe("AccountsFilter", function() {
       app.changeRegion();
       expect(app.state.region).toEqual('uk');
     });
+
+    it("sets the currencySymbol to the one that it is not", function() {
+      app.changeRegion();
+      expect(app.state.currencySymbol).toEqual('£');
+    });
+
+    it("sets the currenctAccount to all accounts in that region", function() {
+      app.changeRegion();
+      expect(app.state.currentAccounts).toEqual(app.ukAccounts());
+    });
+
+    it("sets the records to all records in that region", function() {
+      app.changeRegion();
+      var records = app._filterRecordsByAccounts(app.ukAccounts());
+      expect(app.state.records).toEqual(records);
+    });
   });
 
   describe("tag summary", function() {

@@ -28,28 +28,24 @@ var Budget = React.createClass({
 
   submit: function(event) {
     event.preventDefault();
-    $.ajax('/budgets', {
-      method: 'POST',
-      data: this._budgetLinesJson()
-    })
+    this.props.submitBudgetLines(this._budgetLinesData());
   },
 
-  _budgetLinesJson: function() {
+  _budgetLinesData: function() {
     var _this = this;
-    var budgetLines = _.map(this._budgetLinesExcludingUntagged(), function(budgetLine) {
+    return _.map(this._budgetLinesExcludingUntagged(), function(budgetLine) {
       var attrs = {
         start_date: _this.props.start_date,
         end_date: _this.props.end_date,
         tag_id: budgetLine.tag_id,
         amount: budgetLine.amount,
+        region: _this.props.region
       }
       if (budgetLine.id !== undefined) {
         attrs.id = budgetLine.id
       }
       return attrs;
     });
-    var data = { budgetLines: budgetLines };
-    return JSON.stringify(data);
   },
 
   _calculateTotal: function(budgetLines) {
@@ -84,7 +80,7 @@ var Budget = React.createClass({
     var _this = this;
     var budgetLines = _.map(props.tags, function(tag) {
       var budgetLine = _.find(props.budgetLines, function(budgetLine) {
-        return budgetLine.tag_id == tag.id;
+        return budgetLine.tag_id == tag.id && budgetLine.region == props.region;
       });
       var amount = budgetLine !== undefined ? budgetLine.amount : 0;
       var recordTotal = props.tagsSummary[tag.id];
