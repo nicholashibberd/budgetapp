@@ -116,9 +116,21 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html")
 
-	start_date, err := parseDateParam(r.URL.Query()["start_date"])
+	startDateParam := r.URL.Query()["start_date"]
+
+	var err error
+	var start_date time.Time
 	var end_date time.Time
-	end_date, err = parseDateParam(r.URL.Query()["end_date"])
+	if len(startDateParam) == 0 {
+		t := time.Now()
+		start_date = time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
+		next_month := time.Date(t.Year(), t.Month(), 32, 0, 0, 0, 0, time.UTC)
+		end_date = time.Date(t.Year(), t.Month(), 32-next_month.Day(), 0, 0, 0, 0, time.UTC)
+	} else {
+		endDateParam := r.URL.Query()["end_date"]
+		start_date, err = parseDateParam(startDateParam)
+		end_date, err = parseDateParam(endDateParam)
+	}
 
 	var datesJSONString string
 	q := datastore.NewQuery("BudgetLine")
