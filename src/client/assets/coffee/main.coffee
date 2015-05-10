@@ -2,10 +2,7 @@ $ = require('jquery')
 require('../sass/app')
 require('./../../../react_components/vendor/pickadate/pickadate.js')
 React = require('react')
-Budget = require('./../../../react_components/budget')
-RecordList = require('./../../../react_components/record_list')
 DatePicker = require('./../../../react_components/date_picker')
-AccountsFilter = require('./../../../react_components/accounts_filter')
 App = require('./../../../react_components/app')
 
 window.jQuery = $

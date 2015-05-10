@@ -63,6 +63,8 @@ func (r *Record) AddTags(rs []Rule) {
 	for i := 0; i < len(rs); i++ {
 		ru := rs[i]
 		if strings.Contains(r.Description, ru.MatchText) {
+			log.Print("!!!!!!!!!!!!!!!!!!!!!!!!")
+			log.Print(ru.MatchText)
 			r.AddTag(ru.TagId)
 		}
 	}

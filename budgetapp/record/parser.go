@@ -1,13 +1,13 @@
 package record
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"log"
 	"strings"
 	"time"
-	"bufio"
 )
 
 type Parser interface {
@@ -54,18 +54,6 @@ func (parser ANZParser) read_file(file io.Reader) ([]Record, error) {
 	return a, nil
 }
 
-type StaticRule struct {
-	MatchText string
-	RuleName string
-}
-
-func NewStaticRule(m string, r string) StaticRule {
-	return StaticRule{
-		MatchText: m,
-		RuleName: r,
-	}
-}
-
 func (p NatwestParser) AddTags(r *Record, t []Tag) {
 	log.Print("NatwestParser called")
 }
@@ -101,21 +89,21 @@ func (parser SantanderParser) read_file(file io.Reader) ([]Record, error) {
 		line := scanner.Text()
 		if strings.HasPrefix(line, "Account") {
 			index := strings.Index(line, "\xA0")
-			record[4] = line[index + 1:]
+			record[4] = line[index+1:]
 		} else if strings.HasPrefix(line, "Date") {
 			index := strings.Index(line, "\xA0")
-			record[0] = line[index + 1:]
+			record[0] = line[index+1:]
 		} else if strings.HasPrefix(line, "Description") {
 			index := strings.Index(line, "\xA0")
-			record[1] = line[index + 1:]
+			record[1] = line[index+1:]
 		} else if strings.HasPrefix(line, "Amount") {
 			index := strings.Index(line, "\xA0")
 			lastIndex := strings.LastIndex(line, "\xA0")
-			record[2] = line[index + 1:lastIndex]
+			record[2] = line[index+1 : lastIndex]
 		} else if strings.HasPrefix(line, "Balance") {
 			index := strings.Index(line, "\xA0")
 			lastIndex := strings.LastIndex(line, "\xA0")
-			record[3] = line[index + 1:lastIndex]
+			record[3] = line[index+1 : lastIndex]
 			a = append(a, parser.parse_record(record))
 			record[0] = ""
 			record[1] = ""

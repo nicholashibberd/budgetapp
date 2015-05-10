@@ -394,32 +394,13 @@ func serveSingle(pattern string, filename string) {
 	})
 }
 
-type JSONData struct {
-	Tags        string
-	Records     string
-	Rules       string
-	Accounts    string
-	BudgetLines string
-	Dates       string
-}
-
-func editHandler(w http.ResponseWriter, r *http.Request) {
+func handleReprocessRules(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+
 	q := datastore.NewQuery("Record")
-
-	start_date, err := parseDateParam(r.URL.Query()["start_date"])
-	var end_date time.Time
-	end_date, err = parseDateParam(r.URL.Query()["end_date"])
-	if err == nil {
-		q = q.
-			Filter("Date >=", start_date).
-			Filter("Date <=", end_date)
-	} else {
-		log.Print(err.Error())
-	}
-
 	records := []record.Record{}
 	ks, err := q.GetAll(c, &records)
+	// _, err := q.GetAll(c, &records)
 	if err != nil {
 		log.Printf(err.Error())
 	}
@@ -427,44 +408,37 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 		records[i].Id = ks[i].IntID()
 	}
 
-	recordsJSON, _ := json.Marshal(records)
-	recordsJSONString := string(recordsJSON)
+	q = datastore.NewQuery("Rule")
 
-	q = datastore.NewQuery("Tag")
-
-	tags := []record.Tag{}
-	ks, err = q.GetAll(c, &tags)
+	rules := []record.Rule{}
+	ks, err = q.GetAll(c, &rules)
+	// _, err = q.GetAll(c, &rules)
 	if err != nil {
 		log.Printf(err.Error())
 	}
-	for i := 0; i < len(tags); i++ {
-		tags[i].Id = ks[i].IntID()
+	for i := 0; i < len(rules); i++ {
+		rules[i].Id = ks[i].IntID()
 	}
 
-	tagsJSON, _ := json.Marshal(tags)
-	tagsJSONString := string(tagsJSON)
-
-	q = datastore.NewQuery("Account")
-
-	accounts := []record.Account{}
-	ks, err = q.GetAll(c, &accounts)
-	if err != nil {
-		log.Printf(err.Error())
+	for i := 0; i < len(records); i++ {
+		r := records[i]
+		r.AddTags(rules)
+		_, err := r.Save(c)
+		if err != nil {
+			log.Printf(err.Error())
+			return
+		}
 	}
-	for i := 0; i < len(accounts); i++ {
-		accounts[i].Id = ks[i].IntID()
-	}
+	http.Redirect(w, r, "/", http.StatusFound)
+}
 
-	accountsJSON, _ := json.Marshal(accounts)
-	accountsJSONString := string(accountsJSON)
-
-	p := &JSONData{
-		Records:  recordsJSONString,
-		Tags:     tagsJSONString,
-		Accounts: accountsJSONString,
-	}
-	t, _ := template.ParseFiles("edit.html")
-	t.Execute(w, p)
+type JSONData struct {
+	Tags        string
+	Records     string
+	Rules       string
+	Accounts    string
+	BudgetLines string
+	Dates       string
 }
 
 func init() {
@@ -476,10 +450,10 @@ func init() {
 	http.HandleFunc("/rules", handleRulesJson)
 	http.HandleFunc("/accounts", handleAccountsJson)
 	http.HandleFunc("/budgets", handleBudgetsJson)
-	http.HandleFunc("/", editHandler)
+	http.HandleFunc("/", handleBudget)
 	http.HandleFunc("/input", handleInput)
 	http.HandleFunc("/upload", handleUpload)
 	http.HandleFunc("/tag", handleTags)
-	http.HandleFunc("/budget", handleBudget)
+	http.HandleFunc("/reprocess-rules", handleReprocessRules)
 	serveSingle("/favicon.ico", "./favicon.ico")
 }
