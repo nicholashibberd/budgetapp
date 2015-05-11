@@ -43,7 +43,7 @@ var App = React.createClass({
       currencySymbol: '$',
       currentAccounts: accounts,
       records: this._filterRecordsByAccounts(accounts),
-      showAll: true
+      showAll: false
     };
   },
 
@@ -54,7 +54,7 @@ var App = React.createClass({
       currencySymbol: '£',
       currentAccounts: accounts,
       records: this._filterRecordsByAccounts(accounts),
-      showAll: true
+      showAll: false
     };
   },
 
