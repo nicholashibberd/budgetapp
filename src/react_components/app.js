@@ -191,7 +191,7 @@ var App = React.createClass({
   },
 
   _filterRecordsByTag: function(tag_id) {
-    return _.filter(this.props.records, function(record) {
+    return _.filter(this.state.records, function(record) {
       if (tag_id === 'untagged') {
         return record.tag_ids === null || !record.tag_ids.length;
       } else {

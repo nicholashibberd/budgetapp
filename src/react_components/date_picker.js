@@ -4,6 +4,18 @@ var React = require('react/addons');
 var moment = require('moment');
 var DATE_FORMAT = "DD/MM/YYYY";
 var CAL_DATE_FORMAT = "D MMM, YYYY";
+var _ = require('underscore');
+var $ = require('jquery');
+
+var PICKER_OPTIONS = {
+  weekdaysFull: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  weekdaysShort: ["S", "M", "T", "W", "T", "F", "S"],
+  today: false,
+  clear: false,
+  format: 'dd/mm/yyyy',
+  onClose: function() { $(document.activeElement).blur() }
+};
+
 var DatePicker = React.createClass({
   getInitialState: function() {
     return {
@@ -28,9 +40,21 @@ var DatePicker = React.createClass({
     this.state.endDate = moment(e.target.value, CAL_DATE_FORMAT);
   },
 
+  componentDidMount: function() {
+    window.startDatePicker = $(".js-start-date")
+      .pickadate(PICKER_OPTIONS)
+      .pickadate("picker")
+      .set('select', this.props.startDate, {format: "dd/mm/yyyy"});
+
+    window.endDatePicker = $(".js-end-date")
+      .pickadate(PICKER_OPTIONS)
+      .pickadate("picker")
+      .set('select', this.props.endDate, {format: "dd/mm/yyyy"});
+  },
+
   render: function() {
     return (
-      <form className="navbar-form navbar-right" role="form" action="/budget">
+      <form className="navbar-form navbar-right" role="form" action="/">
         <div className="form-group">
           <input
             name="start_date"
