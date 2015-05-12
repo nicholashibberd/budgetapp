@@ -82,7 +82,19 @@ func RecordKey(c appengine.Context) *datastore.Key {
 }
 
 func (r *Record) AddTag(i int64) {
+	if r.hasTagId(i) {
+		return
+	}
 	r.TagIds = append(r.TagIds, i)
+}
+
+func (r *Record) hasTagId(i int64) bool {
+	for _, a := range r.TagIds {
+		if a == i {
+			return true
+		}
+	}
+	return false
 }
 
 func NewRecord(de string, ac string, am string, da time.Time, b string, t string) Record {

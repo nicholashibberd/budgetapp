@@ -130,7 +130,7 @@ var App = React.createClass({
   tagsSummary: function() {
     var tags = {};
     _.each(this.state.records, function(record) {
-      var amount = parseInt(record.amount);
+      var amount = parseFloat(record.amount);
       _.each(record.tag_ids, function(tag_id) {
         if (tags[tag_id] !== undefined) {
           tags[tag_id] += amount;

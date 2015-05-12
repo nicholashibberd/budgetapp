@@ -3,7 +3,7 @@ var React = require('react/addons');
 var _ = require('underscore');
 var BudgetLine = React.createClass({
   handleChange: function(event) {
-    var amount = parseInt(event.target.value);
+    var amount = parseFloat(event.target.value);
     this.props.updateAmount(this.props.data.tag_id, amount)
   },
 

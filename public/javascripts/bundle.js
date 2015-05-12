@@ -332,7 +332,7 @@
 	  tagsSummary: function() {
 	    var tags = {};
 	    _.each(this.state.records, function(record) {
-	      var amount = parseInt(record.amount);
+	      var amount = parseFloat(record.amount);
 	      _.each(record.tag_ids, function(tag_id) {
 	        if (tags[tag_id] !== undefined) {
 	          tags[tag_id] += amount;
@@ -17755,7 +17755,7 @@
 	var _ = __webpack_require__(19);
 	var BudgetLine = React.createClass({displayName: "BudgetLine",
 	  handleChange: function(event) {
-	    var amount = parseInt(event.target.value);
+	    var amount = parseFloat(event.target.value);
 	    this.props.updateAmount(this.props.data.tag_id, amount)
 	  },
 
@@ -17851,11 +17851,16 @@
 
 	module.exports = {
 	  displayAmount: function(amount, symbol) {
-	    if (amount >= 0) {
-	      return symbol + amount;
-	    } else {
-	      return '-' + symbol + Math.abs(amount);
-	    }
+	    // if (amount >= 0) {
+	    //   return symbol + amount;
+	    // } else {
+	    //   return '-' + symbol + Math.abs(amount);
+	    // }
+
+	    var negative = amount < 0 ? "-" : "",
+	    i = parseInt(amount = Math.abs(+amount || 0).toFixed(2), 10) + "",
+	    j = (j = i.length) > 3 ? j % 3 : 0;
+	    return negative + symbol + (j ? i.substr(0, j) + ',' : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + ',') + ('.' + Math.abs(amount - i).toFixed(2).slice(2));
 	  }
 	}
 
@@ -18257,7 +18262,7 @@
 
 	'use strict';
 
-	var ReactUpdateQueue = __webpack_require__(149);
+	var ReactUpdateQueue = __webpack_require__(144);
 
 	var invariant = __webpack_require__(140);
 	var warning = __webpack_require__(143);
@@ -18399,12 +18404,12 @@
 	var ReactComponent = __webpack_require__(26);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
-	var ReactErrorUtils = __webpack_require__(144);
-	var ReactInstanceMap = __webpack_require__(145);
-	var ReactLifeCycle = __webpack_require__(146);
-	var ReactPropTypeLocations = __webpack_require__(147);
-	var ReactPropTypeLocationNames = __webpack_require__(148);
-	var ReactUpdateQueue = __webpack_require__(149);
+	var ReactErrorUtils = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
+	var ReactLifeCycle = __webpack_require__(147);
+	var ReactPropTypeLocations = __webpack_require__(148);
+	var ReactPropTypeLocationNames = __webpack_require__(149);
+	var ReactUpdateQueue = __webpack_require__(144);
 
 	var assign = __webpack_require__(41);
 	var invariant = __webpack_require__(140);
@@ -19784,8 +19789,8 @@
 
 	var ReactElement = __webpack_require__(30);
 	var ReactFragment = __webpack_require__(50);
-	var ReactPropTypeLocations = __webpack_require__(147);
-	var ReactPropTypeLocationNames = __webpack_require__(148);
+	var ReactPropTypeLocations = __webpack_require__(148);
+	var ReactPropTypeLocationNames = __webpack_require__(149);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactNativeComponent = __webpack_require__(153);
 
@@ -21053,11 +21058,11 @@
 	var ReactElementValidator = __webpack_require__(31);
 	var ReactEmptyComponent = __webpack_require__(189);
 	var ReactInstanceHandles = __webpack_require__(35);
-	var ReactInstanceMap = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
 	var ReactMarkupChecksum = __webpack_require__(190);
 	var ReactPerf = __webpack_require__(37);
 	var ReactReconciler = __webpack_require__(39);
-	var ReactUpdateQueue = __webpack_require__(149);
+	var ReactUpdateQueue = __webpack_require__(144);
 	var ReactUpdates = __webpack_require__(52);
 
 	var emptyObject = __webpack_require__(152);
@@ -22049,7 +22054,7 @@
 
 	var ReactElement = __webpack_require__(30);
 	var ReactFragment = __webpack_require__(50);
-	var ReactPropTypeLocationNames = __webpack_require__(148);
+	var ReactPropTypeLocationNames = __webpack_require__(149);
 
 	var emptyFunction = __webpack_require__(196);
 
@@ -22667,7 +22672,7 @@
 	'use strict';
 
 	var ReactCurrentOwner = __webpack_require__(29);
-	var ReactInstanceMap = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
 	var ReactMount = __webpack_require__(36);
 
 	var invariant = __webpack_require__(140);
@@ -24529,7 +24534,7 @@
 	var ReactBrowserEventEmitter = __webpack_require__(188);
 	var ReactCompositeComponent = __webpack_require__(212);
 	var ReactInstanceHandles = __webpack_require__(35);
-	var ReactInstanceMap = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
 	var ReactMount = __webpack_require__(36);
 	var ReactUpdates = __webpack_require__(52);
 	var SyntheticEvent = __webpack_require__(213);
@@ -33177,195 +33182,6 @@
 /* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactErrorUtils
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ReactErrorUtils = {
-	  /**
-	   * Creates a guarded version of a function. This is supposed to make debugging
-	   * of event handlers easier. To aid debugging with the browser's debugger,
-	   * this currently simply returns the original function.
-	   *
-	   * @param {function} func Function to be executed
-	   * @param {string} name The name of the guard
-	   * @return {function}
-	   */
-	  guard: function(func, name) {
-	    return func;
-	  }
-	};
-
-	module.exports = ReactErrorUtils;
-
-
-/***/ },
-/* 145 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactInstanceMap
-	 */
-
-	'use strict';
-
-	/**
-	 * `ReactInstanceMap` maintains a mapping from a public facing stateful
-	 * instance (key) and the internal representation (value). This allows public
-	 * methods to accept the user facing instance as an argument and map them back
-	 * to internal methods.
-	 */
-
-	// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
-	var ReactInstanceMap = {
-
-	  /**
-	   * This API should be called `delete` but we'd have to make sure to always
-	   * transform these to strings for IE support. When this transform is fully
-	   * supported we can rename it.
-	   */
-	  remove: function(key) {
-	    key._reactInternalInstance = undefined;
-	  },
-
-	  get: function(key) {
-	    return key._reactInternalInstance;
-	  },
-
-	  has: function(key) {
-	    return key._reactInternalInstance !== undefined;
-	  },
-
-	  set: function(key, value) {
-	    key._reactInternalInstance = value;
-	  }
-
-	};
-
-	module.exports = ReactInstanceMap;
-
-
-/***/ },
-/* 146 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLifeCycle
-	 */
-
-	'use strict';
-
-	/**
-	 * This module manages the bookkeeping when a component is in the process
-	 * of being mounted or being unmounted. This is used as a way to enforce
-	 * invariants (or warnings) when it is not recommended to call
-	 * setState/forceUpdate.
-	 *
-	 * currentlyMountingInstance: During the construction phase, it is not possible
-	 * to trigger an update since the instance is not fully mounted yet. However, we
-	 * currently allow this as a convenience for mutating the initial state.
-	 *
-	 * currentlyUnmountingInstance: During the unmounting phase, the instance is
-	 * still mounted and can therefore schedule an update. However, this is not
-	 * recommended and probably an error since it's about to be unmounted.
-	 * Therefore we still want to trigger in an error for that case.
-	 */
-
-	var ReactLifeCycle = {
-	  currentlyMountingInstance: null,
-	  currentlyUnmountingInstance: null
-	};
-
-	module.exports = ReactLifeCycle;
-
-
-/***/ },
-/* 147 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactPropTypeLocations
-	 */
-
-	'use strict';
-
-	var keyMirror = __webpack_require__(150);
-
-	var ReactPropTypeLocations = keyMirror({
-	  prop: null,
-	  context: null,
-	  childContext: null
-	});
-
-	module.exports = ReactPropTypeLocations;
-
-
-/***/ },
-/* 148 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactPropTypeLocationNames
-	 */
-
-	'use strict';
-
-	var ReactPropTypeLocationNames = {};
-
-	if ("production" !== process.env.NODE_ENV) {
-	  ReactPropTypeLocationNames = {
-	    prop: 'prop',
-	    context: 'context',
-	    childContext: 'child context'
-	  };
-	}
-
-	module.exports = ReactPropTypeLocationNames;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
-
-/***/ },
-/* 149 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/* WEBPACK VAR INJECTION */(function(process) {/**
 	 * Copyright 2015, Facebook, Inc.
 	 * All rights reserved.
@@ -33379,10 +33195,10 @@
 
 	'use strict';
 
-	var ReactLifeCycle = __webpack_require__(146);
+	var ReactLifeCycle = __webpack_require__(147);
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
-	var ReactInstanceMap = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
 	var ReactUpdates = __webpack_require__(52);
 
 	var assign = __webpack_require__(41);
@@ -33661,6 +33477,195 @@
 	};
 
 	module.exports = ReactUpdateQueue;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
+
+/***/ },
+/* 145 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactErrorUtils
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ReactErrorUtils = {
+	  /**
+	   * Creates a guarded version of a function. This is supposed to make debugging
+	   * of event handlers easier. To aid debugging with the browser's debugger,
+	   * this currently simply returns the original function.
+	   *
+	   * @param {function} func Function to be executed
+	   * @param {string} name The name of the guard
+	   * @return {function}
+	   */
+	  guard: function(func, name) {
+	    return func;
+	  }
+	};
+
+	module.exports = ReactErrorUtils;
+
+
+/***/ },
+/* 146 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactInstanceMap
+	 */
+
+	'use strict';
+
+	/**
+	 * `ReactInstanceMap` maintains a mapping from a public facing stateful
+	 * instance (key) and the internal representation (value). This allows public
+	 * methods to accept the user facing instance as an argument and map them back
+	 * to internal methods.
+	 */
+
+	// TODO: Replace this with ES6: var ReactInstanceMap = new Map();
+	var ReactInstanceMap = {
+
+	  /**
+	   * This API should be called `delete` but we'd have to make sure to always
+	   * transform these to strings for IE support. When this transform is fully
+	   * supported we can rename it.
+	   */
+	  remove: function(key) {
+	    key._reactInternalInstance = undefined;
+	  },
+
+	  get: function(key) {
+	    return key._reactInternalInstance;
+	  },
+
+	  has: function(key) {
+	    return key._reactInternalInstance !== undefined;
+	  },
+
+	  set: function(key, value) {
+	    key._reactInternalInstance = value;
+	  }
+
+	};
+
+	module.exports = ReactInstanceMap;
+
+
+/***/ },
+/* 147 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLifeCycle
+	 */
+
+	'use strict';
+
+	/**
+	 * This module manages the bookkeeping when a component is in the process
+	 * of being mounted or being unmounted. This is used as a way to enforce
+	 * invariants (or warnings) when it is not recommended to call
+	 * setState/forceUpdate.
+	 *
+	 * currentlyMountingInstance: During the construction phase, it is not possible
+	 * to trigger an update since the instance is not fully mounted yet. However, we
+	 * currently allow this as a convenience for mutating the initial state.
+	 *
+	 * currentlyUnmountingInstance: During the unmounting phase, the instance is
+	 * still mounted and can therefore schedule an update. However, this is not
+	 * recommended and probably an error since it's about to be unmounted.
+	 * Therefore we still want to trigger in an error for that case.
+	 */
+
+	var ReactLifeCycle = {
+	  currentlyMountingInstance: null,
+	  currentlyUnmountingInstance: null
+	};
+
+	module.exports = ReactLifeCycle;
+
+
+/***/ },
+/* 148 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactPropTypeLocations
+	 */
+
+	'use strict';
+
+	var keyMirror = __webpack_require__(150);
+
+	var ReactPropTypeLocations = keyMirror({
+	  prop: null,
+	  context: null,
+	  childContext: null
+	});
+
+	module.exports = ReactPropTypeLocations;
+
+
+/***/ },
+/* 149 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactPropTypeLocationNames
+	 */
+
+	'use strict';
+
+	var ReactPropTypeLocationNames = {};
+
+	if ("production" !== process.env.NODE_ENV) {
+	  ReactPropTypeLocationNames = {
+	    prop: 'prop',
+	    context: 'context',
+	    childContext: 'child context'
+	  };
+	}
+
+	module.exports = ReactPropTypeLocationNames;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(46)))
 
@@ -39197,7 +39202,7 @@
 	'use strict';
 
 	var ReactElement = __webpack_require__(30);
-	var ReactInstanceMap = __webpack_require__(145);
+	var ReactInstanceMap = __webpack_require__(146);
 
 	var invariant = __webpack_require__(140);
 
@@ -41664,12 +41669,12 @@
 	var ReactCurrentOwner = __webpack_require__(29);
 	var ReactElement = __webpack_require__(30);
 	var ReactElementValidator = __webpack_require__(31);
-	var ReactInstanceMap = __webpack_require__(145);
-	var ReactLifeCycle = __webpack_require__(146);
+	var ReactInstanceMap = __webpack_require__(146);
+	var ReactLifeCycle = __webpack_require__(147);
 	var ReactNativeComponent = __webpack_require__(153);
 	var ReactPerf = __webpack_require__(37);
-	var ReactPropTypeLocations = __webpack_require__(147);
-	var ReactPropTypeLocationNames = __webpack_require__(148);
+	var ReactPropTypeLocations = __webpack_require__(148);
+	var ReactPropTypeLocationNames = __webpack_require__(149);
 	var ReactReconciler = __webpack_require__(39);
 	var ReactUpdates = __webpack_require__(52);
 
