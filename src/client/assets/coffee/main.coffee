@@ -11,19 +11,9 @@ $ ->
   start_date = window.datesJSON.start_date
   end_date = window.datesJSON.end_date
 
-  # #Pickadate
-  # pickerOptions = {
-  #   weekdaysFull: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  #   weekdaysShort: ["S", "M", "T", "W", "T", "F", "S"],
-  #   today: false,
-  #   clear: false,
-  #   format: 'dd/mm/yyyy',
-  #   # close: "Cancel",
-  #   # firstDay: true,
-  #   # min: false,
-  #   onClose: -> $(document.activeElement).blur()
-  #   # onSet: (picker) -> setDate(picker.select) if picker.select
-  # }
+  if start_date && end_date
+    path = 'export-records?start_date=' + start_date + '&end_date=' + end_date
+    $('#export-records').attr('href', path)
 
   React.render(
     React.createElement(App, {
@@ -44,13 +34,3 @@ $ ->
     }),
     document.getElementById('date-form')
   )
-
-  # window.startDatePicker = $(".js-start-date")
-  #   .pickadate(pickerOptions)
-  #   .pickadate("picker")
-  #   .set('select', start_date, {format: "dd/mm/yyyy"});
-
-  # window.endDatePicker = $(".js-end-date")
-  #   .pickadate(pickerOptions)
-  #   .pickadate("picker")
-  #   .set('select', end_date, {format: "dd/mm/yyyy"});

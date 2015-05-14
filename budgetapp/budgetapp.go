@@ -1,6 +1,7 @@
 package budgetapp
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -13,6 +14,7 @@ import (
 	"appengine/datastore"
 
 	"budgetapp/record"
+	"bytes"
 	"errors"
 	"time"
 )
@@ -444,6 +446,66 @@ func handleReprocessRules(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
+func handleExportRecords(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+
+	startDateParam := r.URL.Query()["start_date"]
+
+	var err error
+	var start_date time.Time
+	var end_date time.Time
+	if len(startDateParam) == 0 {
+		start_date = time.Date(2014, 9, 1, 0, 0, 0, 0, time.UTC)
+		end_date = time.Now()
+	} else {
+		endDateParam := r.URL.Query()["end_date"]
+		start_date, err = parseDateParam(startDateParam)
+		end_date, err = parseDateParam(endDateParam)
+	}
+
+	q := datastore.NewQuery("Record").
+		Filter("Date >=", start_date).
+		Filter("Date <=", end_date)
+	records := []record.Record{}
+	ks, err := q.GetAll(c, &records)
+	if err != nil {
+		log.Printf(err.Error())
+	}
+
+	b := &bytes.Buffer{}
+
+	for i := 0; i < len(records); i++ {
+		records[i].Id = ks[i].IntID()
+	}
+
+	writer := csv.NewWriter(b)
+	row := []string{"Account Number", "Date", "Description", "Amount", "Balance"}
+	err = writer.Write(row)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	for _, record := range records {
+		row := []string{
+			record.Account_number,
+			record.Date.Format("2006-01-02"),
+			record.Description,
+			record.Amount,
+			record.Balance,
+		}
+		err := writer.Write(row)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+	}
+	writer.Flush()
+	w.Header().Set("Content-Type", "text/csv")
+	filename := "budget-records_" + start_date.Format("2006-01-02") + "_" + end_date.Format("2006-01-02") + ".csv"
+	w.Header().Set("Content-Disposition", "attachment;filename="+filename)
+	w.Write(b.Bytes())
+}
+
 type JSONData struct {
 	Tags        string
 	Records     string
@@ -467,5 +529,6 @@ func init() {
 	http.HandleFunc("/upload", handleUpload)
 	http.HandleFunc("/tag", handleTags)
 	http.HandleFunc("/reprocess-rules", handleReprocessRules)
+	http.HandleFunc("/export-records", handleExportRecords)
 	serveSingle("/favicon.ico", "./favicon.ico")
 }
