@@ -8,6 +8,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"appengine"
 	"appengine/blobstore"
@@ -479,19 +481,25 @@ func handleExportRecords(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writer := csv.NewWriter(b)
-	row := []string{"Account Number", "Date", "Description", "Amount", "Balance"}
+	row := []string{"Account Number", "Date", "Description", "Amount", "Balance", "Tag Ids"}
 	err = writer.Write(row)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 	for _, record := range records {
+		tagIds := []string{}
+		for _, tagId := range record.TagIds {
+			tagIds = append(tagIds, strconv.FormatInt(tagId, 10))
+		}
+
 		row := []string{
 			record.Account_number,
 			record.Date.Format("2006-01-02"),
 			record.Description,
 			record.Amount,
 			record.Balance,
+			strings.Join(tagIds, ","),
 		}
 		err := writer.Write(row)
 		if err != nil {
