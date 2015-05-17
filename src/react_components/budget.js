@@ -57,7 +57,7 @@ var Budget = React.createClass({
   },
 
   _isNumber: function(n) {
-    return !isNaN(parseFloat(n) && isFinite(n));
+    return !isNaN(utils.parseAmount(n) && isFinite(n));
   },
 
   maximumValue: function() {

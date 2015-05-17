@@ -1,9 +1,10 @@
 /** @jsx React.DOM */
 var React = require('react/addons');
 var _ = require('underscore');
+var utils = require('../utils/common');
 var BudgetLine = React.createClass({
   handleChange: function(event) {
-    var amount = parseFloat(event.target.value);
+    var amount = utils.parseAmount(event.target.value);
     this.props.updateAmount(this.props.data.tag_id, amount)
   },
 

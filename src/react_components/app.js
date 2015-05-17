@@ -6,6 +6,7 @@ var AccountsFilter = require('./accounts_filter');
 var Budget = require('./budget');
 var _ = require('underscore');
 var $ = require('jquery');
+var utils = require('../utils/common');
 
 var App = React.createClass({
   getInitialState: function() {
@@ -130,7 +131,7 @@ var App = React.createClass({
   tagsSummary: function() {
     var tags = {};
     _.each(this.state.records, function(record) {
-      var amount = parseFloat(record.amount);
+      var amount = utils.parseAmount(record.amount);
       _.each(record.tag_ids, function(tag_id) {
         if (tags[tag_id] !== undefined) {
           tags[tag_id] += amount;
