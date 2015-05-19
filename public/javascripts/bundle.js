@@ -117,7 +117,7 @@
 	exports = module.exports = __webpack_require__(14)();
 	__webpack_require__(15)(exports, __webpack_require__(16), "");
 	__webpack_require__(15)(exports, __webpack_require__(17), "");
-	exports.push([module.id, "header{background:#333;}header .utilities-menu{margin-top:8px;}a.navbar-brand{color:#fff;}#accounts-container{color:white;margin-top:8px;float:right;}.accounts-button-text{margin-right:6px;}.flag{height:20px;}.jumbotron{position:relative;}#tag-list li .edit{display:none;}#positive-tags h2{position:absolute;top:65px;left:480px;}#negative-tags h2{position:absolute;top:65px;left:900px;}#tag-groups a,.tag-summary-table{font-size:16px;}.tag-summary-bar{height:20px;}.tag-summary-column{padding-top:6px;}span.tag-name{font-weight:500;}.new-tag input{width:50%;}.new-rule input,.new-account input{width:100%;}table#tag-table,span.label,table#rule-table,span.label{font-size:14px;}td.tag-controls{width:20%;}.tt-query{-webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);-moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);}.tt-hint{color:#999;}.tt-dropdown-menu{width:200px;margin-top:4px;padding:4px 0;background-color:#fff;border:1px solid #ccc;border:1px solid rgba(0, 0, 0, 0.2);-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;-webkit-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);-moz-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);}.tt-suggestion{padding:3px 20px;line-height:24px;}.tt-suggestion.tt-cursor{color:#fff;background-color:#0097cf;}.tt-suggestion p{margin:0;}.accounts-filter{float:left;margin-right:30px;}.summary-total{display:inline-block;margin-right:20px;}.budgetLineList{font-size:14px;margin-top:20px;}.budgetLineList td{padding-right:10px;}.submitButtonCell{padding-top:10px;float:right;}.budgetLine-budget-input{float:right;width:162px;}.budgetLine-budget-input .record-addon{width:65px;border-right:none;background:white;color:#999;}.budgetLine input{width:50px;}.summary-bar{padding-top:7px;}.negative-summary-bar{background:#6BA2C2;}.zero-summary-bar.within-budget{background:#87C3A2;}.zero-summary-bar.over-budget{background:#6BA2C2;}.positive-summary-bar.within-budget.summary-bar-outer{background:#87C3A2;}.positive-summary-bar.over-budget.summary-bar-outer{background:#226544;}.positive-summary-bar .summary-bar-inner{background:#009966;}.negative-summary-bar.within-budget.summary-bar-outer{background:#6BA2C2;}.negative-summary-bar.over-budget.summary-bar-outer{background:#005480;}.negative-summary-bar .summary-bar-inner{background:#0075B2;}.summary-bar-inner{height:20px;}", ""]);
+	exports.push([module.id, "header{background:#333;}header .utilities-menu{margin-top:8px;}a.navbar-brand{color:#fff;}#accounts-container{color:white;margin-top:8px;float:right;}.accounts-button-text{margin-right:6px;}.flag{height:20px;}.jumbotron{position:relative;}#tag-list li .edit{display:none;}#positive-tags h2{position:absolute;top:65px;left:480px;}#negative-tags h2{position:absolute;top:65px;left:900px;}#tag-groups a,.tag-summary-table{font-size:16px;}.tag-summary-bar{height:20px;}.tag-summary-column{padding-top:6px;}span.tag-name{font-weight:500;}.new-tag input{width:50%;}.new-rule input,.new-account input{width:100%;}table#tag-table,span.label,table#rule-table,span.label{font-size:14px;}td.tag-controls,td.date,td.amount{width:10%;}td.account-name{width:15%;}.tt-query{-webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);-moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);}.tt-hint{color:#999;}.tt-dropdown-menu{width:200px;margin-top:4px;padding:4px 0;background-color:#fff;border:1px solid #ccc;border:1px solid rgba(0, 0, 0, 0.2);-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;-webkit-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);-moz-box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);box-shadow:0 5px 10px rgba(0, 0, 0, 0.2);}.tt-suggestion{padding:3px 20px;line-height:24px;}.tt-suggestion.tt-cursor{color:#fff;background-color:#0097cf;}.tt-suggestion p{margin:0;}.accounts-filter{float:left;margin-right:30px;}.summary-total{display:inline-block;margin-right:20px;}.budgetLineList{font-size:14px;margin-top:20px;}.budgetLineList td{padding-right:10px;}.submitButtonCell{padding-top:10px;float:right;}.budgetLine-budget-input{float:right;width:162px;}.budgetLine-budget-input .record-addon{width:65px;border-right:none;background:white;color:#999;}.budgetLine input{width:50px;}.summary-bar{padding-top:7px;}.negative-summary-bar{background:#6BA2C2;}.zero-summary-bar.within-budget{background:#87C3A2;}.zero-summary-bar.over-budget{background:#6BA2C2;}.positive-summary-bar.within-budget.summary-bar-outer{background:#87C3A2;}.positive-summary-bar.over-budget.summary-bar-outer{background:#226544;}.positive-summary-bar .summary-bar-inner{background:#009966;}.negative-summary-bar.within-budget.summary-bar-outer{background:#6BA2C2;}.negative-summary-bar.over-budget.summary-bar-outer{background:#005480;}.negative-summary-bar .summary-bar-inner{background:#0075B2;}.summary-bar-inner{height:20px;}", ""]);
 
 /***/ },
 /* 3 */
@@ -497,7 +497,8 @@
 	            React.createElement(RecordList, {
 	              records: this.state.records, 
 	              tags: this.props.tags, 
-	              updateRecord: this.updateRecord}
+	              updateRecord: this.updateRecord, 
+	              currencySymbol: this.currencySymbol()}
 	            )
 	          )
 	        )
@@ -12490,7 +12491,8 @@
 	                data: record, 
 	                tags: _this.props.tags, 
 	                key: index, 
-	                updateRecord: _this.props.updateRecord.bind(null, index)}
+	                updateRecord: _this.props.updateRecord.bind(null, index), 
+	                currencySymbol: _this.props.currencySymbol}
 	              )
 	            })
 	          )
@@ -17711,6 +17713,7 @@
 	var moment = __webpack_require__(19);
 	var _ = __webpack_require__(20);
 	var $ = __webpack_require__(6);
+	var utils = __webpack_require__(13);
 
 	var Record = React.createClass({displayName: "Record",
 	  getInitialState: function() {
@@ -17796,10 +17799,10 @@
 
 	    return (
 	      React.createElement("tr", {className: "record"}, 
-	        React.createElement("td", null, data.account_name), 
-	        React.createElement("td", null, this.displayDate()), 
-	        React.createElement("td", null, data.description), 
-	        React.createElement("td", null, data.amount), 
+	        React.createElement("td", {className: "account-name"}, data.account_name), 
+	        React.createElement("td", {className: "date"}, this.displayDate()), 
+	        React.createElement("td", {className: "description"}, data.description), 
+	        React.createElement("td", {className: "amount"}, utils.displayAmount(data.amount, this.props.currencySymbol)), 
 	        React.createElement("td", {className: "tag-controls"}, tagControls)
 	      )
 	    );
@@ -17877,6 +17880,10 @@
 	    return (sortedVals[0] / sortedVals[1]) * 100;
 	  },
 
+	  renderAmount: function(amount) {
+	    return amount.toFixed(2);
+	  },
+
 	  render: function() {
 	    var data = this.props.data;
 	    return (
@@ -17885,7 +17892,7 @@
 	          React.createElement("div", {className: "input-group input-group budgetLine-budget-input"}, 
 	            React.createElement("span", {className: "input-group-addon"}, this.props.currencySymbol), 
 	            React.createElement("span", {className: "input-group-addon record-addon"}, 
-	              this.props.data.recordTotal
+	              this.renderAmount(this.props.data.recordTotal)
 	            ), 
 	            React.createElement("input", {className: "form-control", onChange: this.handleChange, value: data.amount})
 	          ), 
@@ -23125,8 +23132,8 @@
 
 	'use strict';
 
-	var ReactLink = __webpack_require__(200);
-	var ReactStateSetters = __webpack_require__(201);
+	var ReactLink = __webpack_require__(201);
+	var ReactStateSetters = __webpack_require__(202);
 
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -23169,7 +23176,7 @@
 
 	'use strict';
 
-	var shallowEqual = __webpack_require__(202);
+	var shallowEqual = __webpack_require__(200);
 
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -37732,7 +37739,7 @@
 	var getActiveElement = __webpack_require__(233);
 	var isTextInputElement = __webpack_require__(221);
 	var keyOf = __webpack_require__(151);
-	var shallowEqual = __webpack_require__(202);
+	var shallowEqual = __webpack_require__(200);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -40078,6 +40085,54 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule shallowEqual
+	 */
+
+	'use strict';
+
+	/**
+	 * Performs equality by iterating through keys on an object and returning
+	 * false when any key has values which are not strictly equal between
+	 * objA and objB. Returns true when the values of all keys are strictly equal.
+	 *
+	 * @return {boolean}
+	 */
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+	  var key;
+	  // Test for A's keys different from B.
+	  for (key in objA) {
+	    if (objA.hasOwnProperty(key) &&
+	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+	      return false;
+	    }
+	  }
+	  // Test for B's keys missing from A.
+	  for (key in objB) {
+	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = shallowEqual;
+
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactLink
 	 * @typechecks static-only
 	 */
@@ -40144,7 +40199,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40251,54 +40306,6 @@
 	};
 
 	module.exports = ReactStateSetters;
-
-
-/***/ },
-/* 202 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule shallowEqual
-	 */
-
-	'use strict';
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning
-	 * false when any key has values which are not strictly equal between
-	 * objA and objB. Returns true when the values of all keys are strictly equal.
-	 *
-	 * @return {boolean}
-	 */
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-	  var key;
-	  // Test for A's keys different from B.
-	  for (key in objA) {
-	    if (objA.hasOwnProperty(key) &&
-	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-	      return false;
-	    }
-	  }
-	  // Test for B's keys missing from A.
-	  for (key in objB) {
-	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = shallowEqual;
 
 
 /***/ },
@@ -42997,10 +43004,10 @@
 	'use strict';
 
 	var ReactComponentEnvironment = __webpack_require__(230);
-	var ReactMultiChildUpdateTypes = __webpack_require__(260);
+	var ReactMultiChildUpdateTypes = __webpack_require__(259);
 
 	var ReactReconciler = __webpack_require__(39);
-	var ReactChildReconciler = __webpack_require__(261);
+	var ReactChildReconciler = __webpack_require__(260);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -43502,7 +43509,7 @@
 	var PooledClass = __webpack_require__(141);
 
 	var assign = __webpack_require__(41);
-	var getTextContentAccessor = __webpack_require__(259);
+	var getTextContentAccessor = __webpack_require__(261);
 
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -43917,7 +43924,7 @@
 	'use strict';
 
 	var Danger = __webpack_require__(264);
-	var ReactMultiChildUpdateTypes = __webpack_require__(260);
+	var ReactMultiChildUpdateTypes = __webpack_require__(259);
 
 	var setTextContent = __webpack_require__(265);
 	var invariant = __webpack_require__(140);
@@ -46425,47 +46432,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule getTextContentAccessor
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(44);
-
-	var contentKey = null;
-
-	/**
-	 * Gets the key used to access text content on a DOM node.
-	 *
-	 * @return {?string} Key used to access text content.
-	 * @internal
-	 */
-	function getTextContentAccessor() {
-	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
-	    // Prefer textContent to innerText because many browsers support both but
-	    // SVG <text> elements don't support innerText even when <div> does.
-	    contentKey = 'textContent' in document.documentElement ?
-	      'textContent' :
-	      'innerText';
-	  }
-	  return contentKey;
-	}
-
-	module.exports = getTextContentAccessor;
-
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
@@ -46492,7 +46458,7 @@
 
 
 /***/ },
-/* 261 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46620,6 +46586,47 @@
 	};
 
 	module.exports = ReactChildReconciler;
+
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule getTextContentAccessor
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(44);
+
+	var contentKey = null;
+
+	/**
+	 * Gets the key used to access text content on a DOM node.
+	 *
+	 * @return {?string} Key used to access text content.
+	 * @internal
+	 */
+	function getTextContentAccessor() {
+	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
+	    // Prefer textContent to innerText because many browsers support both but
+	    // SVG <text> elements don't support innerText even when <div> does.
+	    contentKey = 'textContent' in document.documentElement ?
+	      'textContent' :
+	      'innerText';
+	  }
+	  return contentKey;
+	}
+
+	module.exports = getTextContentAccessor;
 
 
 /***/ },
@@ -46962,7 +46969,7 @@
 	var ExecutionEnvironment = __webpack_require__(44);
 
 	var getNodeForCharacterOffset = __webpack_require__(273);
-	var getTextContentAccessor = __webpack_require__(259);
+	var getTextContentAccessor = __webpack_require__(261);
 
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`

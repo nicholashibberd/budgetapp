@@ -77,8 +77,14 @@ table#tag-table, span.label, table#rule-table, span.label {
   font-size:14px;
 }
 
-td.tag-controls {
-  width: 20%;
+td.tag-controls,
+td.date,
+td.amount {
+  width: 10%;
+}
+
+td.account-name {
+  width: 15%;
 }
 
 /** Typeahead styling **/

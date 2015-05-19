@@ -288,6 +288,7 @@ var App = React.createClass({
               records={this.state.records}
               tags={this.props.tags}
               updateRecord={this.updateRecord}
+              currencySymbol={this.currencySymbol()}
             />
           </div>
         </div>

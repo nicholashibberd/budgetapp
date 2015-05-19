@@ -63,6 +63,10 @@ var BudgetLine = React.createClass({
     return (sortedVals[0] / sortedVals[1]) * 100;
   },
 
+  renderAmount: function(amount) {
+    return amount.toFixed(2);
+  },
+
   render: function() {
     var data = this.props.data;
     return (
@@ -71,7 +75,7 @@ var BudgetLine = React.createClass({
           <div className="input-group input-group budgetLine-budget-input">
             <span className="input-group-addon">{this.props.currencySymbol}</span>
             <span className="input-group-addon record-addon">
-              {this.props.data.recordTotal}
+              {this.renderAmount(this.props.data.recordTotal)}
             </span>
             <input className="form-control" onChange={this.handleChange} value={data.amount}/>
           </div>

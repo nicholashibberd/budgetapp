@@ -27,6 +27,7 @@ var RecordList = React.createClass({
                 tags={_this.props.tags}
                 key={index}
                 updateRecord={_this.props.updateRecord.bind(null, index)}
+                currencySymbol={_this.props.currencySymbol}
               />
             })}
           </tbody>

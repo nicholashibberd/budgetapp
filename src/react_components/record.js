@@ -4,6 +4,7 @@ var React = require('react/addons');
 var moment = require('moment');
 var _ = require('underscore');
 var $ = require('jquery');
+var utils = require('../utils/common');
 
 var Record = React.createClass({
   getInitialState: function() {
@@ -89,10 +90,10 @@ var Record = React.createClass({
 
     return (
       <tr className="record">
-        <td>{data.account_name}</td>
-        <td>{this.displayDate()}</td>
-        <td>{data.description}</td>
-        <td>{data.amount}</td>
+        <td className="account-name">{data.account_name}</td>
+        <td className="date">{this.displayDate()}</td>
+        <td className="description">{data.description}</td>
+        <td className="amount">{utils.displayAmount(data.amount, this.props.currencySymbol)}</td>
         <td className="tag-controls">{tagControls}</td>
       </tr>
     );
