@@ -63,22 +63,12 @@ var AccountsFilter = React.createClass({
               <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
           })}
-          <li role="presentation" className="australian">
-            <a role="menuitem" className="all-australian-accounts" href="#" onClick={this.selectAll.bind(null, 'Australia')}>
-              <strong>All Australian Accounts</strong>
-            </a>
-          </li>
           <li role="presentation" className="divider"></li>
           {this.props.ukAccounts.map(function(account, index) {
             return <li role="presentation" className="uk-account" key={index}>
               <a role="menuitem" href="#" onClick={_this.selectAccount.bind(null, account.id)}>{account.name}</a>
             </li>
           })}
-          <li role="presentation" className="uk">
-            <a role="menuitem" className="all-uk-accounts" href="#" onClick={this.selectAll.bind(null, 'UK')}>
-              <strong>All UK Accounts</strong>
-            </a>
-          </li>
         </ul>
       </div>
     );

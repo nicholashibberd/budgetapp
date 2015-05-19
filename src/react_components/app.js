@@ -12,12 +12,22 @@ var App = React.createClass({
   getInitialState: function() {
     var _this = this;
     _.each(this.props.records, function(record) {
-      record.account_name = _this._getAccountName(record.account_number);
+      var account = _this._getAccount(record.account_number);
+      record.account_name = account.name;
     });
     var state = {
       budgetLines: this.props.budgetLines
     }
-    return _.extend(state, this._stateRegionAustralia());
+    var accountsState;
+    if (this.props.account !== undefined) {
+      var account = this._getAccount(this.props.account);
+       accountsState = this._stateCurrentAccounts([account]);
+    } else if (this.props.region === 'uk') {
+      var accountsState = this._stateRegionUk();
+    } else {
+      var accountsState = this._stateRegionAustralia();
+    }
+    return _.extend(state, accountsState);
   },
 
   australianAccounts: function() {
@@ -33,18 +43,22 @@ var App = React.createClass({
   },
 
   setRegion: function(region) {
+    var _this = this;
     var state = (region == 'australia') ? this._stateRegionAustralia() : this._stateRegionUk();
     this.setState(state);
+    this.setState(state, function() {
+      _this._updateURL();
+    });
   },
 
   _stateRegionAustralia: function() {
     var accounts = this.australianAccounts();
     return {
       region: 'australia',
-      currencySymbol: '$',
       currentAccounts: accounts,
       records: this._filterRecordsByAccounts(accounts),
-      showAll: false
+      showAll: false,
+      mode: 'region'
     };
   },
 
@@ -52,10 +66,21 @@ var App = React.createClass({
     var accounts = this.ukAccounts();
     return {
       region: 'uk',
-      currencySymbol: '£',
       currentAccounts: accounts,
       records: this._filterRecordsByAccounts(accounts),
-      showAll: false
+      showAll: false,
+      mode: 'region'
+    };
+  },
+
+  _stateCurrentAccounts: function(accounts) {
+    var records = this._filterRecordsByAccounts(accounts);
+    var region = (accounts[0].region ==  'Australia') ? 'australia' : 'uk';
+    return {
+      region: region,
+      currentAccounts: accounts,
+      records: records,
+      mode: 'account'
     };
   },
 
@@ -80,12 +105,9 @@ var App = React.createClass({
   },
 
   updateCurrentAccounts: function(accounts) {
-    var records = this._filterRecordsByAccounts(accounts);
-    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
-    this.setState({
-      currentAccounts: accounts,
-      records: records,
-      currencySymbol: currencySymbol
+    var _this = this;
+    this.setState(this._stateCurrentAccounts(accounts), function() {
+      _this._updateURL();
     });
   },
 
@@ -201,11 +223,31 @@ var App = React.createClass({
     });
   },
 
-  _getAccountName: function(accountNumber) {
-    var account = _.find(this.props.accounts, function(account) {
+  _getAccount: function(accountNumber) {
+    return _.find(this.props.accounts, function(account) {
       return account.accountNumber == accountNumber;
     });
-    return account.name;
+  },
+
+  currencySymbol: function() {
+    return this.state.region == "uk" ? "£" : "$"
+  },
+
+  _updateURL: function() {
+    history.pushState(null, null, this._stateToQuery());
+  },
+
+  _stateToQuery: function() {
+    var urlParts =  {
+      start_date: this.props.start_date,
+      end_date: this.props.end_date
+    }
+    if (this.state.mode == 'account') {
+      urlParts.account = this.state.currentAccounts[0].accountNumber;
+    } else {
+      urlParts.region = this.state.region;
+    }
+    return "/?" + $.param(urlParts);
   },
 
   render: function() {
@@ -232,7 +274,7 @@ var App = React.createClass({
                 moneyOut={this.moneyOut()}
                 balance={this.balance()}
                 tagsSummary={this.tagsSummary()}
-                currencySymbol={this.state.currencySymbol}
+                currencySymbol={this.currencySymbol()}
                 handleClick={this.handleClick}
                 showAll={this.state.showAll}
                 handleShowAll={this.handleShowAll}

@@ -120,8 +120,19 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	w.Header().Set("Content-Type", "text/html")
 
-	startDateParam := r.URL.Query()["start_date"]
+	params := map[string]string{}
 
+	regionParam := r.URL.Query()["region"]
+	if len(regionParam) > 0 {
+		params["region"] = regionParam[0]
+	}
+
+	accountParam := r.URL.Query()["account"]
+	if len(accountParam) > 0 {
+		params["account"] = accountParam[0]
+	}
+
+	startDateParam := r.URL.Query()["start_date"]
 	var err error
 	var start_date time.Time
 	var end_date time.Time
@@ -136,21 +147,19 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 		end_date, err = parseDateParam(endDateParam)
 	}
 
-	var datesJSONString string
 	q := datastore.NewQuery("BudgetLine")
-	dates := map[string]string{}
 	if err == nil {
 		q = q.
 			Filter("Start_date =", start_date).
 			Filter("End_date =", end_date)
-		dates["start_date"] = start_date.Format("02/01/2006")
-		dates["end_date"] = end_date.Format("02/01/2006")
+		params["start_date"] = start_date.Format("02/01/2006")
+		params["end_date"] = end_date.Format("02/01/2006")
 	} else {
 		log.Print(err.Error())
 	}
 
-	datesJSON, _ := json.Marshal(dates)
-	datesJSONString = string(datesJSON)
+	paramsJSON, _ := json.Marshal(params)
+	paramsJSONString := string(paramsJSON)
 
 	budgetLines := []record.BudgetLine{}
 	ks, err := q.GetAll(c, &budgetLines)
@@ -208,9 +217,9 @@ func handleBudget(w http.ResponseWriter, r *http.Request) {
 	p := &JSONData{
 		BudgetLines: budgetLinesJSONString,
 		Tags:        tagsJSONString,
-		Dates:       datesJSONString,
 		Records:     recordsJSONString,
 		Accounts:    accountsJSONString,
+		Params:      paramsJSONString,
 	}
 	t, _ := template.ParseFiles("budget.html")
 	t.Execute(w, p)
@@ -521,6 +530,7 @@ type JSONData struct {
 	Accounts    string
 	BudgetLines string
 	Dates       string
+	Params      string
 }
 
 func init() {

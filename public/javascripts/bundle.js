@@ -61,9 +61,11 @@
 	window.jQuery = $;
 
 	$(function() {
-	  var end_date, path, start_date;
-	  start_date = window.datesJSON.start_date;
-	  end_date = window.datesJSON.end_date;
+	  var account, end_date, path, region, start_date;
+	  start_date = window.paramsJSON.start_date;
+	  end_date = window.paramsJSON.end_date;
+	  region = window.paramsJSON.region;
+	  account = window.paramsJSON.account;
 	  if (start_date && end_date) {
 	    path = 'export-records?start_date=' + start_date + '&end_date=' + end_date;
 	    $('#export-records').attr('href', path);
@@ -74,7 +76,9 @@
 	    records: window.recordsJSON,
 	    tags: window.tagsJSON,
 	    start_date: start_date,
-	    end_date: end_date
+	    end_date: end_date,
+	    region: region,
+	    account: account
 	  }), document.getElementById('app-container'));
 	  return React.render(React.createElement(DatePicker, {
 	    startDate: start_date,
@@ -218,12 +222,22 @@
 	  getInitialState: function() {
 	    var _this = this;
 	    _.each(this.props.records, function(record) {
-	      record.account_name = _this._getAccountName(record.account_number);
+	      var account = _this._getAccount(record.account_number);
+	      record.account_name = account.name;
 	    });
 	    var state = {
 	      budgetLines: this.props.budgetLines
 	    }
-	    return _.extend(state, this._stateRegionAustralia());
+	    var accountsState;
+	    if (this.props.account !== undefined) {
+	      var account = this._getAccount(this.props.account);
+	       accountsState = this._stateCurrentAccounts([account]);
+	    } else if (this.props.region === 'uk') {
+	      var accountsState = this._stateRegionUk();
+	    } else {
+	      var accountsState = this._stateRegionAustralia();
+	    }
+	    return _.extend(state, accountsState);
 	  },
 
 	  australianAccounts: function() {
@@ -239,18 +253,22 @@
 	  },
 
 	  setRegion: function(region) {
+	    var _this = this;
 	    var state = (region == 'australia') ? this._stateRegionAustralia() : this._stateRegionUk();
 	    this.setState(state);
+	    this.setState(state, function() {
+	      _this._updateURL();
+	    });
 	  },
 
 	  _stateRegionAustralia: function() {
 	    var accounts = this.australianAccounts();
 	    return {
 	      region: 'australia',
-	      currencySymbol: '$',
 	      currentAccounts: accounts,
 	      records: this._filterRecordsByAccounts(accounts),
-	      showAll: false
+	      showAll: false,
+	      mode: 'region'
 	    };
 	  },
 
@@ -258,10 +276,21 @@
 	    var accounts = this.ukAccounts();
 	    return {
 	      region: 'uk',
-	      currencySymbol: '£',
 	      currentAccounts: accounts,
 	      records: this._filterRecordsByAccounts(accounts),
-	      showAll: false
+	      showAll: false,
+	      mode: 'region'
+	    };
+	  },
+
+	  _stateCurrentAccounts: function(accounts) {
+	    var records = this._filterRecordsByAccounts(accounts);
+	    var region = (accounts[0].region ==  'Australia') ? 'australia' : 'uk';
+	    return {
+	      region: region,
+	      currentAccounts: accounts,
+	      records: records,
+	      mode: 'account'
 	    };
 	  },
 
@@ -286,12 +315,9 @@
 	  },
 
 	  updateCurrentAccounts: function(accounts) {
-	    var records = this._filterRecordsByAccounts(accounts);
-	    var currencySymbol = (accounts[0].region ==  'Australia') ? '$' : '£';
-	    this.setState({
-	      currentAccounts: accounts,
-	      records: records,
-	      currencySymbol: currencySymbol
+	    var _this = this;
+	    this.setState(this._stateCurrentAccounts(accounts), function() {
+	      _this._updateURL();
 	    });
 	  },
 
@@ -407,11 +433,31 @@
 	    });
 	  },
 
-	  _getAccountName: function(accountNumber) {
-	    var account = _.find(this.props.accounts, function(account) {
+	  _getAccount: function(accountNumber) {
+	    return _.find(this.props.accounts, function(account) {
 	      return account.accountNumber == accountNumber;
 	    });
-	    return account.name;
+	  },
+
+	  currencySymbol: function() {
+	    return this.state.region == "uk" ? "£" : "$"
+	  },
+
+	  _updateURL: function() {
+	    history.pushState(null, null, this._stateToQuery());
+	  },
+
+	  _stateToQuery: function() {
+	    var urlParts =  {
+	      start_date: this.props.start_date,
+	      end_date: this.props.end_date
+	    }
+	    if (this.state.mode == 'account') {
+	      urlParts.account = this.state.currentAccounts[0].accountNumber;
+	    } else {
+	      urlParts.region = this.state.region;
+	    }
+	    return "/?" + $.param(urlParts);
 	  },
 
 	  render: function() {
@@ -438,7 +484,7 @@
 	                moneyOut: this.moneyOut(), 
 	                balance: this.balance(), 
 	                tagsSummary: this.tagsSummary(), 
-	                currencySymbol: this.state.currencySymbol, 
+	                currencySymbol: this.currencySymbol(), 
 	                handleClick: this.handleClick, 
 	                showAll: this.state.showAll, 
 	                handleShowAll: this.handleShowAll, 
@@ -12525,22 +12571,12 @@
 	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
 	          }), 
-	          React.createElement("li", {role: "presentation", className: "australian"}, 
-	            React.createElement("a", {role: "menuitem", className: "all-australian-accounts", href: "#", onClick: this.selectAll.bind(null, 'Australia')}, 
-	              React.createElement("strong", null, "All Australian Accounts")
-	            )
-	          ), 
 	          React.createElement("li", {role: "presentation", className: "divider"}), 
 	          this.props.ukAccounts.map(function(account, index) {
 	            return React.createElement("li", {role: "presentation", className: "uk-account", key: index}, 
 	              React.createElement("a", {role: "menuitem", href: "#", onClick: _this.selectAccount.bind(null, account.id)}, account.name)
 	            )
-	          }), 
-	          React.createElement("li", {role: "presentation", className: "uk"}, 
-	            React.createElement("a", {role: "menuitem", className: "all-uk-accounts", href: "#", onClick: this.selectAll.bind(null, 'UK')}, 
-	              React.createElement("strong", null, "All UK Accounts")
-	            )
-	          )
+	          })
 	        )
 	      )
 	    );
@@ -12749,9 +12785,11 @@
 	  },
 
 	  parseAmount: function(amount) {
-	    amount = amount.replace(/,/g,'');
+	    if (typeof amount === "string") {
+	      amount = amount.replace(/,/g,'');
+	    }
 	    return parseFloat(amount);
-	  }
+	  },
 	}
 
 
@@ -23087,8 +23125,8 @@
 
 	'use strict';
 
-	var ReactLink = __webpack_require__(201);
-	var ReactStateSetters = __webpack_require__(202);
+	var ReactLink = __webpack_require__(200);
+	var ReactStateSetters = __webpack_require__(201);
 
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -23131,7 +23169,7 @@
 
 	'use strict';
 
-	var shallowEqual = __webpack_require__(200);
+	var shallowEqual = __webpack_require__(202);
 
 	/**
 	 * If your React component's render function is "pure", e.g. it will render the
@@ -37694,7 +37732,7 @@
 	var getActiveElement = __webpack_require__(233);
 	var isTextInputElement = __webpack_require__(221);
 	var keyOf = __webpack_require__(151);
-	var shallowEqual = __webpack_require__(200);
+	var shallowEqual = __webpack_require__(202);
 
 	var topLevelTypes = EventConstants.topLevelTypes;
 
@@ -40040,54 +40078,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule shallowEqual
-	 */
-
-	'use strict';
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning
-	 * false when any key has values which are not strictly equal between
-	 * objA and objB. Returns true when the values of all keys are strictly equal.
-	 *
-	 * @return {boolean}
-	 */
-	function shallowEqual(objA, objB) {
-	  if (objA === objB) {
-	    return true;
-	  }
-	  var key;
-	  // Test for A's keys different from B.
-	  for (key in objA) {
-	    if (objA.hasOwnProperty(key) &&
-	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
-	      return false;
-	    }
-	  }
-	  // Test for B's keys missing from A.
-	  for (key in objB) {
-	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = shallowEqual;
-
-
-/***/ },
-/* 201 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule ReactLink
 	 * @typechecks static-only
 	 */
@@ -40154,7 +40144,7 @@
 
 
 /***/ },
-/* 202 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40261,6 +40251,54 @@
 	};
 
 	module.exports = ReactStateSetters;
+
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule shallowEqual
+	 */
+
+	'use strict';
+
+	/**
+	 * Performs equality by iterating through keys on an object and returning
+	 * false when any key has values which are not strictly equal between
+	 * objA and objB. Returns true when the values of all keys are strictly equal.
+	 *
+	 * @return {boolean}
+	 */
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
+	  var key;
+	  // Test for A's keys different from B.
+	  for (key in objA) {
+	    if (objA.hasOwnProperty(key) &&
+	        (!objB.hasOwnProperty(key) || objA[key] !== objB[key])) {
+	      return false;
+	    }
+	  }
+	  // Test for B's keys missing from A.
+	  for (key in objB) {
+	    if (objB.hasOwnProperty(key) && !objA.hasOwnProperty(key)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = shallowEqual;
 
 
 /***/ },
@@ -42959,10 +42997,10 @@
 	'use strict';
 
 	var ReactComponentEnvironment = __webpack_require__(230);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactMultiChildUpdateTypes = __webpack_require__(260);
 
 	var ReactReconciler = __webpack_require__(39);
-	var ReactChildReconciler = __webpack_require__(260);
+	var ReactChildReconciler = __webpack_require__(261);
 
 	/**
 	 * Updating children of a component may trigger recursive updates. The depth is
@@ -43464,7 +43502,7 @@
 	var PooledClass = __webpack_require__(141);
 
 	var assign = __webpack_require__(41);
-	var getTextContentAccessor = __webpack_require__(261);
+	var getTextContentAccessor = __webpack_require__(259);
 
 	/**
 	 * This helper class stores information about text content of a target node,
@@ -43879,7 +43917,7 @@
 	'use strict';
 
 	var Danger = __webpack_require__(264);
-	var ReactMultiChildUpdateTypes = __webpack_require__(259);
+	var ReactMultiChildUpdateTypes = __webpack_require__(260);
 
 	var setTextContent = __webpack_require__(265);
 	var invariant = __webpack_require__(140);
@@ -46387,6 +46425,47 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule getTextContentAccessor
+	 */
+
+	'use strict';
+
+	var ExecutionEnvironment = __webpack_require__(44);
+
+	var contentKey = null;
+
+	/**
+	 * Gets the key used to access text content on a DOM node.
+	 *
+	 * @return {?string} Key used to access text content.
+	 * @internal
+	 */
+	function getTextContentAccessor() {
+	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
+	    // Prefer textContent to innerText because many browsers support both but
+	    // SVG <text> elements don't support innerText even when <div> does.
+	    contentKey = 'textContent' in document.documentElement ?
+	      'textContent' :
+	      'innerText';
+	  }
+	  return contentKey;
+	}
+
+	module.exports = getTextContentAccessor;
+
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactMultiChildUpdateTypes
 	 */
 
@@ -46413,7 +46492,7 @@
 
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46541,47 +46620,6 @@
 	};
 
 	module.exports = ReactChildReconciler;
-
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule getTextContentAccessor
-	 */
-
-	'use strict';
-
-	var ExecutionEnvironment = __webpack_require__(44);
-
-	var contentKey = null;
-
-	/**
-	 * Gets the key used to access text content on a DOM node.
-	 *
-	 * @return {?string} Key used to access text content.
-	 * @internal
-	 */
-	function getTextContentAccessor() {
-	  if (!contentKey && ExecutionEnvironment.canUseDOM) {
-	    // Prefer textContent to innerText because many browsers support both but
-	    // SVG <text> elements don't support innerText even when <div> does.
-	    contentKey = 'textContent' in document.documentElement ?
-	      'textContent' :
-	      'innerText';
-	  }
-	  return contentKey;
-	}
-
-	module.exports = getTextContentAccessor;
 
 
 /***/ },
@@ -46924,7 +46962,7 @@
 	var ExecutionEnvironment = __webpack_require__(44);
 
 	var getNodeForCharacterOffset = __webpack_require__(273);
-	var getTextContentAccessor = __webpack_require__(261);
+	var getTextContentAccessor = __webpack_require__(259);
 
 	/**
 	 * While `isCollapsed` is available on the Selection object and `collapsed`

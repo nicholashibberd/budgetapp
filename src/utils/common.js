@@ -11,5 +11,5 @@ module.exports = {
       amount = amount.replace(/,/g,'');
     }
     return parseFloat(amount);
-  }
+  },
 }

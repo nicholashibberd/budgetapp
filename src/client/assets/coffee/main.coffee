@@ -8,8 +8,10 @@ App = require('./../../../react_components/app')
 window.jQuery = $
 
 $ ->
-  start_date = window.datesJSON.start_date
-  end_date = window.datesJSON.end_date
+  start_date = window.paramsJSON.start_date
+  end_date = window.paramsJSON.end_date
+  region = window.paramsJSON.region
+  account = window.paramsJSON.account
 
   if start_date && end_date
     path = 'export-records?start_date=' + start_date + '&end_date=' + end_date
@@ -22,7 +24,9 @@ $ ->
       records: window.recordsJSON,
       tags: window.tagsJSON,
       start_date: start_date,
-      end_date: end_date
+      end_date: end_date,
+      region: region,
+      account: account
     }),
     document.getElementById('app-container')
   )
