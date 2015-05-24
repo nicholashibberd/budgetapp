@@ -12,13 +12,13 @@ type NatwestParser struct {
 
 func (parser NatwestParser) read_file(file io.Reader) ([]Record, error) {
 	reader := csv.NewReader(file)
-	// reader.FieldsPerRecord = 8
+	reader.FieldsPerRecord = -1
 	a := []Record{}
 	for {
 		record, err := reader.Read()
 		if err != nil {
 			if strings.Contains(err.Error(), "wrong number of fields in line") {
-				log.Printf("%#v\n", err)
+				log.Printf("%#v\n", err.Error())
 				continue
 			}
 			if err == io.EOF {
